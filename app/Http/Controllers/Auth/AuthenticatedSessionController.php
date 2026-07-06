@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Enums\Role;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,9 +30,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         
         return match ($request->user()->role) {
-            'aluno' => redirect()->intended('/aluno/dashboard'),
-            'professor' => redirect()->intended('/professor/dashboard'),
-            'coordenador' => redirect()->intended('/coordenador/dashboard'),
+            Role::Aluno => redirect()->intended('/aluno/dashboard'),
+            Role::Professor => redirect()->intended('/professor/dashboard'),
+            Role::Coordenador => redirect()->intended('/coordenador/dashboard'),
         };
     }
 

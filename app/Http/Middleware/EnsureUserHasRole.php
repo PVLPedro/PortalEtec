@@ -15,9 +15,10 @@ class EnsureUserHasRole
      */
     public function handle($request, Closure $next, ...$roles)
     {
-        if (! in_array($request->user()->role, $roles)) {
+        if (! in_array($request->user()->role->value, $roles)) {
             abort(403);
         }
+
         return $next($request);
     }
 }

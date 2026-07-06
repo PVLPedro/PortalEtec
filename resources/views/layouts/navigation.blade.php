@@ -5,32 +5,32 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    @if(auth()->user()->role === 'aluno')
+                    @if(auth()->user()->role === \App\Enums\Role::Aluno)
                         <a href="{{ route('aluno.dashboard') }}">
-                            <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                            <x-application-logo class="block h-14 w-auto fill-current" />
                         </a>
-                    @elseif(auth()->user()->role === 'professor')
+                    @elseif(auth()->user()->role === \App\Enums\Role::Professor)
                         <a href="{{ route('professor.dashboard') }}">
-                            <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                            <x-application-logo class="block h-14 w-auto fill-current" />
                         </a>
-                    @elseif(auth()->user()->role === 'coordenador')
+                    @elseif(auth()->user()->role === \App\Enums\Role::Coordenador)
                         <a href="{{ route('coordenador.dashboard') }}">
-                            <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                            <x-application-logo class="block h-14 w-auto fill-current" />
                         </a>
                     @endif
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    @if(auth()->user()->role === 'aluno')
+                    @if(auth()->user()->role === \App\Enums\Role::Aluno)
                         <x-nav-link :href="route('aluno.dashboard')" :active="request()->routeIs('aluno.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                    @elseif(auth()->user()->role === 'professor')
+                    @elseif(auth()->user()->role === \App\Enums\Role::Professor)
                         <x-nav-link :href="route('professor.dashboard')" :active="request()->routeIs('professor.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                    @elseif(auth()->user()->role === 'coordenador')
+                    @elseif(auth()->user()->role === \App\Enums\Role::Coordenador)
                         <x-nav-link :href="route('coordenador.dashboard')" :active="request()->routeIs('coordenador.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
@@ -87,15 +87,15 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            @if(auth()->user()->role === 'aluno')
+            @if(auth()->user()->role === \App\Enums\Role::Aluno)
                 <x-responsive-nav-link :href="route('aluno.dashboard')" :active="request()->routeIs('aluno.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-            @elseif(auth()->user()->role === 'professor')
+            @elseif(auth()->user()->role === \App\Enums\Role::Professor)
                 <x-responsive-nav-link :href="route('professor.dashboard')" :active="request()->routeIs('professor.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-            @elseif(auth()->user()->role === 'coordenador')
+            @elseif(auth()->user()->role === \App\Enums\Role::Coordenador)
                 <x-responsive-nav-link :href="route('coordenador.dashboard')" :active="request()->routeIs('coordenador.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>

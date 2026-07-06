@@ -6,31 +6,27 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     if (! auth()->check()) {
         return redirect()->route('login');
+    } else {
+        $role = auth()->user()->role;
+
+        switch ($role) {
+            case \App\Enums\Role::Aluno:
+                return redirect()->route('aluno.dashboard');
+            case \App\Enums\Role::Professor:
+                return redirect()->route('professor.dashboard');
+            case \App\Enums\Role::Coordenador:
+                return redirect()->route('coordenador.dashboard');
+            default:
+                abort(403);
+        }
     }
-
-    return view('home');
 });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-// Tu vai adicionar as rotas de autenticação aqui
-
-// Route::middleware(['auth', 'role:coordenador'])->group(function () {
-//     Route::get('/coordenador/dashboard', ...);
-//     Route::post('/professores/delegar', ...);
-// });
-
-// Route::middleware(['auth', 'role:professor,coordenador'])->group(function () {
-//     Route::get('/turmas', ...);
-// });
 
 Route::middleware(['auth', 'role:aluno'])->get('/aluno/dashboard', function () {
     return view('aluno.dashboard');
@@ -43,5 +39,17 @@ Route::middleware(['auth', 'role:professor'])->get('/professor/dashboard', funct
 Route::middleware(['auth', 'role:coordenador'])->get('/coordenador/dashboard', function () {
     return view('coordenador.dashboard');
 })->name('coordenador.dashboard');
+
+// Tu vai adicionar as rotas de autenticação aqui
+
+// Ex.:
+// Route::middleware(['auth', 'role:coordenador'])->group(function () {
+//     Route::get('/coordenador/dashboard', ...);
+//     Route::post('/professores/delegar', ...);
+// });
+
+// Route::middleware(['auth', 'role:professor,coordenador'])->group(function () {
+//     Route::get('/turmas', ...);
+// });
 
 require __DIR__.'/auth.php';
