@@ -28,10 +28,10 @@ Route::middleware('guest')->group(function () {
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 
-    Route::get('new-password/{token}', [NewPasswordController::class, 'create'])
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
-    Route::post('new-password', [NewPasswordController::class, 'store'])
+    Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
 
@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
 
-    Route::post('email/verification', [EmailVerificationNotificationController::class, 'store'])
+    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
