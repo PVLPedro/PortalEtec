@@ -1,13 +1,216 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import 'tailwindcss';
+
+@tailwind utilities;
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --color-bg-primary: hsl(40, 50%, 97%);
+    --color-bg-primary-hover: hsl(40, 20%, 92%);
+
+    --color-bg-secondary: hsl(240, 40%, 98%);
+    --color-bg-secondary-hover: hsl(240, 20%, 93%);
+
+    --color-bg-tertiary: hsl(40, 50%, 97%);
+    --color-bg-tertiary-hover: hsl(40, 20%, 92%);
+
+    --color-text: hsl(0, 0%, 15%);
+    --color-text-disabled: hsl(0, 0%, 25%);
+}
+
+:where(.dark, .dark *) {
+    --color-bg-primary: hsl(215, 12%, 22%);
+    --color-bg-primary-hover: hsl(215, 12%, 27%);
+
+    --color-bg-secondary: hsl(215, 17%, 20%);
+    --color-bg-secondary-hover: hsl(215, 17%, 25%);
+
+    --color-bg-tertiary: hsl(215, 10%, 30%);
+    --color-bg-tertiary-hover: hsl(215, 10%, 35%);
+
+    --color-text: hsl(0, 0%, 95%);
+    --color-text-disabled: hsl(0, 0%, 75%);
+}
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-bg-primary: var(--color-bg-primary);
+    --color-bg-primary-hover: var(--color-bg-primary-hover);
+
+    --color-bg-secondary: var(--color-bg-secondary);
+    --color-bg-secondary-hover: var(--color-bg-secondary-hover);
+
+    --color-bg-tertiary: var(--color-bg-tertiary);
+    --color-bg-tertiary-hover: var(--color-bg-tertiary-hover);
+
+    --color-text: var(--color-text);
+    --color-disabled-text: var(--color-disabled-text);
+
+    --opacity-lite: 12%;
+    --opacity-hard: 20%;
+
+    --color-border: hsl(0, 0%, 88%);
+    --color-border-hover: hsl(0, 0%, 93%);
+
+    --color-dark-border: hsl(0, 0%, 68%);
+    --color-dark-border-hover: hsl(0, 0%, 73%);
+
+    --color-bg-transparent: hsl(0, 0%, 0%);
+    --color-bg-transparent-black: hsl(0, 0%, 0%);
+    --color-bg-transparent-white: hsl(0, 0%, 0%);
+
+    --color-accent: hsl(200, 100%, 40%);
+    --color-accent-bg: hsl(200, 100%, 50%, 12%);
+    --color-accent-hover: hsl(200, 100%, 60%);
+    --color-accent-disabled: hsl(200, 70%, 40%);
+
+    --color-notify: hsl(0, 100%, 65%);
+
+    --color-danger: hsl(0, 100%, 30%);
+    --color-danger-bg: hsl(0, 100%, 60%, 12%);
+    --color-danger-hover: hsl(0, 100%, 80%);
+    --color-danger-disabled: hsl(0, 70%, 55%);
+
+    --color-valid: hsl(115, 100%, 20%);
+    --color-valid-bg: hsl(115, 100%, 60%, 12%);
+    --color-valid-hover: hsl(115, 100%, 70%);
+    --color-valid-disabled: hsl(115, 60%, 50%);
+
+    --color-warning: hsl(25, 100%, 30%);
+    --color-warning-bg: hsl(25, 100%, 60%, 12%);
+    --color-warning-hover: hsl(25, 100%, 70%);
+    --color-warning-disabled: hsl(25, 60%, 50%);
+
+    --color-red: hsl(0, 100%, 60%);
+    --color-red-bg: hsl(0, 100%, 60%, 12%);
+    --color-red-hover: hsl(0, 100%, 75%);
+    --color-red-disabled: hsl(0, 70%, 50%);
+
+    --color-orange: hsl(25, 100%, 60%);
+    --color-orange-bg: hsl(25, 100%, 60%, 12%);
+    --color-orange-hover: hsl(25, 100%, 70%);
+    --color-orange-disabled: hsl(25, 60%, 50%);
+
+    --color-yellow: hsl(45, 100%, 50%);
+    --color-yellow-bg: hsl(45, 100%, 50%, 12%);
+    --color-yellow-hover: hsl(45, 100%, 60%);
+    --color-yellow-disabled: hsl(45, 60%, 50%);
+
+    --color-lime: hsl(65, 100%, 45%);
+    --color-lime-bg: hsl(65, 100%, 45%, 12%);
+    --color-lime-hover: hsl(65, 100%, 70%);
+    --color-lime-disabled: hsl(65, 60%, 50%);
+
+    --color-green: hsl(120, 100%, 45%);
+    --color-green-bg: hsl(120, 100%, 55%, 12%);
+    --color-green-hover: hsl(120, 100%, 70%);
+    --color-green-disabled: hsl(120, 60%, 50%);
+
+    --color-turquoise: hsl(160, 100%, 40%);
+    --color-turquoise-bg: hsl(160, 100%, 50%, 12%);
+    --color-turquoise-hover: hsl(160, 100%, 70%);
+    --color-turquoise-disabled: hsl(160, 60%, 50%);
+
+    --color-sky: hsl(190, 100%, 40%);
+    --color-sky-bg: hsl(190, 100%, 50%, 12%);
+    --color-sky-hover: hsl(190, 100%, 60%);
+    --color-sky-disabled: hsl(190, 70%, 40%);
+
+    --color-blue: hsl(230, 100%, 60%);
+    --color-blue-bg: hsl(230, 100%, 70%, 12%);
+    --color-blue-hover: hsl(230, 100%, 60%);
+    --color-blue-disabled: hsl(230, 70%, 40%);
+
+    --color-purple: hsl(275, 100%, 50%);
+    --color-purple-bg: hsl(275, 100%, 60%, 12%);
+    --color-purple-hover: hsl(275, 100%, 70%);
+    --color-purple-disabled: hsl(275, 60%, 50%);
+
+    --color-magenta: hsl(295, 100%, 50%);
+    --color-magenta-bg: hsl(295, 100%, 60%, 12%);
+    --color-magenta-hover: hsl(295, 100%, 70%);
+    --color-magenta-disabled: hsl(295, 60%, 50%);
+
+    --color-pink: hsl(335, 100%, 50%);
+    --color-pink-bg: hsl(335, 100%, 60%, 12%);
+    --color-pink-hover: hsl(335, 100%, 70%);
+    --color-pink-disabled: hsl(335, 60%, 50%);
+
+    --color-brown: hsl(30, 100%, 40%);
+    --color-brown-bg: hsl(30, 100%, 30%, 12%);
+    --color-brown-hover: hsl(30, 100%, 70%);
+    --color-brown-disabled: hsl(30, 60%, 50%);
+
+    --color-gray: hsl(270, 8%, 40%);
+    --color-gray-bg: hsl(270, 8%, 50%, 12%);
+    --color-gray-hover: hsl(270, 8%, 70%);
+    --color-gray-disabled: hsl(270, 0%, 50%);
+
+    --spacing-smaller: 4px;
+    --spacing-small: 8px;
+    --spacing-regular: 12px;
+    --spacing-large: 24px;
+
+    --radius-smaller: 2px;
+    --radius-small: 4px;
+    --radius-regular: 8px;
+    --radius-medium: 12px;
+    --radius-large: 16px;
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --cursor-default: url('images/cursor/default.png');
+    --cursor-pointer: url('images/cursor/pointer.png');
+    --cursor-not-allowed: url('images/cursor/not-allowed.png');
+    --cursor-text: url('images/cursor/text.png');
+
+    --breakpoint-sm: 768px;
+    --breakpoint-md: 992px;
+    --breakpoint-sm: 1024px;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    cursor: var(--cursor-pointer), pointer;
+    border-radius: var(--radius-regular);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--dark-border);
+    border: 2px solid var(--background-secondary);
+    border-radius: var(--radius-regular);
+    cursor: var(--cursor-pointer), pointer;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: var(--radius-regular);
+    background-color: hsl(from var(--bg-transparent-black) h s l / 0.1);
+    border: 2px solid var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--dark-border-hover);
+}
+
+::-webkit-scrollbar-button {
+    height: 12px;
+    width: 12px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+    height: 12px;
+    width: 12px;
+    background-color: transparent;
 }
