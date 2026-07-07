@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (! auth()->check()) {
-        return redirect()->route('login');
+        return redirect()->route('register');
     } else {
         $role = auth()->user()->role;
 
@@ -27,6 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+// Controlle de Edit e Delete de Usuários (Coordenador)
+// Route::middleware(['auth', 'role:coordenador'])->group(function () {
+//     Route::get('/usuarios', [UserManagementController::class, 'index'])->name('usuarios.index');
+//     Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name('usuarios.edit');
+//     Route::put('/usuarios/{user}', [UserManagementController::class, 'update'])->name('usuarios.update');
+//     Route::delete('/usuarios/{user}', [UserManagementController::class, 'destroy'])->name('usuarios.destroy');
+// });
 
 Route::middleware(['auth', 'role:aluno'])->get('/aluno/dashboard', function () {
     return view('aluno.dashboard');
