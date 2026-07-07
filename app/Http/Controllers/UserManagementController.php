@@ -2,48 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Role;
 use App\Models\User;
-use App\Rules\ValidEmailDomainForRole;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 
 class UserManagementController extends Controller
 {
-    public function create()
+    public function index()
     {
-        return view('coordenador.usuarios.create');
+        return view('coordenador.usuarios.index', [
+            'usuarios' => User::all(),
+        ]);
     }
 
-    public function store(Request $request)
+    public function edit(User $user)
+    {
+        return view('coordenador.usuarios.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:aluno,professor,coordenador'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                'unique:'.User::class,
-                new ValidEmailDomainForRole($request->role),
-            ],
-            'cpf' => ['required', 'digits:11', 'unique:'.User::class],
+            'email' => ['required', 'email', 'unique:users,email,'.$user->id],
+            'cpf' => ['required', 'digits:11', 'unique:users,cpf,'.$user->id],
             'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:aluno,professor,coordenador'],
         ]);
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'cpf' => $validated['cpf'],
-            'phone' => $validated['phone'],
-            'role' => Role::from($validated['role']),
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user->update($validated);
 
-        return redirect()->route('coordenador.dashboard')->with('status', 'Usuário criado com sucesso!');
+        return redirect()->route('usuarios.index')->with('status', 'Usuário atualizado!');
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('usuarios.index')->with('status', 'Usuário removido!');
     }
 }
