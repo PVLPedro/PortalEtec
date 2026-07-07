@@ -14,6 +14,8 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Yuji',
             'email' => 'yuji@gmail.com',
+            'cpf' => '11111111111',
+            'phone' => '11987654321',
             'password' => bcrypt('password'),
             'role' => Role::Aluno,
         ]);
@@ -21,6 +23,8 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Siles',
             'email' => 'siles@gmail.com',
+            'cpf' => '22222222222',
+            'phone' => '11987654322',
             'password' => bcrypt('password2'),
             'role' => Role::Professor,
         ]);
@@ -28,6 +32,8 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Davi',
             'email' => 'davi@gmail.com',
+            'cpf' => '33333333333',
+            'phone' => '11987654323',
             'password' => bcrypt('password3'),
             'role' => Role::Coordenador,
         ]);
