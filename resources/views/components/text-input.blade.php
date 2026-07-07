@@ -5,7 +5,7 @@
     {{
         $attributes->merge([
             'class' =>
-                'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm active:border-indigo-500',
+                'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm active:outline-accent focus:outline-accent px-2 py-1',
         ])
     }}
 />

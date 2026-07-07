@@ -23,7 +23,7 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Senha')" />
 
             <x-text-input
                 id="password"
@@ -43,10 +43,10 @@
                 <input
                     id="remember_me"
                     type="checkbox"
-                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                    class="rounded border-gray-300 text-accent shadow-sm focus:outline-accent accent-accent active:outline-accent"
                     name="remember"
                 />
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                <span class="ms-2 text-sm text-gray-600">{{ __('Lembrar-me') }}</span>
             </label>
         </div>
 
@@ -56,7 +56,7 @@
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                     href="{{ route('password.request') }}"
                 >
-                    {{ __('Forgot your password?') }}
+                    {{ __('Esqueceu sua senha?') }}
                 </a>
             @endif
 

@@ -23,20 +23,20 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'role:aluno'])->get('/aluno/visao-geral', function () {
+Route::middleware(['auth', 'role:aluno'])->get('/aluno/dashboard', function () {
     return view('aluno.dashboard');
 })->name('aluno.dashboard');
 
-Route::middleware(['auth', 'role:professor'])->get('/professor/visao-geral', function () {
+Route::middleware(['auth', 'role:professor'])->get('/professor/dashboard', function () {
     return view('professor.dashboard');
 })->name('professor.dashboard');
 
-Route::middleware(['auth', 'role:coordenador'])->get('/coordenador/visao-geral', function () {
+Route::middleware(['auth', 'role:coordenador'])->get('/coordenador/dashboard', function () {
     return view('coordenador.dashboard');
 })->name('coordenador.dashboard');
 
