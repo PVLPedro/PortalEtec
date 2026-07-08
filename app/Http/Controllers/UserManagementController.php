@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -9,14 +10,14 @@ class UserManagementController extends Controller
 {
     public function index()
     {
-        return view('coordenador.usuarios.index', [
+        return view('users.index', [
             'usuarios' => User::all(),
         ]);
     }
 
     public function edit(User $user)
     {
-        return view('coordenador.usuarios.edit', compact('user'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -31,13 +32,17 @@ class UserManagementController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('usuarios.index')->with('status', 'Usuário atualizado!');
+        return redirect()->route('users.index')->with('status', 'Usuário atualizado!');
     }
 
     public function destroy(User $user)
     {
+        if ($user->role === Role::Coordenador) {
+            abort(403, 'Não é possível excluir um coordenador por aqui.');
+        }
+
         $user->delete();
 
-        return redirect()->route('usuarios.index')->with('status', 'Usuário removido!');
+        return redirect()->route('users.index')->with('status', 'Usuário removido!');
     }
 }

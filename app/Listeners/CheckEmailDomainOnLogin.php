@@ -19,7 +19,7 @@ class CheckEmailDomainOnLogin
             request()->session()->invalidate();
             request()->session()->regenerateToken();
 
-            abort(403, 'Email domain does not match the registered role. Please contact the school coordination.');
+            abort(403, 'O domínio de email não condiz com o cargo registrado. Por favor, entre em contato com a coordenação da escola.');
         }
     }
 }

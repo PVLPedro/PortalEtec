@@ -36,13 +36,13 @@
         {{-- CPF --}}
         <div class="mt-4">
             <x-input-label for="cpf" value="CPF" class="mt-4" />
-            <x-text-input 
-                id="cpf" 
-                name="cpf" 
-                type="text" 
-                class="mt-1 block w-full" 
-                :value="old('cpf')" 
-                required 
+            <x-text-input
+                id="cpf"
+                name="cpf"
+                type="text"
+                class="mt-1 block w-full"
+                :value="old('cpf')"
+                required
             />
             <x-input-error :messages="$errors->get('cpf')" class="mt-2" />
         </div>
@@ -50,13 +50,13 @@
         {{-- Telephone --}}
         <div class="mt-4">
             <x-input-label for="phone" value="Telefone" class="mt-4" />
-            <x-text-input 
-                id="phone" 
-                name="phone" 
-                type="text" 
-                class="mt-1 block w-full" 
-                :value="old('phone')" 
-                required 
+            <x-text-input
+                id="phone"
+                name="phone"
+                type="text"
+                class="mt-1 block w-full"
+                :value="old('phone')"
+                required
             />
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
@@ -68,12 +68,19 @@
             <select
                 id="role"
                 name="role"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:outline-accent active:outline-accent px-2 py-1"
+                class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
                 required
             >
                 <option value="">Selecione um cargo</option>
                 @foreach (\App\Enums\Role::cases() as $role)
-                    <option value="{{ $role->value }}" {{ old('role') == $role->value ? 'selected' : '' }}>
+                    <option
+                        value="{{ $role->value }}"
+                        {{
+                            old('role') == $role->value
+                                ? 'selected'
+                                : ''
+                        }}
+                    >
                         {{ $role->name }}
                     </option>
                 @endforeach

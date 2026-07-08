@@ -10,59 +10,19 @@
         <x-lucide-menu></x-lucide-menu>
     </button>
     <div class="flex flex-col items-start gap-smaller">
-        @if (auth()->user()->role === \App\Enums\Role::Aluno)
-            <x-nav-link
-                :href="route('aluno.dashboard')"
-                :active="request()->routeIs('aluno.dashboard')"
-            >
-                <x-slot name="icon">
-                    <x-lucide-layout-dashboard></x-lucide-layout-dashboard>
-                </x-slot>
-                Visão Geral
-            </x-nav-link>
-        @elseif (auth()->user()->role === \App\Enums\Role::Professor)
-            <x-nav-link
-                :href="route('professor.dashboard')"
-                :active="request()->routeIs('professor.dashboard')"
-            >
-                <x-slot name="icon">
-                    <x-lucide-layout-dashboard></x-lucide-layout-dashboard>
-                </x-slot>
-                Visão Geral
-            </x-nav-link>
-        @elseif (auth()->user()->role === \App\Enums\Role::Coordenador)
-            <x-nav-link
-                :href="route('coordenador.dashboard')"
-                :active="request()->routeIs('coordenador.dashboard')"
-            >
-                <x-slot name="icon">
-                    <x-lucide-layout-dashboard></x-lucide-layout-dashboard>
-                </x-slot>
-                Visão Geral
-            </x-nav-link>
-        @endif
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-slot name="icon">
+                <x-lucide-layout-dashboard></x-lucide-layout-dashboard>
+            </x-slot>
+            Visão Geral
+        </x-nav-link>
 
-        @if (auth()->user()->role === \App\Enums\Role::Aluno)
-            <x-nav-link
-                :href="route('aluno.dashboard')"
-                :active="request()->routeIs('aluno.activities')"
-            >
-                <x-slot name="icon">
-                    <x-lucide-file-text></x-lucide-file-text>
-                </x-slot>
-                Atividades
-            </x-nav-link>
-        @elseif (auth()->user()->role === \App\Enums\Role::Professor)
-            <x-nav-link
-                :href="route('professor.dashboard')"
-                :active="request()->routeIs('professor.activities')"
-            >
-                <x-slot name="icon">
-                    <x-lucide-file-text></x-lucide-file-text>
-                </x-slot>
-                Atividades
-            </x-nav-link>
-        @endif
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('activities')">
+            <x-slot name="icon">
+                <x-lucide-file-text></x-lucide-file-text>
+            </x-slot>
+            Atividades
+        </x-nav-link>
     </div>
 </aside>
 

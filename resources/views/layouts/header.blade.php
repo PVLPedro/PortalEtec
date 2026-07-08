@@ -1,18 +1,8 @@
 <header class="t-0 sticky col-span-2 flex items-center justify-between text-text">
     <figure class="relative h-18 px-regular">
-        @if (auth()->user()->role === \App\Enums\Role::Aluno)
-            <a href="{{ route('aluno.dashboard') }}">
-                <x-application-logo class="h-full" />
-            </a>
-        @elseif (auth()->user()->role === \App\Enums\Role::Professor)
-            <a href="{{ route('professor.dashboard') }}">
-                <x-application-logo class="h-full" />
-            </a>
-        @elseif (auth()->user()->role === \App\Enums\Role::Coordenador)
-            <a href="{{ route('coordenador.dashboard') }}">
-                <x-application-logo class="h-full" />
-            </a>
-        @endif
+        <a href="{{ route('dashboard') }}">
+            <x-application-logo class="h-full" />
+        </a>
     </figure>
     <ul class="itmes-center flex justify-center gap-smaller p-regular">
         <x-theme></x-theme>
