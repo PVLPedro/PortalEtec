@@ -46,46 +46,5 @@
 </aside>
 
 @push ('scripts')
-    <script>
-        const toggleSidebarButton = getById('toggle-sidebar');
-
-        toggleSidebarButton.addEventListener('click', toggleSidebar);
-
-        document.addEventListener('keydown', function (event) {
-            if (event.shiftKey && event.key.toLowerCase() === 's') {
-                toggleSidebar();
-            }
-        });
-
-        function toggleSidebar() {
-            let currentSidebar = localStorage.getItem('sidebar');
-
-            switch (currentSidebar) {
-                case 'show':
-                    localStorage.setItem('sidebar', 'hidden');
-                    break;
-                case 'hidden':
-                    localStorage.setItem('sidebar', 'show');
-                    break;
-                default:
-                    localStorage.setItem('sidebar', 'show');
-                    break;
-            }
-            updateSidebar();
-        }
-
-        function updateSidebar() {
-            const sidebar = getById('sidebar');
-
-            let mode = localStorage.getItem('sidebar');
-            if (mode == 'show') {
-                sidebar.classList.add('w-54');
-                sidebar.classList.remove('w-18.5');
-            }
-            if (mode == 'hidden') {
-                sidebar.classList.remove('w-54');
-                sidebar.classList.add('w-18.5');
-            }
-        }
-    </script>
+    <script></script>
 @endpush
