@@ -13,8 +13,16 @@ return [
     |
     */
 
+    'email' => 'Insira seu email',
+    'email_placeholder' => 'Email',
+    'password' => 'Insira sua senha',
+    'password_placeholder' => 'Senha',
+    'remember_me' => 'Continuar conectado',
+    'forgot_password' => 'Esqueceu sua senha?',
+    'log_in' => 'Entrar',
+
     'failed' => 'As credenciais não coincidem.',
-    'password' => 'A senha está incorreta.',
+    'incorrect_password' => 'A senha está incorreta.',
     'throttle' => 'Muitas tentativas. Tente novamente em :seconds segundos.',
 
 ];

@@ -13,8 +13,16 @@ return [
     |
     */
 
+    'email' => 'Insert your email',
+    'email_placeholder' => 'Email',
+    'password' => 'Insert your password',
+    'password_placeholder' => 'Password',
+    'remember_me' => 'Remember me',
+    'forgot_password' => 'Forgot your passowrd?',
+    'log_in' => 'Log in',
+
     'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
+    'incorrect_password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
 ];

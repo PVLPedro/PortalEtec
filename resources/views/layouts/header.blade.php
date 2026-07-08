@@ -14,7 +14,7 @@
             </a>
         @endif
     </figure>
-    <ul class="itmes-center flex justify-center gap-smaller p-regular">
+    <ul class="flex items-center justify-center gap-smaller p-regular">
         <x-theme></x-theme>
         <x-dropdown>
             <x-lucide-user />
