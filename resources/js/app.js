@@ -10,16 +10,6 @@ function getByClassAll(className) {
     return document.querySelectorAll(className);
 }
 
-function getById(id) {
-    return document.getElementById(id);
-}
-function getByClass(className) {
-    return document.querySelector(className);
-}
-function getByClassAll(className) {
-    return document.querySelectorAll(className);
-}
-
 const toggleThemeButton = getById('toggle-theme');
 
 toggleThemeButton.addEventListener('click', () => {

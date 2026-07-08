@@ -7,8 +7,8 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Auth\PasswordController;
 
 Route::get('/', function () {
-    if (! auth()->check()) {
-        return redirect()->route('register');
+    if (!auth()->check()) {
+        return redirect()->route('login');
     }
 
     return redirect()->route('dashboard');
