@@ -20,20 +20,28 @@
 
     --color-text: hsl(0, 0%, 15%);
     --color-text-disabled: hsl(0, 0%, 25%);
+
+    --color-border: hsl(40, 5%, 88%);
+    --color-border-hover: hsl(40, 5%, 93%);
+    --color-border-disabled: hsl(40, 5%, 60%);
 }
 
 :where(.dark, .dark *) {
-    --color-bg-primary: hsl(215, 12%, 22%);
-    --color-bg-primary-hover: hsl(215, 12%, 27%);
+    --color-bg-primary: hsl(230, 20%, 8%);
+    --color-bg-primary-hover: hsl(230, 20%, 13%);
 
-    --color-bg-secondary: hsl(215, 17%, 20%);
-    --color-bg-secondary-hover: hsl(215, 17%, 25%);
+    --color-bg-secondary: hsl(230, 20%, 12%);
+    --color-bg-secondary-hover: hsl(230, 20%, 17%);
 
-    --color-bg-tertiary: hsl(215, 10%, 30%);
-    --color-bg-tertiary-hover: hsl(215, 10%, 35%);
+    --color-bg-tertiary: hsl(230, 20%, 16%);
+    --color-bg-tertiary-hover: hsl(230, 20%, 21%);
 
     --color-text: hsl(0, 0%, 95%);
     --color-text-disabled: hsl(0, 0%, 75%);
+
+    --color-border: hsl(230, 5%, 58%);
+    --color-border-hover: hsl(230, 5%, 63%);
+    --color-border-disabled: hsl(230, 5%, 30%);
 }
 
 @theme {
@@ -52,8 +60,9 @@
     --opacity-lite: 12%;
     --opacity-hard: 20%;
 
-    --color-border: hsl(0, 0%, 88%);
-    --color-border-hover: hsl(0, 0%, 93%);
+    --color-border: var(--color-border);
+    --color-border-hover: var(--color-border-hover);
+    --color-border-disabled: var(--color-border-disabled);
 
     --color-dark-border: hsl(0, 0%, 68%);
     --color-dark-border-hover: hsl(0, 0%, 73%);

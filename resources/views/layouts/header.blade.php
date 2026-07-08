@@ -59,45 +59,5 @@
 </header>
 
 @push ('scripts')
-    <script>
-        function getById(id) {
-            return document.getElementById(id);
-        }
-        function getByClass(className) {
-            return document.querySelector(className);
-        }
-        function getByClassAll(className) {
-            return document.querySelectorAll(className);
-        }
-
-        const toggleThemeButton = getById('toggle-theme');
-
-        toggleThemeButton.addEventListener('click', () => {
-            let currentTheme = localStorage.getItem('theme');
-
-            switch (currentTheme) {
-                case 'light':
-                    localStorage.setItem('theme', 'dark');
-                    break;
-                case 'dark':
-                    localStorage.setItem('theme', 'light');
-                    break;
-                default:
-                    localStorage.setItem('theme', 'light');
-                    break;
-            }
-            updateTheme();
-        });
-
-        function updateTheme() {
-            let mode = localStorage.getItem('theme');
-
-            if (mode == 'light') {
-                document.body.classList.remove('dark');
-            }
-            if (mode == 'dark') {
-                document.body.classList.add('dark');
-            }
-        }
-    </script>
+    <script></script>
 @endpush

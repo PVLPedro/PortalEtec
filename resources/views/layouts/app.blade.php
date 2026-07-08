@@ -21,19 +21,5 @@
     <main>{{ $slot }}</main>
 
     @stack ('scripts')
-
-    @push ('scripts')
-        <script>
-            function getById(id) {
-                return document.getElementById(id);
-            }
-            function getByClass(className) {
-                return document.querySelector(className);
-            }
-            function getByClassAll(className) {
-                return document.querySelectorAll(className);
-            }
-        </script>
-    @endpush
 </body>
 </html>
