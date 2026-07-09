@@ -23,6 +23,12 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+
+    public function etecs()
+    {
+        return $this->belongsToMany(Etec::class)->withPivot('rm')->withTimestamps();
+    }
+
     protected function casts(): array
     {
         return [

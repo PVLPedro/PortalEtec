@@ -33,6 +33,41 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        {{-- Etec --}}
+        <div class="mt-4">
+            <x-input-label for="etec_id" :value="__('Etec')" />
+            <select
+                id="etec_id"
+                name="etec_id"
+                class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
+                required
+            >
+                <option value="">Selecione uma Etec</option>
+                @foreach ($etecs as $etec)
+                    <option
+                        value="{{ $etec->id }}"
+                        {{
+                            old('etec_id') == $etec->id
+                                ? 'selected'
+                                : ''
+                        }}
+                    >
+                        {{ $etec->nome }}
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('etec_id')" class="mt-2" />
+        </div>
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script>
+            new Choices('#etec_id', { searchEnabled: true, itemSelectText: '' });
+        </script>
+
         {{-- CPF --}}
         <div class="mt-4">
             <x-input-label for="cpf" value="CPF" class="mt-4" />
@@ -61,32 +96,31 @@
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
-        {{-- Role --}}
-        <div class="mt-4">
+        {{-- Role + RM --}}
+        <div class="mt-4" x-data="{ role: '{{ old('role', '') }}' }">
             <x-input-label for="role" :value="__('Cargo')" />
 
             <select
                 id="role"
                 name="role"
+                x-model="role"
                 class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
                 required
             >
                 <option value="">Selecione um cargo</option>
-                @foreach (\App\Enums\Role::cases() as $role)
-                    <option
-                        value="{{ $role->value }}"
-                        {{
-                            old('role') == $role->value
-                                ? 'selected'
-                                : ''
-                        }}
-                    >
-                        {{ $role->name }}
-                    </option>
+                @foreach (\App\Enums\Role::cases() as $roleCase)
+                    <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
                 @endforeach
             </select>
-
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
+
+            <div x-show="role === 'aluno'" x-cloak>
+                <div class="mt-4">
+                    <x-input-label for="rm" value="RM" />
+                    <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
+                    <x-input-error :messages="$errors->get('rm')" class="mt-2" />
+                </div>
+            </div>
         </div>
 
         <!-- Password -->

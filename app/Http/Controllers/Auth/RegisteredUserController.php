@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Etec;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use App\Enums\Role;
+use App\Rules\ValidEmailDomainForRole;
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +23,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'etecs' => Etec::orderBy('nome')->get(),
+        ]);
     }
 
     /**
@@ -33,7 +37,6 @@ class RegisteredUserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:aluno,professor,coordenador'],
             'email' => [
                 'required',
                 'string',
@@ -45,6 +48,14 @@ class RegisteredUserController extends Controller
             ],
             'cpf' => ['required', 'digits:11', 'unique:'.User::class],
             'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
+            'role' => ['required', 'in:aluno,professor,coordenador'],
+            'etec_id' => ['required', 'exists:etecs,id'],
+            'rm' => [
+                Rule::requiredIf($request->role === 'aluno'),
+                'nullable',
+                'digits:7',
+                Rule::unique('etec_user', 'rm')->where('etec_id', $request->etec_id),
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -56,6 +67,8 @@ class RegisteredUserController extends Controller
             'role' => Role::from($validated['role']),
             'password' => Hash::make($validated['password']),
         ]);
+
+        $user->etecs()->attach($validated['etec_id'], ['rm' => $validated['rm'] ?? null]);
 
         event(new Registered($user));
 
