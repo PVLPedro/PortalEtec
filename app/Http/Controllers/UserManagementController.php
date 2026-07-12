@@ -4,19 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Enums\Role;
 use App\Models\User;
+use App\Models\Etec;
+use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
     public function index()
     {
-        return view('users.index', [
-            'usuarios' => User::all(),
-        ]);
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
+        $usuarios = User::whereHas('etecs', function ($query) use ($etecIds) {
+            $query->whereIn('etecs.id', $etecIds);
+        })->get();
+
+        return view('users.index', compact('usuarios'));
     }
 
     public function edit(User $user)
     {
+        $this->authorize('manage', $user);
         return view('users.edit', compact('user'));
     }
 
