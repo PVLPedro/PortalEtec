@@ -5,14 +5,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Auth\PasswordController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (!auth()->check()) {
-<<<<<<< HEAD
-        return redirect()->route('register');
-=======
+    if (!Auth::check()) {
         return redirect()->route('login');
->>>>>>> edc769027bc4a161c103ab601c10bb3c3d5d8a96
     }
 
     return redirect()->route('dashboard');
@@ -32,6 +29,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name('users.edit');
         Route::put('/usuarios/{user}', [UserManagementController::class, 'update'])->name('users.update');
         Route::delete('/usuarios/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+        Route::delete('/usuarios', [UserManagementController::class, 'destroyMultiple'])->name('users.destroyMultiple');
+        Route::delete('/usuarios', [UserManagementController::class, 'destroyMultiple'])->name('users.destroyMultiple');
     });
 });
 
