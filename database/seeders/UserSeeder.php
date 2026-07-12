@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
         User::factory()
             ->create([
                 'name' => 'Siles',
-                'email' => 'siles@cps.gov.br',
+                'email' => 'siles@cps.sp.gov.br',
                 'cpf' => '12345678903',
                 'phone' => '11999999997',
                 'password' => 'password4',
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
         User::factory()
             ->create([
                 'name' => 'Davi',
-                'email' => 'davi@cps.gov.br',
+                'email' => 'davi@cps.sp.gov.br',
                 'cpf' => '12345678904',
                 'phone' => '11999999996',
                 'password' => 'password3',

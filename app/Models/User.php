@@ -47,7 +47,7 @@ class User extends Authenticatable
 
         return match ($this->role) {
             Role::Aluno => str_ends_with($email, '@aluno.cps.sp.gov.br'),
-            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.gov.br'),
+            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.sp.gov.br'),
             default => false,
         };
     }

@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Etec;
+use App\Enums\Role;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use App\Enums\Role;
-use App\Rules\ValidEmailDomainForRole;
 
 class RegisteredUserController extends Controller
 {
@@ -44,7 +45,6 @@ class RegisteredUserController extends Controller
                 'email',
                 'max:255',
                 'unique:'.User::class,
-                new ValidEmailDomainForRole($request->role),
             ],
             'cpf' => ['required', 'digits:11', 'unique:'.User::class],
             'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
@@ -74,6 +74,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route(Route::name('/dashboard'), absolute: false)); 
+        return redirect(route('dashboard', absolute: false));
     }
 }
