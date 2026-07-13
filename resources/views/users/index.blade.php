@@ -106,8 +106,17 @@
                     x-data="{
                     cargo: '',
                     rm: '',
+                    school_class_id: '',
+                    serie: '',
+                    curso: '',
                     async filtrar() {
-                        const params = new URLSearchParams({ cargo: this.cargo, rm: this.rm });
+                        const params = new URLSearchParams({
+                            cargo: this.cargo,
+                            rm: this.rm,
+                            school_class_id: this.school_class_id,
+                            serie: this.serie,
+                            curso: this.curso,
+                        });
                         const resposta = await fetch(`{{ route('users.filtrar') }}?${params}`);
                         document.getElementById('tabela-usuarios').innerHTML = await resposta.text();
                     }
@@ -127,6 +136,27 @@
                         placeholder="RM"
                         maxlength="7"
                     />
+
+                    <select x-model="school_class_id" @change="filtrar()">
+                        <option value="">Turma</option>
+                        @foreach ($schoolClasses as $schoolClass)
+                            <option value="{{ $schoolClass->id }}">{{ $schoolClass->nome }}</option>
+                        @endforeach
+                    </select>
+
+                    <select x-model="serie" @change="filtrar()">
+                        <option value="">Série</option>
+                        @foreach ($series as $serie)
+                            <option value="{{ $serie }}">{{ $serie }}</option>
+                        @endforeach
+                    </select>
+
+                    <select x-model="curso" @change="filtrar()">
+                        <option value="">Curso</option>
+                        @foreach ($cursos as $curso)
+                            <option value="{{ $curso }}">{{ $curso }}</option>
+                        @endforeach
+                    </select>
 
                     <div id="tabela-usuarios">
                         @include ('users.partials.table', ['usuarios' => $usuarios])

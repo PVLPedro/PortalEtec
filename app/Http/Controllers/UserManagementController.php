@@ -20,11 +20,9 @@ class UserManagementController extends Controller
 
         return view('users.index', [
             'usuarios' => $this->usuariosFiltrados($request),
-            'turmas' => SchoolClass::whereIn(
-                'etec_id',
-                auth()->user()->etecs()->pluck('etecs.id'),
-            )->get(),
             'schoolClasses' => SchoolClass::whereIn('etec_id', $etecIds)->get(),
+            'series' => SchoolClass::whereIn('etec_id', $etecIds)->distinct()->pluck('serie'),
+            'cursos' => SchoolClass::whereIn('etec_id', $etecIds)->distinct()->pluck('curso'),
         ]);
     }
 
