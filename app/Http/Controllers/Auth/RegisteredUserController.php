@@ -40,12 +40,12 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:'.User::class,
+                'unique:' . User::class,
                 new ValidEmailDomainForRole($request->role),
             ],
-            'cpf' => ['required', 'digits:11', 'unique:'.User::class],
+            'cpf' => ['required', 'digits:11', 'unique:' . User::class],
             'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
@@ -61,6 +61,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route(Route::name('/dashboard'), absolute: false)); 
+        return redirect(route(Route::name('/dashboard'), absolute: false));
     }
 }

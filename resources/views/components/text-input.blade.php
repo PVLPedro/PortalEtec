@@ -4,7 +4,7 @@
     @disabled ($disabled)
     {{
         $attributes->merge([
-            'class' => 'flex w-full rounded-small border border-border p-small outline-0 shadow-md',
+            'class' => 'flex w-full rounded-small border border-border p-small shadow-md outline-0',
         ])
     }}
 />

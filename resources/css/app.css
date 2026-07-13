@@ -9,17 +9,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    --color-bg-primary: hsl(40, 50%, 97%);
-    --color-bg-primary-hover: hsl(40, 20%, 92%);
+    --color-bg-primary: hsl(240, 20%, 98%);
+    --color-bg-primary-hover: hsl(from var(--color-bg-primary) h s 93%);
 
-    --color-bg-secondary: hsl(240, 40%, 98%);
-    --color-bg-secondary-hover: hsl(240, 20%, 93%);
+    --color-bg-secondary: hsl(from var(--color-bg-primary) h s 95%);
+    --color-bg-secondary-hover: hsl(from var(--color-bg-primary) h s 90%);
 
-    --color-bg-tertiary: hsl(40, 50%, 97%);
-    --color-bg-tertiary-hover: hsl(40, 20%, 92%);
+    --color-bg-tertiary: hsl(from var(--color-bg-primary) h s 92%);
+    --color-bg-tertiary-hover: hsl(from var(--color-bg-primary) h s 87%);
+
+    --color-bg-transparent: hsl(0, 0%, 30%);
 
     --color-text: hsl(0, 0%, 15%);
     --color-text-disabled: hsl(0, 0%, 25%);
+
+    --color-secondary: hsl(0, 0%, 30%);
 
     --color-border: hsl(40, 5%, 88%);
     --color-border-hover: hsl(40, 5%, 93%);
@@ -36,8 +40,12 @@
     --color-bg-tertiary: hsl(230, 20%, 16%);
     --color-bg-tertiary-hover: hsl(230, 20%, 21%);
 
+    --color-bg-transparent: hsl(0, 0%, 30%);
+
     --color-text: hsl(0, 0%, 95%);
     --color-text-disabled: hsl(0, 0%, 75%);
+
+    --color-secondary: hsl(0, 0%, 70%);
 
     --color-border: hsl(230, 5%, 58%);
     --color-border-hover: hsl(230, 5%, 63%);
@@ -54,8 +62,12 @@
     --color-bg-tertiary: var(--color-bg-tertiary);
     --color-bg-tertiary-hover: var(--color-bg-tertiary-hover);
 
+    --color-bg-transparent: var(--color-bg-transparent);
+
     --color-text: var(--color-text);
     --color-disabled-text: var(--color-disabled-text);
+
+    --color-secondary: var(--color-secondary);
 
     --opacity-lite: 12%;
     --opacity-hard: 20%;
@@ -174,10 +186,10 @@
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
 
-    --cursor-default: url('images/cursor/default.png');
+    /* --cursor-default: url('images/cursor/default.png');
     --cursor-pointer: url('images/cursor/pointer.png');
     --cursor-not-allowed: url('images/cursor/not-allowed.png');
-    --cursor-text: url('images/cursor/text.png');
+    --cursor-text: url('images/cursor/text.png'); */
 
     --breakpoint-sm: 768px;
     --breakpoint-md: 992px;
@@ -188,28 +200,43 @@
     font-family: 'Poppins', sans-serif;
 }
 
+p,
+span,
+input,
+select {
+    color: var(--color-text);
+}
+
+::placeholder {
+    color: var(--color-secondary);
+}
+
+select {
+    background: var(--color-bg-primary);
+}
+
 ::-webkit-scrollbar {
     height: 12px;
     width: 12px;
-    cursor: var(--cursor-pointer), pointer;
-    border-radius: var(--radius-regular);
+    /* cursor: var(--cursor-pointer), pointer; */
+    border-radius: 50vh;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--dark-border);
-    border: 2px solid var(--background-secondary);
-    border-radius: var(--radius-regular);
-    cursor: var(--cursor-pointer), pointer;
+    background-color: var(--color-border);
+    border: 2px solid var(--color-bg-primary);
+    border-radius: 50vh;
+    /* cursor: var(--cursor-pointer), pointer; */
 }
 
 ::-webkit-scrollbar-track {
-    border-radius: var(--radius-regular);
-    background-color: hsl(from var(--bg-transparent-black) h s l / 0.1);
-    border: 2px solid var(--background-secondary);
+    border-radius: 50vh;
+    background-color: hsl(from var(--color-bg-transparent) h s l / 0.5);
+    border: 2px solid var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--dark-border-hover);
+    background-color: var(--color-border-hover);
 }
 
 ::-webkit-scrollbar-button {
