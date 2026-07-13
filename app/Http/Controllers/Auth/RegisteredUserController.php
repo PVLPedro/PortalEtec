@@ -44,9 +44,10 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:'.User::class,
+                'unique:' . User::class,
+                new ValidEmailDomainForRole($request->role),
             ],
-            'cpf' => ['required', 'digits:11', 'unique:'.User::class],
+            'cpf' => ['required', 'digits:11', 'unique:' . User::class],
             'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
             'role' => ['required', 'in:aluno,professor,coordenador'],
             'etec_id' => ['required', 'exists:etecs,id'],
@@ -56,7 +57,7 @@ class RegisteredUserController extends Controller
                 'digits:7',
                 Rule::unique('etec_user', 'rm')->where('etec_id', $request->etec_id),
             ],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
         $user = User::create([

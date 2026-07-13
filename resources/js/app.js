@@ -6,7 +6,7 @@ Alpine.start();
 
 const toggleThemeButton = getById('toggle-theme');
 
-toggleThemeButton.addEventListener('click', () => {
+toggleThemeButton?.addEventListener('click', () => {
     let currentTheme = localStorage.getItem('theme');
 
     switch (currentTheme) {
@@ -24,7 +24,7 @@ toggleThemeButton.addEventListener('click', () => {
 });
 
 function updateTheme() {
-    let mode = localStorage.getItem('theme');
+    let mode = localStorage?.getItem('theme');
 
     if (mode == 'light') {
         document.body.classList.remove('dark');
@@ -36,7 +36,7 @@ function updateTheme() {
 
 const toggleSidebarButton = getById('toggle-sidebar');
 
-toggleSidebarButton.addEventListener('click', toggleSidebar);
+toggleSidebarButton?.addEventListener('click', toggleSidebar);
 
 document.addEventListener('keydown', function (event) {
     if (event.shiftKey && event.key.toLowerCase() === 's') {
@@ -45,7 +45,7 @@ document.addEventListener('keydown', function (event) {
 });
 
 function toggleSidebar() {
-    let currentSidebar = localStorage.getItem('sidebar');
+    let currentSidebar = localStorage?.getItem('sidebar');
 
     switch (currentSidebar) {
         case 'show':
@@ -63,6 +63,8 @@ function toggleSidebar() {
 
 function updateSidebar() {
     const sidebar = getById('sidebar');
+
+    if (sidebar == null) return;
 
     let mode = localStorage.getItem('sidebar');
     if (mode == 'show') {
