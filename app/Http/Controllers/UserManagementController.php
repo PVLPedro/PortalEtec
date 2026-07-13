@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
  
 use App\Enums\Role;
 use App\Models\User;
+use App\Models\Etec;
+use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,13 +15,19 @@ class UserManagementController extends Controller
 {
     public function index()
     {
-        return view('users.index', [
-            'usuarios' => User::all(),
-        ]);
+        $etecIds = Auth::user()->etecs()->pluck('etecs.id');
+ 
+        $usuarios = User::whereHas('etecs', function ($query) use ($etecIds) {
+            $query->whereIn('etecs.id', $etecIds);
+        })->get();
+ 
+        return view('users.index', compact('usuarios'));
     }
  
     public function edit(User $user)
     {
+        $this->authorize('manage', $user);
+ 
         return view('users.edit', compact('user'));
     }
  
@@ -35,7 +43,7 @@ class UserManagementController extends Controller
  
         $user->update($validated);
  
-        return redirect()->route('users.index')->with('status', 'Usuário atualizado!');
+        return redirect()->route('users.index')->with('status', 'User updated!');
     }
  
     public function destroy(Request $request, User $user)
@@ -44,7 +52,7 @@ class UserManagementController extends Controller
  
         $user->delete();
  
-        return redirect()->route('users.index')->with('status', 'Usuário removido!');
+        return redirect()->route('users.index')->with('status', 'User removed!');
     }
  
     public function destroyMultiple(Request $request)
@@ -62,7 +70,7 @@ class UserManagementController extends Controller
             ->where('role', '!=', Role::Coordenador->value)
             ->delete();
  
-        return redirect()->route('users.index')->with('status', 'Usuários removidos!');
+        return redirect()->route('users.index')->with('status', 'Users removed!');
     }
  
     /**
@@ -74,12 +82,12 @@ class UserManagementController extends Controller
         $request->validate([
             'password' => ['required', 'string'],
         ], [
-            'password.required' => 'Confirme sua senha para continuar.',
+            'password.required' => 'Please confirm your password to continue.',
         ]);
  
         if (! Hash::check($request->input('password'), Auth::user()->password)) {
             throw ValidationException::withMessages([
-                'password' => 'Senha incorreta.',
+                'password' => 'Incorrect password.',
             ]);
         }
  
@@ -88,7 +96,8 @@ class UserManagementController extends Controller
             ->exists();
  
         if ($existeCoordenador) {
-            abort(403, 'Não é possível excluir um coordenador por aqui.');
+            abort(403, 'A coordinator cannot be deleted here.');
         }
     }
 }
+ 

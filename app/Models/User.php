@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\Role;
 
-#[Fillable(['name', 'email', 'password', 'role', 'cpf', 'telephone'])]
+#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'cpf', 'phone', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -47,7 +47,7 @@ class User extends Authenticatable
 
         return match ($this->role) {
             Role::Aluno => str_ends_with($email, '@aluno.cps.sp.gov.br'),
-            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.gov.br'),
+            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.sp.gov.br'),
             default => false,
         };
     }
