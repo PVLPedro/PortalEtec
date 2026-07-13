@@ -30,6 +30,43 @@
 
                     <x-primary-button class="mt-6">Salvar</x-primary-button>
                 </form>
+
+                @if ($user->role !== \App\Enums\Role::Coordenador)
+                    <hr class="my-6" />
+
+                    <form
+                        method="POST"
+                        action="{{ route('users.destroy', $user) }}"
+                        onsubmit="
+                            return confirm(
+                                'Excluir este usuário? Esta ação não pode ser desfeita.'
+                            );
+                        "
+                    >
+                        @csrf
+                        @method ('DELETE')
+
+                        <x-input-label
+                            for="delete_password"
+                            value="Confirme sua senha para excluir este usuário"
+                        />
+                        <x-text-input
+                            id="delete_password"
+                            name="password"
+                            type="password"
+                            class="mt-1 block w-full"
+                            required
+                        />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+
+                        <button
+                            type="submit"
+                            class="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                        >
+                            Excluir usuário
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

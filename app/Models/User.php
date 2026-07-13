@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\Role;
 
-#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'cpf', 'telephone', 'password'])]
+#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'cpf', 'phone', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
