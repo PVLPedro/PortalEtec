@@ -12,6 +12,96 @@
                     <div class="mb-4 rounded bg-red-100 p-3 text-red-800">{{ $message }}</div>
                 @enderror
 
+                <div x-data="{ modalTurma: false, criarNova: false }">
+                    <button
+                        type="button"
+                        @click="modalTurma = true"
+                        class="rounded-md bg-indigo-600 px-4 py-2 text-white"
+                    >
+                        Adicionar à Turma
+                    </button>
+
+                    <div
+                        x-show="modalTurma"
+                        x-cloak
+                        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                    >
+                        <div
+                            class="w-96 rounded-lg bg-white p-6"
+                            @click.outside="modalTurma = false"
+                        >
+                            <h3 class="mb-4 font-semibold">Adicionar à Turma</h3>
+
+                            <form method="POST" action="{{ route('users.add-to-class') }}">
+                                @csrf
+
+                                <template
+                                    x-for="
+                                        id in
+                                        Array.from(
+                                            document.querySelectorAll(
+                                                'input[name=\'usuarios[]\']:checked'
+                                            )
+                                        ).map((el) => el.value)
+                                    "
+                                >
+                                    <input type="hidden" name="usuarios[]" :value="id" />
+                                </template>
+
+                                <div x-show="!criarNova">
+                                    <select
+                                        name="school_class_id"
+                                        class="w-full rounded-md border-gray-300"
+                                    >
+                                        @foreach ($schoolClasses as $schoolClass)
+                                            <option value="{{ $schoolClass->id }}">
+                                                {{ $schoolClass->nome }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button
+                                        type="button"
+                                        @click="criarNova = true"
+                                        class="mt-2 text-sm underline"
+                                    >
+                                        + Criar nova turma
+                                    </button>
+                                </div>
+
+                                <div x-show="criarNova" x-cloak class="space-y-2">
+                                    <x-text-input
+                                        name="nova_turma[curso]"
+                                        type="text"
+                                        placeholder="Curso"
+                                        class="w-full"
+                                    />
+                                    <x-text-input
+                                        name="nova_turma[serie]"
+                                        type="text"
+                                        placeholder="Série (ex: 3º ano)"
+                                        class="w-full"
+                                    />
+                                    <select
+                                        name="nova_turma[turno]"
+                                        class="w-full rounded-md border-gray-300"
+                                    >
+                                        <option value="Manhã">Manhã</option>
+                                        <option value="Tarde">Tarde</option>
+                                        <option value="Noite">Noite</option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-6 flex justify-end gap-2">
+                                    <button type="button" @click="modalTurma = false">
+                                        Cancelar
+                                    </button>
+                                    <x-primary-button>Confirmar</x-primary-button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div
                     x-data="{
                     cargo: '',
@@ -58,46 +148,6 @@
                     <template x-for="id in selected" :key="id">
                         <input type="hidden" name="ids[]" :value="id" />
                     </template>
-
-                    {{-- <table class="w-full text-left">
-                        <thead>
-                            <tr>
-                                <th class="w-8">
-                                    <input
-                                        type="checkbox"
-                                        @change="selected = $event.target.checked
-                                            ? @json($usuarios->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values())
-                                            : []"
-                                    />
-                                </th>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Cargo</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($usuarios as $usuario)
-                                <tr>
-                                    <td>
-                                        @if ($usuario->role !== \App\Enums\Role::Coordenador)
-                                            <input
-                                                type="checkbox"
-                                                value="{{ $usuario->id }}"
-                                                x-model="selected"
-                                            />
-                                        @endif
-                                    </td>
-                                    <td>{{ $usuario->name }}</td>
-                                    <td>{{ $usuario->email }}</td>
-                                    <td>{{ $usuario->role->value }}</td>
-                                    <td>
-                                        <a href="{{ route('users.edit', $usuario) }}">Editar</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table> --}}
 
                     <div class="mt-4" x-show="selected.length > 0" x-cloak>
                         <label for="bulk-password" class="block text-sm text-gray-700">

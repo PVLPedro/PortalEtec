@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Enums\Role;
+use App\Models\Etec;
+use App\Models\SchoolClass;
 
 #[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'cpf', 'phone', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -36,6 +39,11 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => \App\Enums\Role::class,
         ];
+    }
+
+    public function schoolClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(SchoolClass::class)->withTimestamps();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Models\User;
 use App\Models\Etec;
+use App\Models\SchoolClass;
 use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +16,15 @@ class UserManagementController extends Controller
 {
     public function index(Request $request)
     {
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
         return view('users.index', [
             'usuarios' => $this->usuariosFiltrados($request),
-            // 'turmas' => Turma::whereIn('etec_id', auth()->user()->etecs()->pluck('etecs.id'))->get(),
+            'turmas' => SchoolClass::whereIn(
+                'etec_id',
+                auth()->user()->etecs()->pluck('etecs.id'),
+            )->get(),
+            'schoolClasses' => SchoolClass::whereIn('etec_id', $etecIds)->get(),
         ]);
     }
 
@@ -40,21 +47,21 @@ class UserManagementController extends Controller
                     fn($sub) => $sub->whereIn('etecs.id', $etecIds)->where('rm', $request->rm),
                 );
             })
-            // ->when(
-            //     $request->turma_id,
-            //     fn($q) => $q->whereHas(
-            //         'turmas',
-            //         fn($sub) => $sub->where('turmas.id', $request->turma_id),
-            //     ),
-            // )
-            // ->when(
-            //     $request->serie,
-            //     fn($q) => $q->whereHas('turmas', fn($sub) => $sub->where('serie', $request->serie)),
-            // )
-            // ->when(
-            //     $request->curso,
-            //     fn($q) => $q->whereHas('turmas', fn($sub) => $sub->where('curso', $request->curso)),
-            // )
+            ->when(
+                $request->turma_id,
+                fn($q) => $q->whereHas(
+                    'turmas',
+                    fn($sub) => $sub->where('turmas.id', $request->turma_id),
+                ),
+            )
+            ->when(
+                $request->serie,
+                fn($q) => $q->whereHas('turmas', fn($sub) => $sub->where('serie', $request->serie)),
+            )
+            ->when(
+                $request->curso,
+                fn($q) => $q->whereHas('turmas', fn($sub) => $sub->where('curso', $request->curso)),
+            )
             ->get();
     }
 
@@ -133,5 +140,38 @@ class UserManagementController extends Controller
         if ($existeCoordenador) {
             abort(403, 'A coordinator cannot be deleted here.');
         }
+    }
+
+    public function addToClass(Request $request)
+    {
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
+        $request->validate([
+            'usuarios' => ['required', 'array', 'min:1'],
+            'school_class_id' => [
+                'required_without:nova_turma.curso',
+                'nullable',
+                'exists:school_classes,id',
+            ],
+            'nova_turma.curso' => ['required_without:school_class_id', 'nullable', 'string'],
+            'nova_turma.serie' => ['required_with:nova_turma.curso', 'nullable', 'string'],
+            'nova_turma.turno' => ['required_with:nova_turma.curso', 'nullable', 'string'],
+        ]);
+
+        if ($request->filled('nova_turma.curso')) {
+            $schoolClass = SchoolClass::create([
+                'etec_id' => $etecIds->first(),
+                'curso' => $request->input('nova_turma.curso'),
+                'serie' => $request->input('nova_turma.serie'),
+                'turno' => $request->input('nova_turma.turno'),
+            ]);
+        } else {
+            $schoolClass = SchoolClass::findOrFail($request->school_class_id);
+            abort_unless($etecIds->contains($schoolClass->etec_id), 403);
+        }
+
+        $schoolClass->users()->syncWithoutDetaching($request->usuarios);
+
+        return back()->with('status', 'Usuários adicionados à turma!');
     }
 }

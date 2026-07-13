@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\SchoolClassController;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -20,6 +21,28 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
+
+    Route::middleware('role:coordenador,professor')->group(function () {
+        Route::get('/turmas', [SchoolClassController::class, 'index'])->name(
+            'school-classes.index',
+        );
+        Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
+            'school-classes.store',
+        );
+        Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
+            'school-classes.show',
+        );
+        Route::put('/turmas/{schoolClass}', [SchoolClassController::class, 'update'])->name(
+            'school-classes.update',
+        );
+        Route::delete('/turmas/{schoolClass}', [SchoolClassController::class, 'destroy'])->name(
+            'school-classes.destroy',
+        );
+        Route::delete('/turmas/{schoolClass}/usuarios/{user}', [
+            SchoolClassController::class,
+            'removeUser',
+        ])->name('school-classes.remove-user');
+    });
 
     Route::middleware('role:coordenador')->group(function () {
         Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
@@ -41,6 +64,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/usuarios', [UserManagementController::class, 'destroyMultiple'])->name(
             'users.destroyMultiple',
         );
+        Route::post('/usuarios/adicionar-turma', [
+            UserManagementController::class,
+            'addToClass',
+        ])->name('users.add-to-class');
     });
 });
 
