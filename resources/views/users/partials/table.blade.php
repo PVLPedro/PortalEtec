@@ -9,10 +9,10 @@
                         : []"
                 />
             </th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Cargo</th>
-            <th>Ações</th>
+            <th class="py-3">Nome</th>
+            <th class="py-3">Email</th>
+            <th class="py-3">Cargo</th>
+            <th class="py-3">Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -23,11 +23,20 @@
                         <input type="checkbox" value="{{ $usuario->id }}" x-model="selected" />
                     @endif
                 </td>
-                <td>{{ $usuario->name }}</td>
-                <td>{{ $usuario->email }}</td>
-                <td>{{ $usuario->role->value }}</td>
+                <td class="py-4">{{ $usuario->name }}</td>
+                <td class="py-4">{{ $usuario->email }}</td>
+                <td class="py-4">{{ $usuario->role->value }}</td>
                 <td>
-                    <a href="{{ route('users.edit', $usuario) }}">Editar</a>
+                    <a
+                        class="group relative inline-flex items-center justify-center rounded-small p-small hover:bg-bg-secondary"
+                        href="{{ route('users.edit', $usuario) }}"
+                    >
+                        <x-lucide-square-pen name="square-pen"></x-lucide-square-pen>
+                        <span
+                            class="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded-small bg-gray px-small py-smaller text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100"
+                            >Editar</span
+                        >
+                    </a>
                 </td>
             </tr>
         @endforeach
