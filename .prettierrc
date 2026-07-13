@@ -5,7 +5,7 @@
     "printWidth": 100,
     "trailingComma": "es5",
     "tailwindStylesheet": "./resources/css/app.css",
-    "plugins": ["prettier-plugin-blade", "prettier-plugin-tailwindcss"],
+    "plugins": ["@prettier/plugin-php", "prettier-plugin-blade", "prettier-plugin-tailwindcss"],
     "overrides": [
         {
             "files": ["*.blade.php"],

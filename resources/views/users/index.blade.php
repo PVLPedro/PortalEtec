@@ -12,6 +12,37 @@
                     <div class="mb-4 rounded bg-red-100 p-3 text-red-800">{{ $message }}</div>
                 @enderror
 
+                <div
+                    x-data="{
+                    cargo: '',
+                    rm: '',
+                    async filtrar() {
+                        const params = new URLSearchParams({ cargo: this.cargo, rm: this.rm });
+                        const resposta = await fetch(`{{ route('users.filtrar') }}?${params}`);
+                        document.getElementById('tabela-usuarios').innerHTML = await resposta.text();
+                    }
+                }"
+                >
+                    <select x-model="cargo" @change="filtrar()">
+                        <option value="">Cargo</option>
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                        <option value="coordenador">Coordenador</option>
+                    </select>
+
+                    <input
+                        type="text"
+                        x-model="rm"
+                        @input.debounce.400ms="filtrar()"
+                        placeholder="RM"
+                        maxlength="7"
+                    />
+
+                    <div id="tabela-usuarios">
+                        @include ('users.partials.table', ['usuarios' => $usuarios])
+                    </div>
+                </div>
+
                 <form
                     method="POST"
                     action="{{ route('users.destroyMultiple') }}"
@@ -28,7 +59,7 @@
                         <input type="hidden" name="ids[]" :value="id" />
                     </template>
 
-                    <table class="w-full text-left">
+                    {{-- <table class="w-full text-left">
                         <thead>
                             <tr>
                                 <th class="w-8">
@@ -66,7 +97,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table> --}}
 
                     <div class="mt-4" x-show="selected.length > 0" x-cloak>
                         <label for="bulk-password" class="block text-sm text-gray-700">
