@@ -66,7 +66,7 @@
                                     >
                                         <option value="">Selecione um curso</option>
                                         @foreach ($courses as $course)
-                                            <option value="{{ $course->course_id }}">
+                                            <option value="{{ $course->id }}">
                                                 {{ $course->course_name }}
                                             </option>
                                         @endforeach
@@ -151,9 +151,7 @@
                     <select x-model="course_id" @change="filtrar()">
                         <option value="">Curso</option>
                         @foreach ($courses as $course)
-                            <option value="{{ $course->course_id }}">
-                                {{ $course->course_name }}
-                            </option>
+                            <option value="{{ $course->id }}">{{ $course->course_name }}</option>
                         @endforeach
                     </select>
 

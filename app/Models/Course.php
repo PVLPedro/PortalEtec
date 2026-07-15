@@ -6,11 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $table = 'course';
-
-    protected $primaryKey = 'course_id';
-
-    public $timestamps = false;
-
     protected $fillable = ['course_initialism', 'course_name'];
 }

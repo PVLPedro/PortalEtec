@@ -217,7 +217,7 @@ class CourseSeeder extends Seeder
         ];
 
         foreach (array_chunk($courses, 100) as $chunk) {
-            DB::table('course')->insert($chunk);
+            DB::table('courses')->insert($chunk);
         }
     }
 }

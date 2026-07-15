@@ -20,8 +20,8 @@
                         >
                             @foreach ($courses as $course)
                                 <option
-                                    value="{{ $course->course_id }}"
-                                    @selected (old('course_id', $schoolClass->course_id) == $course->course_id)
+                                    value="{{ $course->id }}"
+                                    @selected (old('course_id', $schoolClass->course_id) == $course->id)
                                 >
                                     {{ $course->course_name }}
                                 </option>

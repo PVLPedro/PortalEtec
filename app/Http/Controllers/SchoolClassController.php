@@ -22,7 +22,7 @@ class SchoolClassController extends Controller
             ->withCount('users')
             ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
             ->orderBy('grades.name')
-            ->select('school_classes.*')
+            ->addSelect('school_classes.*')
             ->get();
 
         return view('school-classes.index', [
@@ -36,7 +36,7 @@ class SchoolClassController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'course_id' => ['required', 'exists:course,course_id'],
+            'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
         ]);
@@ -79,7 +79,7 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
 
         $validated = $request->validate([
-            'course_id' => ['required', 'exists:course,course_id'],
+            'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
         ]);

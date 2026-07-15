@@ -3,12 +3,15 @@
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">Turmas</h2>
-                <button
-                    @click="modalCriar = true"
-                    class="rounded-md bg-indigo-600 px-4 py-2 text-white"
-                >
-                    + Nova Turma
-                </button>
+                @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
+                    auth()->user()->role === \App\Enums\Role::Professor)
+                    <button
+                        @click="modalCriar = true"
+                        class="rounded-md bg-indigo-600 px-4 py-2 text-white"
+                    >
+                        + Nova Turma
+                    </button>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3 sm:grid-cols-2">
@@ -50,7 +53,7 @@
                         >
                             <option value="">Selecione um curso</option>
                             @foreach ($courses as $course)
-                                <option value="{{ $course->course_id }}">
+                                <option value="{{ $course->id }}">
                                     {{ $course->course_name }}
                                 </option>
                             @endforeach

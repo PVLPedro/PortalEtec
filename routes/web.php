@@ -22,15 +22,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
 
+    Route::get('/turmas', [SchoolClassController::class, 'index'])->name('school-classes.index');
+    Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
+        'school-classes.show',
+    );
+
     Route::middleware('role:coordenador,professor')->group(function () {
-        Route::get('/turmas', [SchoolClassController::class, 'index'])->name(
-            'school-classes.index',
-        );
         Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
             'school-classes.store',
-        );
-        Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
-            'school-classes.show',
         );
         Route::get('/turmas/{schoolClass}/editar', [SchoolClassController::class, 'edit'])->name(
             'school-classes.edit',

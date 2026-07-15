@@ -109,7 +109,7 @@ class UserManagementController extends Controller
             'nova_turma.course_id' => [
                 'required_without:school_class_id',
                 'nullable',
-                'exists:course,course_id',
+                'exists:courses,id',
             ],
             'nova_turma.grade_id' => [
                 'required_with:nova_turma.course_id',

@@ -3,20 +3,23 @@
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">{{ $schoolClass->nome }}</h2>
-                <div class="flex gap-2">
-                    <button @click="editando = true" class="text-sm underline">Editar</button>
-                    <form
-                        method="POST"
-                        action="{{ route('school-classes.destroy', $schoolClass) }}"
-                        onsubmit="return confirm('Excluir esta turma?');"
-                    >
-                        @csrf
-                        @method ('DELETE')
-                        <button type="submit" class="text-sm text-red-600 underline">
-                            Excluir turma
-                        </button>
-                    </form>
-                </div>
+                @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
+                    auth()->user()->role === \App\Enums\Role::Professor)
+                    <div class="flex gap-2">
+                        <button @click="editando = true" class="text-sm underline">Editar</button>
+                        <form
+                            method="POST"
+                            action="{{ route('school-classes.destroy', $schoolClass) }}"
+                            onsubmit="return confirm('Excluir esta turma?');"
+                        >
+                            @csrf
+                            @method ('DELETE')
+                            <button type="submit" class="text-sm text-red-600 underline">
+                                Excluir turma
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
 
             <div x-show="editando" x-cloak class="mb-6 rounded-lg bg-white p-4 shadow">
@@ -33,8 +36,8 @@
                         <select name="course_id" required class="rounded-md border-gray-300">
                             @foreach ($courses as $course)
                                 <option
-                                    value="{{ $course->course_id }}"
-                                    @selected ($course->course_id === $schoolClass->course_id)
+                                    value="{{ $course->id }}"
+                                    @selected ($course->id === $schoolClass->course_id)
                                 >
                                     {{ $course->course_name }}
                                 </option>
@@ -89,19 +92,22 @@
                                 <td class="p-3">{{ $usuario->name }}</td>
                                 <td class="p-3">{{ $usuario->role->value }}</td>
                                 <td class="p-3 text-right">
-                                    <form
-                                        method="POST"
-                                        action="{{ route('school-classes.remove-user', [$schoolClass, $usuario]) }}"
-                                    >
-                                        @csrf
-                                        @method ('DELETE')
-                                        <button
-                                            type="submit"
-                                            class="text-sm text-red-600 underline"
+                                    @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
+                                        auth()->user()->role === \App\Enums\Role::Professor)
+                                        <form
+                                            method="POST"
+                                            action="{{ route('school-classes.remove-user', [$schoolClass, $usuario]) }}"
                                         >
-                                            Remover
-                                        </button>
-                                    </form>
+                                            @csrf
+                                            @method ('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="text-sm text-red-600 underline"
+                                            >
+                                                Remover
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

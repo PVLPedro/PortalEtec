@@ -25,7 +25,7 @@ class SchoolClass extends Model
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class, 'course_id', 'course_id');
+        return $this->belongsTo(Course::class);
     }
 
     public function grade(): BelongsTo
