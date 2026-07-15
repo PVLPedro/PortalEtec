@@ -19,7 +19,10 @@
         </x-nav-link>
 
         {{-- <x-nav-link :href="route('subjects')" :active="request()->routeIs('subjects')"> --}}
-        <x-nav-link>
+        <x-nav-link
+            :href="route('school-classes.index')"
+            :active="request()->routeIs('school-classes.index')"
+        >
             <x-slot name="icon">
                 <x-lucide-book-marked class="shrink-0"></x-lucide-book-marked>
             </x-slot>

@@ -1,11 +1,11 @@
 <?php
- 
+
 namespace Database\Seeders;
- 
+
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
- 
+
 class CourseSeeder extends Seeder
 {
     public function run(): void
@@ -24,13 +24,20 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'AGNE', 'course_name' => 'Agronegócio'],
             ['course_initialism' => 'AGRP', 'course_name' => 'Agropecuária'],
             ['course_initialism' => 'ALIM', 'course_name' => 'Alimentos'],
-            ['course_initialism' => 'ADQS', 'course_name' => 'Análise de Dados para Questões Sociais'],
+            [
+                'course_initialism' => 'ADQS',
+                'course_name' => 'Análise de Dados para Questões Sociais',
+            ],
             ['course_initialism' => 'ARQV', 'course_name' => 'Arquivo'],
             ['course_initialism' => 'AP', 'course_name' => 'Assessoria Parlamentar'],
             ['course_initialism' => 'ARH', 'course_name' => 'Assistente de Recursos Humanos'],
             ['course_initialism' => 'AI', 'course_name' => 'Automação Industrial'],
             ['course_initialism' => 'AUPR', 'course_name' => 'Automação Predial'],
-            ['course_initialism' => 'AAFMC', 'course_name' => 'Auxiliar Administrativo, Auxiliar de Finanças e Auxiliar de Marketing e Comercial'],
+            [
+                'course_initialism' => 'AAFMC',
+                'course_name' =>
+                    'Auxiliar Administrativo, Auxiliar de Finanças e Auxiliar de Marketing e Comercial',
+            ],
             ['course_initialism' => 'BIBL', 'course_name' => 'Biblioteconomia'],
             ['course_initialism' => 'BPRO', 'course_name' => 'Bioprocessos'],
             ['course_initialism' => 'BIOT', 'course_name' => 'Biotecnologia'],
@@ -38,10 +45,20 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'CT', 'course_name' => 'Cálculos Trabalhistas'],
             ['course_initialism' => 'CANT', 'course_name' => 'Canto'],
             ['course_initialism' => 'CP', 'course_name' => 'Celulose e Papel'],
-            ['course_initialism' => 'CCIC', 'course_name' => 'Centro Cirúrgico e Instrumentação Cirúrgica'],
+            [
+                'course_initialism' => 'CCIC',
+                'course_name' => 'Centro Cirúrgico e Instrumentação Cirúrgica',
+            ],
             ['course_initialism' => 'CD', 'course_name' => 'Ciência de Dados'],
-            ['course_initialism' => 'CNT', 'course_name' => 'Ensino Médio com ênfase em Ciências da Natureza e suas Tecnologias'],
-            ['course_initialism' => 'CHS', 'course_name' => 'Ensino Médio com ênfase em Ciências Humanas e Sociais Aplicadas'],
+            [
+                'course_initialism' => 'CNT',
+                'course_name' =>
+                    'Ensino Médio com ênfase em Ciências da Natureza e suas Tecnologias',
+            ],
+            [
+                'course_initialism' => 'CHS',
+                'course_name' => 'Ensino Médio com ênfase em Ciências Humanas e Sociais Aplicadas',
+            ],
             ['course_initialism' => 'COM', 'course_name' => 'Comércio'],
             ['course_initialism' => 'COMEX', 'course_name' => 'Comércio Exterior'],
             ['course_initialism' => 'CA', 'course_name' => 'Composição e Arranjo'],
@@ -55,8 +72,15 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'DC', 'course_name' => 'Defesa Civil'],
             ['course_initialism' => 'DCC', 'course_name' => 'Desenho de Construção Civil'],
             ['course_initialism' => 'DCOM', 'course_name' => 'Desenvolvimento Comunitário'],
-            ['course_initialism' => 'DAS', 'course_name' => 'Desenvolvimento de Aplicativos para Smartphones'],
-            ['course_initialism' => 'DNPA', 'course_name' => 'Desenvolvimento de novos Produtos para a Área da Indústria Alimentícia'],
+            [
+                'course_initialism' => 'DAS',
+                'course_name' => 'Desenvolvimento de Aplicativos para Smartphones',
+            ],
+            [
+                'course_initialism' => 'DNPA',
+                'course_name' =>
+                    'Desenvolvimento de novos Produtos para a Área da Indústria Alimentícia',
+            ],
             ['course_initialism' => 'DS', 'course_name' => 'Desenvolvimento de Sistemas'],
             ['course_initialism' => 'DI', 'course_name' => 'Design de Interiores'],
             ['course_initialism' => 'DM', 'course_name' => 'Design de Moda'],
@@ -80,13 +104,16 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'FLOR', 'course_name' => 'Florestas'],
             ['course_initialism' => 'GAST', 'course_name' => 'Gastronomia'],
             ['course_initialism' => 'GB', 'course_name' => 'Gastronomia Brasileira'],
-            ['course_initialism' => 'GH', 'course_name' => 'Gastronomia hospitalar'],
+            ['course_initialism' => 'GH', 'course_name' => 'Gastronomia Hospitalar'],
             ['course_initialism' => 'GI', 'course_name' => 'Gastronomia Internacional'],
             ['course_initialism' => 'GEOP', 'course_name' => 'Geoprocessamento'],
             ['course_initialism' => 'GA', 'course_name' => 'Gestão Ambiental'],
             ['course_initialism' => 'GE', 'course_name' => 'Gestão de Energia'],
             ['course_initialism' => 'GP', 'course_name' => 'Gestão de Projetos – EaD'],
-            ['course_initialism' => 'GUAN', 'course_name' => 'Gestão de Unidades de Alimentação e Nutrição'],
+            [
+                'course_initialism' => 'GUAN',
+                'course_name' => 'Gestão de Unidades de Alimentação e Nutrição',
+            ],
             ['course_initialism' => 'GT', 'course_name' => 'Guia de Turismo'],
             ['course_initialism' => 'GTI', 'course_name' => 'Guia de Turismo Internacional'],
             ['course_initialism' => 'HIDR', 'course_name' => 'Hidrologia'],
@@ -97,14 +124,20 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'IM', 'course_name' => 'Instrumento Musical'],
             ['course_initialism' => 'JAVAWR', 'course_name' => 'JAVA-WR'],
             ['course_initialism' => 'LAZE', 'course_name' => 'Lazer'],
-            ['course_initialism' => 'LGG', 'course_name' => 'Ensino Médio com ênfase em Linguagens e suas Tecnologias'],
+            [
+                'course_initialism' => 'LGG',
+                'course_name' => 'Ensino Médio com ênfase em Linguagens e suas Tecnologias',
+            ],
             ['course_initialism' => 'LOG', 'course_name' => 'Logística'],
             ['course_initialism' => 'LR', 'course_name' => 'Logística Reversa'],
             ['course_initialism' => 'MAUT', 'course_name' => 'Manutenção Automotiva'],
             ['course_initialism' => 'MMP', 'course_name' => 'Manutenção de Máquinas Pesadas'],
             ['course_initialism' => 'MSI', 'course_name' => 'Manutenção e Suporte em Informática'],
             ['course_initialism' => 'MKT', 'course_name' => 'Marketing'],
-            ['course_initialism' => 'MAT', 'course_name' => 'Ensino Médio com ênfase em Matemática e suas Tecnologias'],
+            [
+                'course_initialism' => 'MAT',
+                'course_name' => 'Ensino Médio com ênfase em Matemática e suas Tecnologias',
+            ],
             ['course_initialism' => 'MEC', 'course_name' => 'Mecânica'],
             ['course_initialism' => 'MECA', 'course_name' => 'Mecanização Agrícola'],
             ['course_initialism' => 'MTR', 'course_name' => 'Mecatrônica'],
@@ -143,9 +176,16 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'SB', 'course_name' => 'Saúde Bucal'],
             ['course_initialism' => 'SDTR', 'course_name' => 'Saúde do Trabalhador'],
             ['course_initialism' => 'SEC', 'course_name' => 'Secretariado'],
-            ['course_initialism' => 'SACQ', 'course_name' => 'Segurança do Alimento – Ênfase em Controle de Qualidade em Unidade de Alimentação e Nutrição'],
+            [
+                'course_initialism' => 'SACQ',
+                'course_name' =>
+                    'Segurança do Alimento – Ênfase em Controle de Qualidade em Unidade de Alimentação e Nutrição',
+            ],
             ['course_initialism' => 'ST', 'course_name' => 'Segurança do Trabalho'],
-            ['course_initialism' => 'STCC', 'course_name' => 'Segurança do Trabalho na Construção Civil'],
+            [
+                'course_initialism' => 'STCC',
+                'course_name' => 'Segurança do Trabalho na Construção Civil',
+            ],
             ['course_initialism' => 'SEGU', 'course_name' => 'Seguros'],
             ['course_initialism' => 'SRB', 'course_name' => 'Serviços de Restaurante e Bar'],
             ['course_initialism' => 'SJ', 'course_name' => 'Serviços Jurídicos'],
@@ -153,7 +193,10 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'SF', 'course_name' => 'Sistema Fotovoltaico'],
             ['course_initialism' => 'SER', 'course_name' => 'Sistemas de Energia Renovável'],
             ['course_initialism' => 'SOLD', 'course_name' => 'Soldagem'],
-            ['course_initialism' => 'SMEI', 'course_name' => 'Supervisão de Manutenção Elétrica Industrial'],
+            [
+                'course_initialism' => 'SMEI',
+                'course_name' => 'Supervisão de Manutenção Elétrica Industrial',
+            ],
             ['course_initialism' => 'TEAT', 'course_name' => 'Teatro'],
             ['course_initialism' => 'LEGI', 'course_name' => 'Legislativo'],
             ['course_initialism' => 'TELE', 'course_name' => 'Telecomunicações'],
@@ -162,14 +205,17 @@ class CourseSeeder extends Seeder
             ['course_initialism' => 'TR', 'course_name' => 'Transporte Rodoviário'],
             ['course_initialism' => 'TE', 'course_name' => 'Turismo de Experiência'],
             ['course_initialism' => 'TURR', 'course_name' => 'Turismo Receptivo'],
-            ['course_initialism' => 'APH', 'course_name' => 'Urgência e Emergência – APH (Atendimento Pré-Hospitalar)'],
+            [
+                'course_initialism' => 'APH',
+                'course_name' => 'Urgência e Emergência – APH (Atendimento Pré-Hospitalar)',
+            ],
             ['course_initialism' => 'VEST', 'course_name' => 'Vestuário'],
             ['course_initialism' => 'VET', 'course_name' => 'Veterinária'],
             ['course_initialism' => 'VIDR', 'course_name' => 'Vidro'],
             ['course_initialism' => 'VE', 'course_name' => 'Viticultura e Enologia'],
             ['course_initialism' => 'ZOOT', 'course_name' => 'Zootecnia'],
         ];
- 
+
         foreach (array_chunk($courses, 100) as $chunk) {
             DB::table('course')->insert($chunk);
         }

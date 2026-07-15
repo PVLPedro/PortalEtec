@@ -27,38 +27,49 @@
                 >
                     @csrf
                     @method ('PUT')
+
                     <div>
                         <x-input-label value="Curso" />
-                        <x-text-input
-                            name="curso"
-                            type="text"
-                            :value="$schoolClass->curso"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <x-input-label value="Série" />
-                        <x-text-input
-                            name="serie"
-                            type="text"
-                            :value="$schoolClass->serie"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <x-input-label value="Turno" />
-                        <select name="turno" class="rounded-md border-gray-300">
-                            <option value="Manhã" @selected ($schoolClass->turno === 'Manhã')>
-                                Manhã
-                            </option>
-                            <option value="Tarde" @selected ($schoolClass->turno === 'Tarde')>
-                                Tarde
-                            </option>
-                            <option value="Noite" @selected ($schoolClass->turno === 'Noite')>
-                                Noite
-                            </option>
+                        <select name="course_id" required class="rounded-md border-gray-300">
+                            @foreach ($courses as $course)
+                                <option
+                                    value="{{ $course->course_id }}"
+                                    @selected ($course->course_id === $schoolClass->course_id)
+                                >
+                                    {{ $course->course_name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
+
+                    <div>
+                        <x-input-label value="Série" />
+                        <select name="grade_id" required class="rounded-md border-gray-300">
+                            @foreach ($grades as $grade)
+                                <option
+                                    value="{{ $grade->id }}"
+                                    @selected ($grade->id === $schoolClass->grade_id)
+                                >
+                                    {{ $grade->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <x-input-label value="Turno" />
+                        <select name="shift_id" required class="rounded-md border-gray-300">
+                            @foreach ($shifts as $shift)
+                                <option
+                                    value="{{ $shift->id }}"
+                                    @selected ($shift->id === $schoolClass->shift_id)
+                                >
+                                    {{ $shift->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <x-primary-button>Salvar</x-primary-button>
                 </form>
             </div>

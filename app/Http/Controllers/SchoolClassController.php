@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\SchoolClass;
 use App\Models\User;
+use App\Models\Etec;
+use App\Models\Course;
+use App\Models\Grade;
+use App\Models\Shift;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class SchoolClassController extends Controller
@@ -13,19 +18,27 @@ class SchoolClassController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
+            ->with(['course', 'grade', 'shift'])
             ->withCount('users')
-            ->orderBy('serie')
+            ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
+            ->orderBy('grades.name')
+            ->select('school_classes.*')
             ->get();
 
-        return view('school-classes.index', compact('schoolClasses'));
+        return view('school-classes.index', [
+            'schoolClasses' => $schoolClasses,
+            'courses' => Course::all(),
+            'grades' => Grade::all(),
+            'shifts' => Shift::all(),
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'curso' => ['required', 'string', 'max:255'],
-            'serie' => ['required', 'string', 'max:50'],
-            'turno' => ['required', 'string', 'max:50'],
+            'course_id' => ['required', 'exists:course,course_id'],
+            'grade_id' => ['required', 'exists:grades,id'],
+            'shift_id' => ['required', 'exists:shifts,id'],
         ]);
 
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
@@ -39,9 +52,26 @@ class SchoolClassController extends Controller
     {
         $this->authorizeClass($schoolClass);
 
-        $schoolClass->load('users');
+        $schoolClass->load('users', 'course', 'grade', 'shift');
 
-        return view('school-classes.show', ['schoolClass' => $schoolClass]);
+        return view('school-classes.show', [
+            'schoolClass' => $schoolClass,
+            'courses' => Course::all(),
+            'grades' => Grade::all(),
+            'shifts' => Shift::all(),
+        ]);
+    }
+
+    public function edit(SchoolClass $schoolClass)
+    {
+        $this->authorizeClass($schoolClass);
+
+        return view('school-classes.edit', [
+            'schoolClass' => $schoolClass,
+            'courses' => Course::all(),
+            'grades' => Grade::all(),
+            'shifts' => Shift::all(),
+        ]);
     }
 
     public function update(Request $request, SchoolClass $schoolClass)
@@ -49,9 +79,9 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
 
         $validated = $request->validate([
-            'curso' => ['required', 'string', 'max:255'],
-            'serie' => ['required', 'string', 'max:50'],
-            'turno' => ['required', 'string', 'max:50'],
+            'course_id' => ['required', 'exists:course,course_id'],
+            'grade_id' => ['required', 'exists:grades,id'],
+            'shift_id' => ['required', 'exists:shifts,id'],
         ]);
 
         $schoolClass->update($validated);

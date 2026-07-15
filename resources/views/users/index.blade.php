@@ -35,16 +35,7 @@
                             <form method="POST" action="{{ route('users.add-to-class') }}">
                                 @csrf
 
-                                <template
-                                    x-for="
-                                        id in
-                                        Array.from(
-                                            document.querySelectorAll(
-                                                'input[name=\'usuarios[]\']:checked'
-                                            )
-                                        ).map((el) => el.value)
-                                    "
-                                >
+                                <template x-for="id in selected" :key="id">
                                     <input type="hidden" name="usuarios[]" :value="id" />
                                 </template>
 
@@ -69,25 +60,38 @@
                                 </div>
 
                                 <div x-show="criarNova" x-cloak class="space-y-2">
-                                    <x-text-input
-                                        name="nova_turma[curso]"
-                                        type="text"
-                                        placeholder="Curso"
-                                        class="w-full"
-                                    />
-                                    <x-text-input
-                                        name="nova_turma[serie]"
-                                        type="text"
-                                        placeholder="Série (ex: 3º ano)"
-                                        class="w-full"
-                                    />
                                     <select
-                                        name="nova_turma[turno]"
+                                        name="nova_turma[course_id]"
                                         class="w-full rounded-md border-gray-300"
                                     >
-                                        <option value="Manhã">Manhã</option>
-                                        <option value="Tarde">Tarde</option>
-                                        <option value="Noite">Noite</option>
+                                        <option value="">Selecione um curso</option>
+                                        @foreach ($courses as $course)
+                                            <option value="{{ $course->course_id }}">
+                                                {{ $course->course_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <select
+                                        name="nova_turma[grade_id]"
+                                        class="w-full rounded-md border-gray-300"
+                                    >
+                                        <option value="">Selecione uma série</option>
+                                        @foreach ($grades as $grade)
+                                            <option value="{{ $grade->id }}">
+                                                {{ $grade->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <select
+                                        name="nova_turma[shift_id]"
+                                        class="w-full rounded-md border-gray-300"
+                                    >
+                                        <option value="">Selecione um turno</option>
+                                        @foreach ($shifts as $shift)
+                                            <option value="{{ $shift->id }}">
+                                                {{ $shift->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -104,23 +108,23 @@
 
                 <div
                     x-data="{
-                    cargo: '',
-                    rm: '',
-                    school_class_id: '',
-                    serie: '',
-                    curso: '',
-                    async filtrar() {
-                        const params = new URLSearchParams({
-                            cargo: this.cargo,
-                            rm: this.rm,
-                            school_class_id: this.school_class_id,
-                            serie: this.serie,
-                            curso: this.curso,
-                        });
-                        const resposta = await fetch(`{{ route('users.filtrar') }}?${params}`);
-                        document.getElementById('tabela-usuarios').innerHTML = await resposta.text();
-                    }
-                }"
+                        cargo: '',
+                        rm: '',
+                        school_class_id: '',
+                        grade_id: '',
+                        course_id: '',
+                        async filtrar() {
+                            const params = new URLSearchParams({
+                                cargo: this.cargo,
+                                rm: this.rm,
+                                school_class_id: this.school_class_id,
+                                grade_id: this.grade_id,
+                                course_id: this.course_id,
+                            });
+                            const resposta = await fetch(`{{ route('users.filtrar') }}?${params}`);
+                            document.getElementById('tabela-usuarios').innerHTML = await resposta.text();
+                        }
+                    }"
                 >
                     <select x-model="cargo" @change="filtrar()">
                         <option value="">Cargo</option>
@@ -144,17 +148,19 @@
                         @endforeach
                     </select>
 
-                    <select x-model="serie" @change="filtrar()">
-                        <option value="">Série</option>
-                        @foreach ($series as $serie)
-                            <option value="{{ $serie }}">{{ $serie }}</option>
+                    <select x-model="course_id" @change="filtrar()">
+                        <option value="">Curso</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->course_id }}">
+                                {{ $course->course_name }}
+                            </option>
                         @endforeach
                     </select>
 
-                    <select x-model="curso" @change="filtrar()">
-                        <option value="">Curso</option>
-                        @foreach ($cursos as $curso)
-                            <option value="{{ $curso }}">{{ $curso }}</option>
+                    <select x-model="grade_id" @change="filtrar()">
+                        <option value="">Série</option>
+                        @foreach ($grades as $grade)
+                            <option value="{{ $grade->id }}">{{ $grade->name }}</option>
                         @endforeach
                     </select>
 

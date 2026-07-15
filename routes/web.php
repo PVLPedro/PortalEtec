@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
             'school-classes.show',
         );
+        Route::get('/turmas/{schoolClass}/editar', [SchoolClassController::class, 'edit'])->name(
+            'school-classes.edit',
+        );
         Route::put('/turmas/{schoolClass}', [SchoolClassController::class, 'update'])->name(
             'school-classes.update',
         );

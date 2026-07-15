@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('school_classes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('etec_id')->constrained()->cascadeOnDelete();
-            $table->string('curso');
-            $table->string('serie');
-            $table->string('turno');
+            $table->foreignId('course_id')->constrained('course', 'course_id')->cascadeOnDelete();
+            $table->foreignId('grade_id')->constrained('grades')->cascadeOnDelete();
+            $table->foreignId('shift_id')->constrained('shifts')->cascadeOnDelete();
             $table->timestamps();
         });
     }
