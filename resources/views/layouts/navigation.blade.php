@@ -49,5 +49,50 @@
 </aside>
 
 @push ('scripts')
-    <script></script>
+    <script>
+        $(function () {
+            updateSidebar();
+
+            $('#toggle-sidebar').on('click', toggleSidebar);
+
+            $(document).on('keydown', function (event) {
+                if (event.shiftKey && event.key.toLowerCase() === 's') {
+                    toggleSidebar();
+                }
+            });
+
+            function toggleSidebar() {
+                let currentSidebar = localStorage.getItem('sidebar');
+
+                switch (currentSidebar) {
+                    case 'show':
+                        localStorage.setItem('sidebar', 'hidden');
+                        break;
+                    case 'hidden':
+                        localStorage.setItem('sidebar', 'show');
+                        break;
+                    default:
+                        localStorage.setItem('sidebar', 'show');
+                        break;
+                }
+
+                updateSidebar();
+            }
+
+            function updateSidebar() {
+                const $sidebar = $('#sidebar');
+
+                if ($sidebar.length === 0) return;
+
+                let mode = localStorage.getItem('sidebar');
+
+                if (mode == 'show') {
+                    $sidebar.addClass('w-54').removeClass('w-18.5');
+                }
+                if (mode == 'hidden') {
+                    $sidebar.removeClass('w-54').addClass('w-18.5');
+                }
+            }
+        });
+    </script>
 @endpush
