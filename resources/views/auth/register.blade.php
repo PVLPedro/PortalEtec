@@ -112,30 +112,30 @@
 
             {{-- Role + RM --}}
             {{-- <div class="mt-4" x-data="{ role: '{{ old('role', '') }}' }">
-            <x-input-label for="role" :value="__('Cargo')" />
+                <x-input-label for="role" :value="__('Cargo')" />
 
-            <select
-                id="role"
-                name="role"
-                x-model="role"
-                class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
-                required
-            >
-                <option value="">Selecione um cargo</option>
-                @foreach (\App\Enums\Role::cases() as $roleCase)
-                    <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
-                @endforeach
-            </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                <select
+                    id="role"
+                    name="role"
+                    x-model="role"
+                    class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
+                    required
+                >
+                    <option value="">Selecione um cargo</option>
+                    @foreach (\App\Enums\Role::cases() as $roleCase)
+                        <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('role')" class="mt-2" />
 
-            <div x-show="role === 'aluno'" x-cloak>
-                <div class="mt-4">
-                    <x-input-label for="rm" value="RM" />
-                    <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
-                    <x-input-error :messages="$errors->get('rm')" class="mt-2" />
+                <div x-show="role === 'aluno'" x-cloak>
+                    <div class="mt-4">
+                        <x-input-label for="rm" value="RM" />
+                        <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
+                        <x-input-error :messages="$errors->get('rm')" class="mt-2" />
+                    </div>
                 </div>
-            </div>
-        </div> --}}
+            </div> --}}
 
             {{-- Etec --}}
             <div class="mt-4">
