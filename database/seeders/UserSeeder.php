@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
                 'password' => 'password',
                 'role' => Role::Aluno,
             ])
-            ->etecs()->attach($etec->id, ['rm' => '1234567']);
+            ->etecs()
+            ->attach($etec->id, ['rm' => '1234567']);
 
         User::factory()
             ->create([
@@ -33,7 +34,8 @@ class UserSeeder extends Seeder
                 'password' => 'password',
                 'role' => Role::Aluno,
             ])
-            ->etecs()->attach($etec->id, ['rm' => '1234568']);
+            ->etecs()
+            ->attach($etec->id, ['rm' => '1234568']);
 
         User::factory()
             ->create([
@@ -44,7 +46,8 @@ class UserSeeder extends Seeder
                 'password' => 'password4',
                 'role' => Role::Professor,
             ])
-            ->etecs()->attach($etec->id);
+            ->etecs()
+            ->attach($etec->id);
 
         User::factory()
             ->create([
@@ -55,17 +58,7 @@ class UserSeeder extends Seeder
                 'password' => 'password3',
                 'role' => Role::Coordenador,
             ])
-            ->etecs()->attach($etec->id);
-
-        User::factory()
-            ->create([
-                'name' => 'Pedro',
-                'email' => 'pvlprofissional@gmail.com',
-                'cpf' => '12345678905',
-                'phone' => '11999999997',
-                'password' => bcrypt('password4'),
-                'role' => Role::Coordenador,
-            ])
-            ->etecs()->attach($etec->id);
+            ->etecs()
+            ->attach($etec->id);
     }
 }
