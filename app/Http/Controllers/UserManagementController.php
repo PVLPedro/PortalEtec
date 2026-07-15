@@ -85,8 +85,6 @@ class UserManagementController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $user->id],
-            'cpf' => ['required', 'digits:11', 'unique:users,cpf,' . $user->id],
-            'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
             'role' => ['required', 'in:aluno,professor,coordenador'],
         ]);
 
