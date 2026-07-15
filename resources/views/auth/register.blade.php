@@ -18,7 +18,7 @@
             @csrf
 
             <!-- Name -->
-            <div>
+            <div class="">
                 <x-input-label for="name" :value="__('auth.register.name')" />
                 <x-input-mini-label for="name" :value="__('auth.register.mini_label.name')" />
                 <x-text-input
@@ -52,73 +52,16 @@
                 <x-input-error :messages="$errors->get('email')" class="" />
             </div>
 
-            <!-- CPF -->
-            <div class="">
-                <x-input-label for="cpf" :value="__('auth.register.cpf')" />
-                <x-text-input
-                    id="cpf"
-                    name="cpf"
-                    type="text"
-                    class="cpf-mask"
-                    :value="old('cpf')"
-                    :placeholder="__('auth.placeholder.cpf')"
-                    required
-                />
-                <x-input-error :messages="$errors->get('cpf')" />
-            </div>
-
-            <!-- Telephone -->
-            <div class="">
-                <x-input-label for="phone" :value="__('auth.register.phone')" />
-                <x-text-input
-                    id="phone"
-                    name="phone"
-                    type="text"
-                    class="phone-mask"
-                    :value="old('phone')"
-                    :placeholder="__('auth.placeholder.phone')"
-                    required
-                />
-                <x-input-error :messages="$errors->get('phone')" />
-            </div>
-
-            <!-- Role -->
-            <div class="">
+            <!-- Role + RM -->
+            <div class="" x-data="{ role: '{{ old('role', '') }}' }">
                 <x-input-label for="role" :value="__('auth.register.role')" />
                 <x-input-mini-label for="role" :value="__('auth.register.mini_label.role')" />
 
                 <select
                     id="role"
                     name="role"
-                    class="flex w-full rounded-small border border-border p-small shadow-md outline-0"
-                    required
-                >
-                    @foreach (\App\Enums\Role::cases() as $role)
-                        <option
-                            value="{{ $role->value }}"
-                            {{
-                                old('role') == $role->value
-                                    ? 'selected'
-                                    : ''
-                            }}
-                        >
-                            {{ $role->name }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <x-input-error :messages="$errors->get('role')" class="" />
-            </div>
-
-            {{-- Role + RM --}}
-            {{-- <div class="mt-4" x-data="{ role: '{{ old('role', '') }}' }">
-                <x-input-label for="role" :value="__('Cargo')" />
-
-                <select
-                    id="role"
-                    name="role"
                     x-model="role"
-                    class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1 shadow-sm focus:outline-accent active:outline-accent"
+                    class="flex w-full rounded-small border border-border p-small shadow-md outline-0"
                     required
                 >
                     <option value="">Selecione um cargo</option>
@@ -126,16 +69,23 @@
                         <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
                     @endforeach
                 </select>
-                <x-input-error :messages="$errors->get('role')" class="mt-2" />
+
+                <x-input-error :messages="$errors->get('role')" class="" />
 
                 <div x-show="role === 'aluno'" x-cloak>
-                    <div class="mt-4">
+                    <div class="">
                         <x-input-label for="rm" value="RM" />
-                        <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
+                        <x-text-input
+                            id="rm"
+                            name="rm"
+                            type="text"
+                            maxlength="7"
+                            :value="old('rm')"
+                        />
                         <x-input-error :messages="$errors->get('rm')" class="mt-2" />
                     </div>
                 </div>
-            </div> --}}
+            </div>
 
             {{-- Etec --}}
             <div class="mt-4">

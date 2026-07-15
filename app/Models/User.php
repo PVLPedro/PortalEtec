@@ -14,7 +14,7 @@ use App\Enums\Role;
 use App\Models\Etec;
 use App\Models\SchoolClass;
 
-#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'cpf', 'phone', 'password'])]
+#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

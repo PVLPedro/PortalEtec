@@ -17,8 +17,6 @@ class UserSeeder extends Seeder
             ->create([
                 'name' => 'Yuji',
                 'email' => 'yuji@aluno.cps.sp.gov.br',
-                'cpf' => '12345678901',
-                'phone' => '11999999999',
                 'password' => 'password',
                 'role' => Role::Aluno,
             ])
@@ -29,8 +27,6 @@ class UserSeeder extends Seeder
             ->create([
                 'name' => 'samuelgato',
                 'email' => 'samuelgato@aluno.cps.sp.gov.br',
-                'cpf' => '12345678902',
-                'phone' => '11999999998',
                 'password' => 'password',
                 'role' => Role::Aluno,
             ])
@@ -41,8 +37,6 @@ class UserSeeder extends Seeder
             ->create([
                 'name' => 'Siles',
                 'email' => 'siles@cps.sp.gov.br',
-                'cpf' => '12345678903',
-                'phone' => '11999999997',
                 'password' => 'password4',
                 'role' => Role::Professor,
             ])
@@ -53,8 +47,6 @@ class UserSeeder extends Seeder
             ->create([
                 'name' => 'Davi',
                 'email' => 'davi@cps.sp.gov.br',
-                'cpf' => '12345678904',
-                'phone' => '11999999996',
                 'password' => 'password3',
                 'role' => Role::Coordenador,
             ])
