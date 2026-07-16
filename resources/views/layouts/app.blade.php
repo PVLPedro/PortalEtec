@@ -21,7 +21,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <!-- Page Content -->
-    <main>{{ $slot }}</main>
+    <main
+        class="grid h-full grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary p-large"
+    >
+        {{ $slot }}
+    </main>
 
     @stack ('scripts')
 </body>

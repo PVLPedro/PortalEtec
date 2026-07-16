@@ -13,11 +13,11 @@
 }
 
 :root {
-    --color-bg-primary: hsl(240, 20%, 98%);
-    --color-bg-primary-hover: hsl(from var(--color-bg-primary) h s 93%);
+    --color-bg-primary: hsl(240, 20%, 96%);
+    --color-bg-primary-hover: hsl(from var(--color-bg-primary) h s 90%);
 
-    --color-bg-secondary: hsl(from var(--color-bg-primary) h s 95%);
-    --color-bg-secondary-hover: hsl(from var(--color-bg-primary) h s 90%);
+    --color-bg-secondary: hsl(from var(--color-bg-primary) h s 98%);
+    --color-bg-secondary-hover: hsl(from var(--color-bg-primary) h s 93%);
 
     --color-bg-tertiary: hsl(from var(--color-bg-primary) h s 92%);
     --color-bg-tertiary-hover: hsl(from var(--color-bg-primary) h s 87%);
@@ -201,20 +201,15 @@
 }
 
 * {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif !important;
 }
 
-input,
-select {
-    color: var(--color-text);
+input::placeholder {
+    color: var(--color-secondary);
 }
 
 ::placeholder {
     color: var(--color-secondary);
-}
-
-select {
-    background: var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar {

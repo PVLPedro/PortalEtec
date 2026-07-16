@@ -24,6 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(Login::class, CheckEmailDomainOnLogin::class);
-        View::share('generalTextClass', 'text-gray-900 text-base/tight tracking-tight');
+        View::share('generalTextClass', 'text-text text-base/tight tracking-tight');
     }
 }

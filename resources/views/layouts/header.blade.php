@@ -49,37 +49,5 @@
 </header>
 
 @push ('scripts')
-    <script>
-        $(function () {
-            updateTheme();
-
-            $('#toggle-theme').on('click', function () {
-                let currentTheme = localStorage.getItem('theme');
-
-                switch (currentTheme) {
-                    case 'light':
-                        localStorage.setItem('theme', 'dark');
-                        break;
-                    case 'dark':
-                        localStorage.setItem('theme', 'light');
-                        break;
-                    default:
-                        localStorage.setItem('theme', 'light');
-                        break;
-                }
-
-                updateTheme();
-            });
-
-            function updateTheme() {
-                let mode = localStorage.getItem('theme');
-
-                if (mode == 'dark') {
-                    $('body').addClass('dark');
-                } else {
-                    $('body').removeClass('dark');
-                }
-            }
-        });
-    </script>
+    <script></script>
 @endpush

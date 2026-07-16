@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-12" x-data="{ editando: false }">
+    <div class="" x-data="{ editando: false }">
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">{{ $schoolClass->nome }}</h2>

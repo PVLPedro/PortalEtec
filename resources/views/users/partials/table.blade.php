@@ -1,4 +1,4 @@
-<table class="w-full text-left">
+<table class="w-full bg-bg-primary text-left">
     <thead>
         <tr>
             <th class="w-8">
@@ -33,7 +33,7 @@
                     >
                         <x-lucide-square-pen name="square-pen"></x-lucide-square-pen>
                         <span
-                            class="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded-small bg-gray px-small py-smaller text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100"
+                            class="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded-small bg-gray px-small py-smaller text-xs whitespace-nowrap text-text opacity-0 transition-opacity group-hover:opacity-100"
                             >Editar</span
                         >
                     </a>

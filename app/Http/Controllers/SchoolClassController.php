@@ -33,6 +33,11 @@ class SchoolClassController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return view('school-classes.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

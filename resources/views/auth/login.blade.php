@@ -1,14 +1,14 @@
 <x-guest-layout>
-    <x-theme></x-theme>
-
     <!-- Session Status -->
     <x-auth-session-status class="" :status="session('status')" />
 
     <section
-        class="flex w-full max-w-120 flex-col items-center gap-large rounded-regular bg-bg-primary p-large shadow-md"
+        class="relative flex max-h-[90dvh] w-full max-w-120 flex-col items-center gap-large overflow-auto rounded-regular bg-bg-secondary p-large shadow-md"
     >
+        <x-theme class="fixed top-large right-large"></x-theme>
+
         <a href="/">
-            <x-application-logo class="h-48 w-full fill-current" />
+            <x-application-logo class="h-32 w-full fill-current" />
         </a>
 
         <p class="text-center font-medium {{ $generalTextClass }}">Bem-vindo(a) ao Portal Etec!</p>

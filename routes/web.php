@@ -28,6 +28,9 @@ Route::middleware('auth')->group(function () {
     );
 
     Route::middleware('role:coordenador,professor')->group(function () {
+        Route::get('/turmas/criar', [SchoolClassController::class, 'create'])->name(
+            'school-classes.create',
+        );
         Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
             'school-classes.store',
         );

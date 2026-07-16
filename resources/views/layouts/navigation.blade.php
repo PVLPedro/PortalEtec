@@ -18,7 +18,6 @@
             <span class="grow"> Visão Geral </span>
         </x-nav-link>
 
-        {{-- <x-nav-link :href="route('subjects')" :active="request()->routeIs('subjects')"> --}}
         <x-nav-link
             :href="route('school-classes.index')"
             :active="request()->routeIs('school-classes.index')"
@@ -27,14 +26,6 @@
                 <x-lucide-book-marked class="shrink-0"></x-lucide-book-marked>
             </x-slot>
             <span class="grow"> Disciplinas </span>
-        </x-nav-link>
-
-        {{-- <x-nav-link :href="route('activities')" :active="request()->routeIs('activities')"> --}}
-        <x-nav-link>
-            <x-slot name="icon">
-                <x-lucide-file-text class="shrink-0"></x-lucide-file-text>
-            </x-slot>
-            <span class="grow"> Atividades </span>
         </x-nav-link>
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)

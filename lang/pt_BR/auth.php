@@ -12,48 +12,54 @@ return [
     |
     */
 
-    'email' => 'Digite seu email institucional',
-    'password' => 'Digite sua senha',
+    'login' => [
+        'label' => [
+            'email' => 'Digite seu email institucional',
+            'password' => 'Digite sua senha',
+        ],
+        'remember_me' => 'Continuar conectado',
 
-    'remember_me' => 'Continuar conectado',
+        'forgot_password' => 'Esqueceu sua senha?',
 
-    'forgot_password' => 'Esqueceu sua senha?',
+        'no_account' => 'Não possui uma conta? Crie uma',
 
-    'no_account' => 'Não possui uma conta? Crie uma',
-    'already_account' => 'Já possui uma conta? Entre com ela',
-
-    'log_in' => 'Entrar',
+        'log_in' => 'Entrar',
+    ],
 
     'register' => [
-        'name' => 'Nome',
-        'email' => 'Email',
+        'label' => [
+            'name' => 'Seu nome completo',
 
-        'cpf' => 'CPF',
+            'role' => 'Tipo de usuário',
+            'role_select' => 'Selecione um cargo',
 
-        'phone' => 'Telefone',
+            'rm' => 'Digite seu RM de Aluno',
+            'etec_student' => 'Selecione sua Etec',
+            'etec_worker' => 'Selecione suas Etecs',
 
-        'role' => 'Tipo de usuário',
-
-        'password' => 'Crie uma senha',
+            'email' => 'Email institucional',
+            'password' => 'Crie uma senha',
+        ],
+        'already_account' => 'Já possui uma conta? Entre com ela',
 
         'sign_up' => 'Criar Conta',
+    ],
 
-        'mini_label' => [
-            'name' => 'Nome completo',
-            'email' => 'Email institucional',
-            'role' => 'Selecione um cargo',
-            'password' => 'A senha precisa conter:',
-            'password_min_max' => 'De 8 a 20 caracteres',
-            'password_special' => 'Um caractere especial (! @ # $...)',
-            'password_number' => 'Um caractere numérico (0 a 9)',
-        ],
+    'rules' => [
+        'password' => 'A senha precisa conter:',
+        'password_min_max' => 'De 8 a 20 caracteres',
+        'password_special' => 'Um caractere especial (! @ # $...)',
+        'password_number' => 'Um caractere numérico (0 a 9)',
+    ],
+
+    'domain' => [
+        'student' => '@aluno.cps.sp.gov.br',
+        'worker' => '@cps.sp.gov.br',
     ],
 
     'placeholder' => [
         'name' => 'Nome',
-        'email' => 'exemplo@cps.sp.gov.br',
-        'cpf' => '123.456.789-10',
-        'phone' => '(00) 12345-6789',
+        'email' => 'Email',
         'password' => 'Senha',
     ],
 

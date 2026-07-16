@@ -1,11 +1,9 @@
 <x-app-layout>
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow sm:rounded-lg" x-data="{ selected: [] }">
+    <div class="">
+        <div class="">
+            <div class="bg-bg-primary p-6 shadow sm:rounded-lg" x-data="{ selected: [] }">
                 @if (session('status'))
-                    <div class="mb-4 rounded bg-green-100 p-3 text-green-800">
-                        {{ session('status') }}
-                    </div>
+                    <div class="mb-4 rounded bg-valid p-3">{{ session('status') }}</div>
                 @endif
 
                 @error ('password')
@@ -16,7 +14,7 @@
                     <button
                         type="button"
                         @click="modalTurma = true"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-white"
+                        class="rounded-md bg-accent px-4 py-2 text-white"
                     >
                         Adicionar à Turma
                     </button>
@@ -26,10 +24,7 @@
                         x-cloak
                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     >
-                        <div
-                            class="w-96 rounded-lg bg-white p-6"
-                            @click.outside="modalTurma = false"
-                        >
+                        <div class="w-96 rounded-lg p-6" @click.outside="modalTurma = false">
                             <h3 class="mb-4 font-semibold">Adicionar à Turma</h3>
 
                             <form method="POST" action="{{ route('users.add-to-class') }}">
