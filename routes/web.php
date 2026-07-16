@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (!Auth::check()) {
-        return redirect()->route('register');
+        return redirect()->route('login');
     }
 
     return redirect()->route('dashboard');
