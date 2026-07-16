@@ -14,7 +14,7 @@
         <p class="text-center font-medium {{ $generalTextClass }}">Bem-vindo(a) ao Portal Etec!</p>
 
         <x-form-link href="{{ route('register') }}">
-            {{ __('auth.no_account') }}
+            {{ __('auth.login.no_account') }}
             <x-slot name="icon">
                 <x-lucide-square-arrow-out-up-right
                     class="size-4 stroke-3"
@@ -27,7 +27,7 @@
 
             <!-- Email Address -->
             <div>
-                <x-input-label for="email" :value="__('auth.email')" />
+                <x-input-label for="email" :value="__('auth.login.label.email')" />
                 <x-text-input
                     id="email"
                     type="email"
@@ -42,18 +42,19 @@
             </div>
 
             <!-- Password -->
-            <div class="> <x-input-label for=" password" :value="__('auth.password')" />
+            <div class="">
+                <x-input-label for=" password" :value="__('auth.login.label.password')" />
 
-            <x-text-input
-                id="password"
-                type="password"
-                name="password"
-                :placeholder="__('auth.placeholder.password')"
-                required
-                autocomplete="current-password"
-            />
+                <x-text-input
+                    id="password"
+                    type="password"
+                    name="password"
+                    :placeholder="__('auth.placeholder.password')"
+                    required
+                    autocomplete="current-password"
+                />
 
-            <x-input-error :messages="$errors->get('incorrect_password')" class="" />
+                <x-input-error :messages="$errors->get('incorrect_password')" class="" />
             </div>
 
             <!-- Forgot Your Password? -->
@@ -62,7 +63,7 @@
                     class="rounded-md text-sm font-medium text-gray underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                     href="{{ route('password.request') }}"
                 >
-                    {{ __('auth.forgot_password') }}
+                    {{ __('auth.login.forgot_password') }}
                 </a>
             @endif
 
@@ -81,11 +82,11 @@
                         class="pointer-events-none absolute top-1/2 left-0 hidden size-5 -translate-y-1/2 stroke-3 text-white peer-checked:block"
                     ></x-lucide-check>
                     <label for="remember_me" class="flex-1 text-sm">
-                        {{ __('auth.remember_me') }}
+                        {{ __('auth.login.remember_me') }}
                     </label>
                 </div>
                 <div class="">
-                    <x-primary-button class=""> {{ __('auth.log_in') }} </x-primary-button>
+                    <x-primary-button class=""> {{ __('auth.login.log_in') }} </x-primary-button>
                 </div>
             </div>
         </form>
