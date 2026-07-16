@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Etec;
 use App\Enums\Role;
+use App\Support\EmailDomainValidator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,7 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Mostra a view de cadastro.
      */
     public function create(): View
     {
@@ -30,12 +31,14 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
-     *
+     * Cuida da validação de cadastro do usuário.
      * @throws ValidationException
      */
+
     public function store(Request $request): RedirectResponse
     {
+        $isAluno = $request->input('role') === Role::Aluno->value;
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -45,17 +48,21 @@ class RegisteredUserController extends Controller
                 'email',
                 'max:255',
                 'unique:' . User::class,
-                new ValidEmailDomainForRole($request->role),
+                function ($attribute, $value, $fail) use ($request) {
+                    $role = Role::from($request->input('role'));
+                    if (!EmailDomainValidator::isValid($value, $role)) {
+                        $fail('O domínio do email não corresponde ao tipo de usuário selecionado.');
+                    }
+                },
             ],
-            'cpf' => ['required', 'digits:11', 'unique:' . User::class],
-            'phone' => ['required', 'regex:/^\d{2}9\d{8}$/'],
             'role' => ['required', 'in:aluno,professor,coordenador'],
-            'etec_id' => ['required', 'exists:etecs,id'],
+            'etecs' => ['required', 'array', $isAluno ? 'size:1' : 'min:1'],
+            'etecs.*' => ['exists:etecs,id'],
             'rm' => [
-                Rule::requiredIf($request->role === 'aluno'),
+                Rule::requiredIf($isAluno),
                 'nullable',
                 'digits:7',
-                Rule::unique('etec_user', 'rm')->where('etec_id', $request->etec_id),
+                Rule::unique('etec_user', 'rm')->where('etec_id', $request->input('etecs.0')),
             ],
             'password' => ['required', Rules\Password::defaults()],
         ]);
@@ -63,13 +70,17 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'cpf' => $validated['cpf'],
-            'phone' => $validated['phone'],
             'role' => Role::from($validated['role']),
             'password' => Hash::make($validated['password']),
         ]);
 
-        $user->etecs()->attach($validated['etec_id'], ['rm' => $validated['rm'] ?? null]);
+        $user->etecs()->sync(
+            collect($validated['etecs'])->mapWithKeys(
+                fn($etecId) => [
+                    $etecId => ['rm' => $validated['rm'] ?? null],
+                ],
+            ),
+        );
 
         event(new Registered($user));
 

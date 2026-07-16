@@ -5,6 +5,7 @@
         </a>
     </figure>
     <ul class="flex items-center justify-center gap-smaller p-regular">
+        <x-etec-switcher />
         <x-theme></x-theme>
         <x-dropdown>
             <x-lucide-user />

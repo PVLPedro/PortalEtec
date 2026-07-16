@@ -6,7 +6,7 @@
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
                     <button
-                        @click="modalCriar = true"
+                        @click="window.location.href='{{ route('school-classes.create') }}';"
                         class="rounded-md bg-indigo-600 px-4 py-2 text-white"
                     >
                         + Nova Turma

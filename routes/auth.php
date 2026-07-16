@@ -13,48 +13,52 @@ use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('cadastrar', [RegisteredUserController::class, 'create'])
-        ->name('register');
+    Route::get('cadastrar', [RegisteredUserController::class, 'create'])->name('register');
 
     Route::post('cadastrar', [RegisteredUserController::class, 'store']);
 
-    Route::get('entrar', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    Route::get('entrar', [AuthenticatedSessionController::class, 'create'])->name('login');
 
     Route::post('entrar', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('esqueci-senha', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+    Route::get('esqueci-senha', [PasswordResetLinkController::class, 'create'])->name(
+        'password.request',
+    );
 
-    Route::post('esqueci-senha', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+    Route::post('esqueci-senha', [PasswordResetLinkController::class, 'store'])->name(
+        'password.email',
+    );
 
-    Route::get('resetar-senha/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+    Route::get('resetar-senha/{token}', [NewPasswordController::class, 'create'])->name(
+        'password.reset',
+    );
 
-    Route::post('resetar-senha', [NewPasswordController::class, 'store'])
-        ->name('password.update');
+    Route::post('resetar-senha', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verificar-email', EmailVerificationPromptController::class)
-        ->name('verification.notice');
+    Route::get('verificar-email', EmailVerificationPromptController::class)->name(
+        'verification.notice',
+    );
 
     Route::get('verificar-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
 
-    Route::post('email/verificacao-notificacao', [EmailVerificationNotificationController::class, 'store'])
+    Route::post('email/verificacao-notificacao', [
+        EmailVerificationNotificationController::class,
+        'store',
+    ])
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    Route::get('confirmar-senha', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm');
+    Route::get('confirmar-senha', [ConfirmablePasswordController::class, 'show'])->name(
+        'password.confirm',
+    );
 
     Route::post('confirmar-senha', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('senha', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::post('sair', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+    Route::post('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

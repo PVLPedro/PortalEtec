@@ -24,7 +24,10 @@
                         x-cloak
                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     >
-                        <div class="w-96 rounded-lg p-6" @click.outside="modalTurma = false">
+                        <div
+                            class="w-96 rounded-lg bg-amber-50 p-6 shadow-lg"
+                            @click.outside="modalTurma = false"
+                        >
                             <h3 class="mb-4 font-semibold">Adicionar à Turma</h3>
 
                             <form method="POST" action="{{ route('users.add-to-class') }}">

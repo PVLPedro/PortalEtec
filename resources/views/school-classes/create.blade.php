@@ -53,5 +53,6 @@
                     <x-primary-button>Criar</x-primary-button>
                 </div>
             </form>
-        </div></x-app-layout
->
+        </div>
+    </div>
+</x-app-layout>

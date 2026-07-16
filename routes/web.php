@@ -5,18 +5,23 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\EtecContextController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (!Auth::check()) {
-        return redirect()->route('login');
+        return redirect()->route('register');
     }
 
     return redirect()->route('dashboard');
 });
 
 Route::middleware('auth')->group(function () {
+    Route::post('/trocar-etec', [EtecContextController::class, 'switch'])->name(
+        'etec-context.switch',
+    );
+
     Route::get('/visao-geral', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');

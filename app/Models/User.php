@@ -27,11 +27,6 @@ class User extends Authenticatable
      * @return array<string, string>
      */
 
-    public function etecs()
-    {
-        return $this->belongsToMany(Etec::class)->withPivot('rm')->withTimestamps();
-    }
-
     protected function casts(): array
     {
         return [
@@ -41,13 +36,35 @@ class User extends Authenticatable
         ];
     }
 
+    public function etecs(): BelongsToMany
+    {
+        return $this->belongsToMany(Etec::class, 'etec_user')->withPivot('rm');
+    }
+
+    // Etec "ativa" na sessão, com fallback pra primeira vinculada
+    public function activeEtec(): ?Etec
+    {
+        $activeId = session('etec_ativa');
+
+        if ($activeId && $this->etecs->contains($activeId)) {
+            return $this->etecs->find($activeId);
+        }
+
+        return $this->etecs->first();
+    }
+
+    public function belongsToMultipleEtecs(): bool
+    {
+        return $this->role !== Role::Aluno;
+    }
+
     public function schoolClasses(): BelongsToMany
     {
         return $this->belongsToMany(SchoolClass::class)->withTimestamps();
     }
 
     /**
-     * Check if the user's email domain matches their role.
+     * Checa se o domínio do email do usuário é válido para o cargo dele.
      */
     public function hasValidEmailDomain(): bool
     {

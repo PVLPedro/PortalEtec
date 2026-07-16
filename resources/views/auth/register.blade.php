@@ -79,32 +79,52 @@
 
                 <!-- Etec -->
                 <div class="">
-                    {{--
-                        Um único label, texto trocado via Alpine em vez de
-                        renderizar dois <x-input-label> (o de cima tinha os
-                        dois sempre visíveis ao mesmo tempo).
-                    --}}
-                    <x-input-label
-                        for="etec_id"
-                        x-text="role === 'aluno'
-                            ? '{{ __('auth.register.label.etec_student') }}'
-                            : '{{ __('auth.register.label.etec_worker') }}'"
-                    />
-                    <select id="etec_id" name="etec_id" class="mt-1 block w-full" required>
-                        <option value="">Selecione uma Etec</option>
-                        @foreach ($etecs as $etec)
-                            <option
-                                value="{{ $etec->id }}"
-                                {{
-                                    old('etec_id') == $etec->id
-                                        ? 'selected'
-                                        : ''
-                                }}
-                            >
-                                {{ $etec->nome }}
+                    <div x-show="['coordenador', 'professor'].includes(role)" x-cloak>
+                        <x-input-label
+                            for="etec_id"
+                            value="{{ __('auth.register.label.etec_worker') }}"
+                        />
+                        <select multiple id="etec_worker" name="etecs[]" class="mt-1 block w-full">
+                            <option value="">
+                                Selecione a(s) Etec(s) na(s) qual(ais) trabalha
                             </option>
-                        @endforeach
-                    </select>
+                            @foreach ($etecs as $etec)
+                                <option
+                                    value="{{ $etec->id }}"
+                                    {{
+                                        in_array($etec->id, old('etecs', []))
+                                            ? 'selected'
+                                            : ''
+                                    }}
+                                >
+                                    {{ $etec->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div x-show="role === 'aluno'" x-cloak>
+                        <x-input-label
+                            for="etec_id"
+                            value="{{ __('auth.register.label.etec_student') }}"
+                        />
+                        <select multiple id="etec_student" name="etecs[]" class="mt-1 block w-full">
+                            <option value="">Selecione a Etec na qual estuda</option>
+                            @foreach ($etecs as $etec)
+                                <option
+                                    value="{{ $etec->id }}"
+                                    {{
+                                        in_array($etec->id, old('etecs', []))
+                                            ? 'selected'
+                                            : ''
+                                    }}
+                                >
+                                    {{ $etec->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <x-input-error :messages="$errors->get('etec_id')" class="mt-2" />
                 </div>
 
@@ -227,9 +247,15 @@
                     Alpine.$data(roleSelect.closest('[x-data]')).role = event.target.value;
                 });
 
-                new Choices('#etec_id', {
+                new Choices('#etec_worker', {
                     searchEnabled: true,
                     itemSelectText: '',
+                });
+                new Choices('#etec_student', {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    maxItemCount: 1,
+                    maxItemText: (max) => `Você só pode selecionar ${max} Etec`,
                 });
 
                 // Nome
@@ -259,6 +285,11 @@
                 // Toggle de mostrar/ocultar senha (antes em JS vanilla)
                 $('#toggle-password').on('change', function () {
                     $('#password').attr('type', this.checked ? 'text' : 'password');
+                });
+
+                document.querySelector('form').addEventListener('submit', function () {
+                    document.getElementById('password-real').value =
+                        document.getElementById('password').value;
                 });
             });
 
