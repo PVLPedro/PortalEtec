@@ -28,17 +28,21 @@ Route::middleware('auth')->group(function () {
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
 
     Route::get('/turmas', [SchoolClassController::class, 'index'])->name('school-classes.index');
+
+    Route::middleware('role:coordenador,professor')->group(function () {
+        Route::get('/turmas/criar', [SchoolClassController::class, 'create'])->name(
+            'school-classes.create',
+        );
+        Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
+            'school-classes.store',
+        );
+    });
+
     Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
         'school-classes.show',
     );
 
     Route::middleware('role:coordenador,professor')->group(function () {
-        Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
-            'school-classes.store',
-        );
-        Route::get('/turmas/criar', [SchoolClassController::class, 'create'])->name(
-            'school-classes.create',
-        );
         Route::get('/turmas/{schoolClass}/editar', [SchoolClassController::class, 'edit'])->name(
             'school-classes.edit',
         );
