@@ -10,6 +10,9 @@ use App\Models\Grade;
 use App\Models\Shift;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class SchoolClassController extends Controller
 {
@@ -35,9 +38,12 @@ class SchoolClassController extends Controller
 
     public function create()
     {
-        return view('school-classes.create');
+        return view('school-classes.create', [
+            'courses' => Course::all(),
+            'grades' => Grade::all(),
+            'shifts' => Shift::all(),
+        ]);
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -94,18 +100,20 @@ class SchoolClassController extends Controller
         return back()->with('status', 'Turma atualizada!');
     }
 
-    public function destroy(SchoolClass $schoolClass)
+    public function destroy(Request $request, SchoolClass $schoolClass)
     {
         $this->authorizeClass($schoolClass);
+        $this->requirePassword($request);
 
         $schoolClass->delete();
 
         return redirect()->route('school-classes.index')->with('status', 'Turma removida!');
     }
 
-    public function removeUser(SchoolClass $schoolClass, User $user)
+    public function removeUser(Request $request, SchoolClass $schoolClass, User $user)
     {
         $this->authorizeClass($schoolClass);
+        $this->requirePassword($request);
 
         $schoolClass->users()->detach($user->id);
 
@@ -117,5 +125,26 @@ class SchoolClassController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         abort_unless($etecIds->contains($schoolClass->etec_id), 403);
+    }
+
+    /**
+     * Confirms the logged-in user's own password before a destructive action.
+     */
+    private function requirePassword(Request $request): void
+    {
+        $request->validate(
+            [
+                'password' => ['required', 'string'],
+            ],
+            [
+                'password.required' => 'Please confirm your password to continue.',
+            ],
+        );
+
+        if (!Hash::check($request->input('password'), Auth::user()->password)) {
+            throw ValidationException::withMessages([
+                'password' => 'Incorrect password.',
+            ]);
+        }
     }
 }

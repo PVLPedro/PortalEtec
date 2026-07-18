@@ -1,22 +1,66 @@
 <x-app-layout>
     <div class="" x-data="{ editando: false }">
         <div class="mx-auto max-w-5xl sm:px-6 lg:px-8">
+            @if (session('status'))
+                <div class="mb-4 rounded bg-green-100 p-3 text-green-800">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            @error ('password')
+                <div class="mb-4 rounded bg-red-100 p-3 text-red-800">{{ $message }}</div>
+            @enderror
+
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">{{ $schoolClass->nome }}</h2>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
-                    <div class="flex gap-2">
+                    <div class="flex items-center gap-2">
                         <button @click="editando = true" class="text-sm underline">Editar</button>
+
                         <form
                             method="POST"
                             action="{{ route('school-classes.destroy', $schoolClass) }}"
-                            onsubmit="return confirm('Excluir esta turma?');"
+                            x-data="{ confirmando: false }"
+                            @submit="
+                                if (!confirmando) {
+                                    $event.preventDefault();
+                                    confirmando = true;
+                                }
+                            "
+                            class="flex items-center gap-2"
                         >
                             @csrf
                             @method ('DELETE')
-                            <button type="submit" class="text-sm text-red-600 underline">
-                                Excluir turma
-                            </button>
+
+                            <template x-if="!confirmando">
+                                <button type="submit" class="text-sm text-red-600 underline">
+                                    Excluir turma
+                                </button>
+                            </template>
+
+                            <div x-show="confirmando" x-cloak class="flex items-center gap-2">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    placeholder="Sua senha"
+                                    class="rounded-md border-gray-300 text-sm"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    class="text-sm font-semibold text-red-600 underline"
+                                >
+                                    Confirmar exclusão
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="confirmando = false"
+                                    class="text-sm underline"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 @endif
@@ -97,15 +141,53 @@
                                         <form
                                             method="POST"
                                             action="{{ route('school-classes.remove-user', [$schoolClass, $usuario]) }}"
+                                            x-data="{ confirmando: false }"
+                                            @submit="
+                                                if (!confirmando) {
+                                                    $event.preventDefault();
+                                                    confirmando = true;
+                                                }
+                                            "
+                                            class="flex items-center justify-end gap-2"
                                         >
                                             @csrf
                                             @method ('DELETE')
-                                            <button
-                                                type="submit"
-                                                class="text-sm text-red-600 underline"
+
+                                            <template x-if="!confirmando">
+                                                <button
+                                                    type="submit"
+                                                    class="text-sm text-red-600 underline"
+                                                >
+                                                    Remover
+                                                </button>
+                                            </template>
+
+                                            <div
+                                                x-show="confirmando"
+                                                x-cloak
+                                                class="flex items-center gap-2"
                                             >
-                                                Remover
-                                            </button>
+                                                <input
+                                                    type="password"
+                                                    name="password"
+                                                    placeholder="Sua senha"
+                                                    class="w-32 rounded-md border-gray-300 text-sm"
+                                                    required
+                                                />
+                                                <button
+                                                    type="submit"
+                                                    class="text-sm font-semibold text-red-600 underline"
+                                                >
+                                                    Confirmar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    @click="confirmando = false"
+                                                    class="text-sm underline"
+                                                >
+                                                    Cancelar
+                                                </button>
+                                            </div>
                                         </form>
                                     @endif
                                 </td>
