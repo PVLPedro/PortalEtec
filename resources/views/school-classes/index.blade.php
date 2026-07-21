@@ -1,15 +1,16 @@
 <x-app-layout>
-    <div class="" x-data="{ modalCriar: false }">
+    <div class="">
         <div class="mx-auto max-w-5xl">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">Turmas</h2>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
-                    <button
-                        @click="window.location.href='{{ route('school-classes.create') }}';"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-white"
+                    <a
+                        href="{{ route('school-classes.create') }}"
+                        class="inline-block rounded-md bg-indigo-600 px-4 py-2 text-white"
                     >
                         + Nova Turma
+                    </a>
                     </button>
                 @endif
             </div>
