@@ -62,5 +62,15 @@ class UserSeeder extends Seeder
             ])
             ->etecs()
             ->attach($etec->id);
+
+        User::factory()
+            ->create([
+                'name' => 'furigo',
+                'email' => 'furigo@cps.sp.gov.br',
+                'password' => 'password67',
+                'role' => Role::Coordenador,
+            ])
+            ->etecs()
+            ->attach($etec->id);
     }
 }
