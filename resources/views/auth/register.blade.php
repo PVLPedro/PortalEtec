@@ -82,11 +82,11 @@
                     <div x-show="['coordenador', 'professor'].includes(role)" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec_worker') }}"
+                            value="{{ __('auth.register.label.etec-worker') }}"
                         />
-                        <select multiple id="etec_worker" name="etecs[]" class="mt-1 block w-full">
+                        <select multiple id="etec-worker" name="etecs[]" class="mt-1 block w-full">
                             <option value="">
-                                Selecione a(s) Etec(s) na(s) qual(ais) trabalha
+                                Etec na qual trabalha (Pode selecionar múltiplas)
                             </option>
                             @foreach ($etecs as $etec)
                                 <option
@@ -106,10 +106,10 @@
                     <div x-show="role === 'aluno'" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec_student') }}"
+                            value="{{ __('auth.register.label.etec-student') }}"
                         />
-                        <select multiple id="etec_student" name="etecs[]" class="mt-1 block w-full">
-                            <option value="">Selecione a Etec na qual estuda</option>
+                        <select multiple id="etec-student" name="etecs[]" class="mt-1 block w-full">
+                            <option value="">Etec na qual estuda</option>
                             @foreach ($etecs as $etec)
                                 <option
                                     value="{{ $etec->id }}"
@@ -227,9 +227,6 @@
 
         <script>
             $(function () {
-                // Choices.js temado com as classes Tailwind do projeto.
-                // As classes "choices__..." precisam continuar presentes:
-                // é o que o CSS interno da lib usa para posicionar o dropdown.
                 const roleSelect = document.getElementById('role');
 
                 new Choices(roleSelect, {
@@ -238,20 +235,16 @@
                     shouldSort: false,
                 });
 
-                // O Choices assume a interação do select e dispara 'change' nele por
-                // baixo, mas isso nem sempre chega de forma confiável até o x-model
-                // do Alpine (depende de qual das duas libs terminou de inicializar
-                // primeiro). Pra não depender disso, atualizamos o estado do Alpine
-                // explicitamente aqui.
                 roleSelect.addEventListener('change', (event) => {
                     Alpine.$data(roleSelect.closest('[x-data]')).role = event.target.value;
                 });
 
-                new Choices('#etec_worker', {
+                new Choices('#etec-worker', {
                     searchEnabled: true,
+                    removeItemButton: true,
                     itemSelectText: '',
                 });
-                new Choices('#etec_student', {
+                new Choices('#etec-student', {
                     searchEnabled: true,
                     itemSelectText: '',
                     maxItemCount: 1,

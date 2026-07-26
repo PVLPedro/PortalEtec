@@ -1,0 +1,27 @@
+<svg
+    {{
+        $attributes->merge([
+            'xmlns' => 'http://www.w3.org/2000/svg',
+            'width' => 24,
+            'height' => 24,
+            'viewBox' => '0 0 24 24',
+            'fill' => 'none',
+            'stroke' => 'currentColor',
+            'stroke-width' => 2,
+            'stroke-linecap' => 'round',
+            'stroke-linejoin' => 'round',
+        ])
+    }}
+>
+    <rect x="2" y="2" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none" />
+
+    <rect x="14" y="2" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="18" cy="6" r="1.5" fill="currentColor" stroke="none" />
+
+    <rect x="2" y="14" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="6" cy="18" r="1.5" fill="currentColor" stroke="none" />
+
+    <rect x="14" y="14" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="18" cy="18" r="1.5" fill="currentColor" stroke="none" />
+</svg>
