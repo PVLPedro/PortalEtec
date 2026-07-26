@@ -9,6 +9,11 @@
 
     <!-- Scripts -->
     @vite (['resources/css/app.css', 'resources/js/app.js'])
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+    />
 </head>
 <body
     class="grid h-dvh grid-rows-[auto_auto_1fr] gap-small bg-bg-primary p-small text-text md:grid-cols-[auto_1fr] md:grid-rows-[auto_1fr] md:gap-regular md:p-regular"
@@ -19,6 +24,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <!-- Page Content -->
     <main
