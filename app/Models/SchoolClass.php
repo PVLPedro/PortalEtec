@@ -42,4 +42,11 @@ class SchoolClass extends Model
     {
         return $this->belongsToMany(User::class)->withTimestamps();
     }
+
+    public function disciplines(): BelongsToMany
+    {
+        return $this->belongsToMany(Discipline::class, 'school_class_discipline')
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
 }
