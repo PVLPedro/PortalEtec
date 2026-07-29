@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             GradeSeeder::class,
             ShiftSeeder::class,
+            DisciplineSeeder::class,
         ]);
     }
 }
