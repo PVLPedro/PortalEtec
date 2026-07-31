@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('etecs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('codigo')->unique(); // Cód. da Unidade
-            $table->string('nome'); // Unidade
+            $table->unsignedInteger('code')->unique(); // Cód. da Unidade
+            $table->string('name'); // Unidade
             $table->timestamps();
         });
     }

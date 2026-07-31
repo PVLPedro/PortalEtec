@@ -13,7 +13,7 @@
                 >
                     <option value="">Selecione um curso</option>
                     @foreach ($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                        <option value="{{ $course->id }}">{{ $course->name }}</option>
                     @endforeach
                 </select>
                 <x-input-error :messages="$errors->get('course_id')" class="mt-2" />

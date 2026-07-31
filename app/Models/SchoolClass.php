@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id'])]
 class SchoolClass extends Model
 {
-    protected function nome(): Attribute
+    protected function name(): Attribute
     {
         return Attribute::get(
-            fn() => "{$this->grade->name} {$this->course->course_name} - {$this->shift->name}",
+            fn() => "{$this->grade->name} {$this->course->name} - {$this->shift->name}",
         );
     }
 

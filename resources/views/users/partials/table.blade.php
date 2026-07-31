@@ -5,11 +5,15 @@
         selected: [],
         schoolClassModal: false,
         newSchoolClass: false,
+        deleteModal: false,
         deleteSelectedModal: false,
+        idToDelete: 0,
+        username: 'name',
+        userRole: 'role',
     }"
-    class="relative grid size-full grid-cols-[repeat(3,minmax(0,1fr))_repeat(2,auto)] p-small"
+    class="flex flex-col items-center gap-small rounded-small *:w-full"
 >
-    <div class="col-span-full flex items-center justify-start gap-smaller">
+    <div class="flex items-center justify-start gap-smaller">
         <button
             type="button"
             class="flex items-center gap-small rounded-small p-small"
@@ -79,16 +83,16 @@
             <x-lucide-book-plus />
             Adicionar à Turma
         </button>
-        <div
+        <x-backdrop
             x-show="schoolClassModal"
             x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            class=""
             @keydown.escape.window="schoolClassModal = false"
         >
             <form
                 method="POST"
                 action="{{ route('users.add-to-class') }}"
-                class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-120 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
+                class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-130 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
                 @click.outside="schoolClassModal = false"
             >
                 @csrf
@@ -101,14 +105,16 @@
                     <input type="hidden" name="usuarios[]" :value="id" />
                 </template>
 
+                <x-input-label for="school_class_id"> Turma existente </x-input-label>
                 <select
                     name="school_class_id"
+                    id="school_class_id"
                     class="flex items-center gap-small rounded-small border border-border p-small text-text"
                     x-show="!newSchoolClass"
                 >
                     <option value="">Selecione uma Turma</option>
                     @foreach ($schoolClasses as $schoolClass)
-                        <option value="{{ $schoolClass->id }}">{{ $schoolClass->nome }}</option>
+                        <option value="{{ $schoolClass->id }}">{{ $schoolClass->name }}</option>
                     @endforeach
                 </select>
 
@@ -123,33 +129,45 @@
                 </button>
 
                 <div x-show="newSchoolClass" x-cloak class="space-y-regular">
-                    <select
-                        name="nova_turma[course_id]"
-                        class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                    >
-                        <option value="">Selecione um curso</option>
-                        @foreach ($courses as $course)
-                            <option value="{{ $course->id }}">{{ $course->course_name }}</option>
-                        @endforeach
-                    </select>
-                    <select
-                        name="nova_turma[grade_id]"
-                        class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                    >
-                        <option value="">Selecione uma série</option>
-                        @foreach ($grades as $grade)
-                            <option value="{{ $grade->id }}">{{ $grade->name }}</option>
-                        @endforeach
-                    </select>
-                    <select
-                        name="nova_turma[shift_id]"
-                        class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                    >
-                        <option value="">Selecione um turno</option>
-                        @foreach ($shifts as $shift)
-                            <option value="{{ $shift->id }}">{{ $shift->name }}</option>
-                        @endforeach
-                    </select>
+                    <div>
+                        <x-input-label for="course_id"> Courso </x-input-label>
+                        <select
+                            name="course_id"
+                            id="course_id"
+                            class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                        >
+                            <option value="">Selecione um curso</option>
+                            @foreach ($courses as $course)
+                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <x-input-label for="grade_id"> Série </x-input-label>
+                        <select
+                            name="grade_id"
+                            id="grade_id"
+                            class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                        >
+                            <option value="">Selecione uma série</option>
+                            @foreach ($grades as $grade)
+                                <option value="{{ $grade->id }}">{{ $grade->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <x-input-label for="shift_id"> Turno </x-input-label>
+                        <select
+                            name="shift_id"
+                            id="shift_id"
+                            class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                        >
+                            <option value="">Selecione um turno</option>
+                            @foreach ($shifts as $shift)
+                                <option value="{{ $shift->id }}">{{ $shift->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <button
@@ -180,7 +198,7 @@
                     </button>
                 </div>
             </form>
-        </div>
+        </x-backdrop>
         <button
             type="button"
             class="items-center gap-small rounded-small p-small disabled:cursor-not-allowed"
@@ -196,16 +214,16 @@
             <x-lucide-trash-2 />
             Excluir selecionados
         </button>
-        <div
+        <x-backdrop
             x-show="deleteSelectedModal"
             x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            class=""
             @keydown.escape.window="deleteSelectedModal = false"
         >
             <form
                 method="POST"
                 action="{{ route('users.destroyMultiple') }}"
-                class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-120 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
+                class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-130 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
                 @click.outside="deleteSelectedModal = false"
                 onsubmit="
                     return confirm(
@@ -254,68 +272,147 @@
                     </button>
                 </div>
             </form>
-        </div>
+        </x-backdrop>
+        <x-backdrop
+            x-show="deleteModal"
+            x-cloak
+            class=""
+            @keydown.escape.window="deleteModal = false"
+        >
+            <form
+                method="POST"
+                {{-- action="{{ route('users.destroy', $user) }}" --}}
+                class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-130 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
+                @click.outside="deleteModal = false"
+            >
+                @csrf
+                @method ('DELETE')
+
+                <x-close-button @click="deleteModal = false" />
+
+                <h3 class="py-smaller text-center font-semibold">Exclusão</h3>
+
+                <label for="bulk_password_2" class="text-sm font-medium text-secondary">
+                    Confirme sua senha para excluir o usuário
+                    <span x-text="userRole" class="capitalize"></span>
+                    <span x-text="username" class="capitalize"></span>
+                </label>
+
+                <input
+                    id="bulk_password_2"
+                    type="password"
+                    name="password"
+                    class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                    placeholder="Sua senha"
+                />
+
+                <div class="flex justify-between">
+                    <button
+                        type="button"
+                        @click="deleteModal = false"
+                        class="flex items-center gap-smaller rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"
+                    >
+                        <x-lucide-x />
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        class="flex items-center gap-small rounded-small bg-danger p-small text-text-white hover:bg-danger-hover"
+                    >
+                        <x-lucide-trash-2 />
+                        Excluir
+                    </button>
+                </div>
+            </form>
+        </x-backdrop>
     </div>
 
-    <span class="p-small text-center font-semibold">Nome</span>
-    <span class="p-small text-center font-semibold">Email</span>
-    <span class="p-small text-center font-semibold">Cargo</span>
-    <span class="p-small text-center font-semibold">Ações</span>
-    <span class=""></span>
+    <div
+        class="relative grid size-full grid-cols-[auto_repeat(2,minmax(0,1fr))_repeat(2,auto)] overflow-hidden rounded-regular border border-border"
+    >
+        <div class="col-span-full grid grid-cols-subgrid bg-accent-bg">
+            <span class="col-span-2 flex flex-col justify-center p-large">
+                <x-card-text>
+                    <x-slot name="primary">
+                        Nome
+                    </x-slot>
+                    <x-slot name="secondary">
+                        Email
+                    </x-slot>
+                </x-card-text>
+            </span>
+            <span class="flex items-center p-large font-semibold">Cargo</span>
+            <span class="col-span-2 flex items-center justify-center p-large font-semibold"
+                >Ações</span
+            >
+        </div>
 
-    @foreach ($usuarios as $usuario)
-        <label
-            for="{{ "user-checkbox" . $usuario->id }}"
-            class="flex items-center rounded-l-small p-small capitalize"
-            @mouseenter="hoveredRow = {{ $usuario->id }}"
-            @mouseleave="hoveredRow = null"
-            :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
-            >{{ $usuario->name }}</label
-        >
-        <label
-            for="{{ "user-checkbox" . $usuario->id }}"
-            class="flex items-center p-small"
-            @mouseenter="hoveredRow = {{ $usuario->id }}"
-            @mouseleave="hoveredRow = null"
-            :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
-            >{{ $usuario->email }}</label
-        >
-        <label
-            for="{{ "user-checkbox" . $usuario->id }}"
-            class="flex items-center rounded-r-small p-small capitalize"
-            @mouseenter="hoveredRow = {{ $usuario->id }}"
-            @mouseleave="hoveredRow = null"
-            :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
-            >{{ $usuario->role->value }}
-            @if ($usuario->rm)
-                {{ $usuario->rm }}
-            @endif
-        </label>
-        <a
-            href="{{ route('users.edit', $usuario) }}"
-            class="group/tooltip relative flex items-center justify-center rounded-small p-small font-semibold hover:bg-bg-secondary-hover"
-        >
-            <x-lucide-square-pen />
-            <x-tooltip> Editar </x-tooltip>
-        </a>
-        <label
-            for="{{ "user-checkbox" . $usuario->id }}"
-            class="relative flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out"
-            :class="selectionMode ? 'w-8 opacity-100' : 'w-0 opacity-0'"
-        >
-            @if ($usuario->role !== \App\Enums\Role::Coordenador)
-                <input
-                    type="checkbox"
-                    id="{{ "user-checkbox" . $usuario->id }}"
-                    class="peer size-6 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
-                    value="{{ $usuario->id }}"
-                    :disabled="!selectionMode"
-                    x-model="selected"
-                />
-                <x-lucide-check
-                    class="pointer-events-none absolute top-1/2 left-1/2 hidden size-4 -translate-1/2 stroke-3 peer-checked:block peer-checked:text-text-white peer-hover:block peer-hover:text-text peer-hover:opacity-50 peer-checked:peer-hover:text-text-white peer-checked:peer-hover:opacity-100"
-                />
-            @endif
-        </label>
-    @endforeach
+        @foreach ($usuarios as $usuario)
+            <div class="col-span-full grid grid-cols-subgrid border-t border-t-border">
+                <label
+                    for="{{ "user-checkbox" . $usuario->id }}"
+                    class="relative flex items-center justify-center overflow-hidden"
+                    :class="selectionMode ? 'w-auto opacity-100 p-large' : 'w-0 opacity-0 p-0'"
+                >
+                    @if ($usuario->role !== \App\Enums\Role::Coordenador)
+                        <input
+                            type="checkbox"
+                            id="{{ "user-checkbox" . $usuario->id }}"
+                            class="peer size-6 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
+                            value="{{ $usuario->id }}"
+                            :disabled="!selectionMode"
+                            x-model="selected"
+                        />
+                        <x-lucide-check
+                            class="pointer-events-none absolute top-1/2 left-1/2 hidden size-4 -translate-1/2 stroke-3 peer-checked:block peer-checked:text-text-white peer-hover:block peer-hover:text-text peer-hover:opacity-50 peer-checked:peer-hover:text-text-white peer-checked:peer-hover:opacity-100"
+                        />
+                    @endif
+                </label>
+                <div class="group contents">
+                    <label
+                        for="{{ "user-checkbox" . $usuario->id }}"
+                        class="flex flex-col justify-center p-large"
+                        @if ($usuario->role->value != 'coordenador')
+                            :class="selectionMode &&
+                            'group-hover:bg-bg-secondary-hover hover:cursor-pointer'"
+                        @endif
+                    >
+                        <x-card-text>
+                            <x-slot name="primary">
+                                {{ $usuario->name }}
+                            </x-slot>
+                            <x-slot name="secondary">
+                                {{ $usuario->email }}
+                            </x-slot>
+                        </x-card-text>
+                    </label>
+                    <label
+                        for="{{ "user-checkbox" . $usuario->id }}"
+                        class="flex items-center p-large capitalize"
+                        @if ($usuario->role->value != 'coordenador')
+                            :class="selectionMode &&
+                            'group-hover:bg-bg-secondary-hover hover:cursor-pointer'"
+                        @endif
+                        >{{ $usuario->role->value }}
+                    </label>
+                </div>
+                <a
+                    href="{{ route('users.edit', $usuario) }}"
+                    class="group/tooltip relative flex items-center justify-center p-large font-semibold hover:bg-bg-secondary-hover"
+                >
+                    <x-lucide-square-pen />
+                    <x-tooltip> Editar </x-tooltip>
+                </a>
+                @if ($usuario->role->value != 'coordenador')
+                    <span
+                        class="group/tooltip relative flex items-center justify-center p-large font-semibold text-danger hover:bg-bg-secondary-hover"
+                        @click="deleteModal = true; idToDelete = {{ $usuario->id }}; username = @js($usuario->name); userRole = @js($usuario->role->value)"
+                    >
+                        <x-lucide-trash-2 />
+                        <x-tooltip> Excluir </x-tooltip>
+                    </span>
+                @endif
+            </div>
+        @endforeach
+    </div>
 </div>

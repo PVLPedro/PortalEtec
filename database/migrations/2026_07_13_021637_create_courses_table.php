@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('course_initialism', 6)->nullable();
-            $table->string('course_name', 100);
+            $table->string('initialism', 6)->nullable();
+            $table->string('name', 100);
             $table->timestamps();
         });
     }

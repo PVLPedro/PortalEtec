@@ -28,7 +28,7 @@
 
     <!-- Page Content -->
     <main
-        class="grid h-full grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary p-large"
+        class="grid h-full grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary p-larger"
     >
         {{ $slot }}
     </main>

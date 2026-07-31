@@ -1,6 +1,6 @@
 <aside
     id="sidebar"
-    class="sticky flex h-full w-54 flex-col gap-large self-start overflow-auto rounded-large border border-border bg-bg-secondary p-regular text-nowrap text-text transition-[width] duration-300"
+    class="sticky flex h-full w-54 flex-col gap-larger self-start overflow-auto rounded-large border border-border bg-bg-secondary p-regular text-nowrap text-text transition-[width] duration-300"
 >
     <button
         id="toggle-sidebar"
@@ -23,9 +23,9 @@
             :active="request()->routeIs('school-classes.index')"
         >
             <x-slot name="icon">
-                <x-lucide-book-marked class="shrink-0"></x-lucide-book-marked>
+                <x-lucide-graduation-cap class="shrink-0"></x-lucide-graduation-cap>
             </x-slot>
-            <span class="grow"> Disciplinas </span>
+            <span class="grow"> Turmas </span>
         </x-nav-link>
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
