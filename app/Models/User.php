@@ -2,78 +2,58 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Enums\Role;
-use App\Models\Etec;
-use App\Models\SchoolClass;
 
-#[Fillable(['name', 'email', 'etec_id', 'role', 'rm', 'password'])]
+#[Fillable(['name', 'email', 'role', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => \App\Enums\Role::class,
+            'role' => Role::class,
         ];
     }
 
-    public function etecs(): BelongsToMany
+    public function student(): HasOne
     {
-        return $this->belongsToMany(Etec::class, 'etec_user')->withPivot('rm');
+        return $this->hasOne(UserStudent::class);
     }
 
-    // Etec "ativa" na sessão, com fallback pra primeira vinculada
-    public function activeEtec(): ?Etec
+    public function teacher(): HasOne
     {
-        $activeId = session('etec_ativa');
-
-        if ($activeId && $this->etecs->contains($activeId)) {
-            return $this->etecs->find($activeId);
-        }
-
-        return $this->etecs->first();
+        return $this->hasOne(UserTeacher::class);
     }
 
-    public function belongsToMultipleEtecs(): bool
+    public function coordinator(): HasOne
     {
-        return $this->role !== Role::Aluno;
+        return $this->hasOne(UserCoordinator::class);
     }
 
-    public function schoolClasses(): BelongsToMany
+    public function isStudent(): bool
     {
-        return $this->belongsToMany(SchoolClass::class)->withTimestamps();
+        return $this->role === Role::Aluno;
     }
 
-    /**
-     * Checa se o domínio do email do usuário é válido para o cargo dele.
-     */
-    public function hasValidEmailDomain(): bool
+    public function isTeacher(): bool
     {
-        $email = strtolower($this->email);
+        return $this->role === Role::Professor;
+    }
 
-        return match ($this->role) {
-            Role::Aluno => str_ends_with($email, '@aluno.cps.sp.gov.br'),
-            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.sp.gov.br'),
-            default => false,
-        };
+    public function isCoordinator(): bool
+    {
+        return $this->role === Role::Coordenador;
     }
 }

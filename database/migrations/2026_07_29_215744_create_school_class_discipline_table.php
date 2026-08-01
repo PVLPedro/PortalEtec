@@ -9,9 +9,18 @@ return new class extends Migration {
     {
         Schema::create('school_class_discipline', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('school_class_id')->constrained()->cascadeOnDelete();
+
             $table->foreignId('discipline_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+
+            $table
+                ->foreignId('id_teacher')
+                ->nullable()
+                ->references('id_teacher')
+                ->on('user_teachers')
+                ->nullOnDelete();
+
             $table->timestamps();
 
             $table->unique(['school_class_id', 'discipline_id']);
