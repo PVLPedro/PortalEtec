@@ -78,10 +78,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/usuarios', [UserManagementController::class, 'destroyMultiple'])->name(
             'users.destroyMultiple',
         );
-        Route::post('/usuarios/adicionar-turma', [
+        Route::post('/usuarios/{user}/adicionar-turma', [
             UserManagementController::class,
             'addToClass',
         ])->name('users.add-to-class');
+
+        Route::post('/usuarios/adicionar-turma', [
+            UserManagementController::class,
+            'addToClassMultiple',
+        ])->name('users.add-to-classMultiple');
     });
 });
 

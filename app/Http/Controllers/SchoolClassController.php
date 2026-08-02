@@ -8,6 +8,8 @@ use App\Models\Etec;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
+use App\Models\Color;
+use App\Models\Icon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +23,7 @@ class SchoolClassController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
-            ->with(['course', 'grade', 'shift'])
+            ->with(['course', 'grade', 'shift', 'color', 'icon'])
             ->withCount('users')
             ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
             ->orderBy('grades.name')
@@ -33,30 +35,57 @@ class SchoolClassController extends Controller
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
+        $preselectedUsers = User::whereIn('id', $request->query('usuarios', []))
+            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->get(['id', 'name']);
+
         return view('school-classes.create', [
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
+            'preselectedUsers' => $preselectedUsers,
         ]);
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
+            'color_id' => ['required', 'exists:colors,id'],
+            'icon_id' => ['required', 'exists:icons,id'],
+            'usuarios' => ['sometimes', 'array'],
+            'usuarios.*' => ['exists:users,id'],
         ]);
 
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
-        SchoolClass::create([...$validated, 'etec_id' => $etecIds->first()]);
+        $schoolClass = SchoolClass::create([
+            'course_id' => $validated['course_id'],
+            'grade_id' => $validated['grade_id'],
+            'shift_id' => $validated['shift_id'],
+            'color_id' => $validated['color_id'],
+            'icon_id' => $validated['icon_id'],
+            'etec_id' => $etecIds->first(),
+        ]);
 
-        return back()->with('status', 'Turma criada!');
+        if (!empty($validated['usuarios'])) {
+            $schoolClass->users()->syncWithoutDetaching($validated['usuarios']);
+        }
+
+        return redirect()->route('school-classes.index')->with('status', 'Turma criada!');
     }
 
     public function show(SchoolClass $schoolClass)
@@ -70,6 +99,8 @@ class SchoolClassController extends Controller
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
         ]);
     }
 
@@ -82,6 +113,8 @@ class SchoolClassController extends Controller
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
         ]);
     }
 
@@ -93,6 +126,8 @@ class SchoolClassController extends Controller
             'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
+            'color_id' => ['required', 'exists:colors,id'],
+            'icon_id' => ['required', 'exists:icons,id'],
         ]);
 
         $schoolClass->update($validated);

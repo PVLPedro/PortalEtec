@@ -6,7 +6,7 @@
     @keydown.escape.window="openDropdown = false"
 >
     <div
-        class="flex items-center gap-regular rounded-regular p-regular text-lg font-medium hover:bg-bg-primary-hover"
+        class="z-50 flex items-center gap-regular rounded-regular p-regular text-lg font-medium hover:bg-bg-primary-hover"
         @click="openDropdown = !openDropdown"
     >
         <x-lucide-user class="size-8"></x-lucide-user>

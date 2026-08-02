@@ -93,49 +93,44 @@ class UserManagementController extends Controller
         return redirect()->route('users.index')->with('status', 'User updated!');
     }
 
-    public function addToClass(Request $request)
+    public function addToClass(Request $request, User $user)
     {
-        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+        abort_if($user->role === Role::Coordenador, 403);
 
         $request->validate([
-            'usuarios' => ['required', 'array', 'min:1'],
-            'school_class_id' => [
-                'required_without:nova_turma.course_id',
-                'nullable',
-                'exists:school_classes,id',
-            ],
-            'nova_turma.course_id' => [
-                'required_without:school_class_id',
-                'nullable',
-                'exists:courses,id',
-            ],
-            'nova_turma.grade_id' => [
-                'required_with:nova_turma.course_id',
-                'nullable',
-                'exists:grades,id',
-            ],
-            'nova_turma.shift_id' => [
-                'required_with:nova_turma.course_id',
-                'nullable',
-                'exists:shifts,id',
-            ],
+            'school_class_id' => ['required', 'exists:school_classes,id'],
         ]);
 
-        if ($request->filled('nova_turma.course_id')) {
-            $schoolClass = SchoolClass::create([
-                'etec_id' => $etecIds->first(),
-                'course_id' => $request->input('nova_turma.course_id'),
-                'grade_id' => $request->input('nova_turma.grade_id'),
-                'shift_id' => $request->input('nova_turma.shift_id'),
-            ]);
-        } else {
-            $schoolClass = SchoolClass::findOrFail($request->school_class_id);
-            abort_unless($etecIds->contains($schoolClass->etec_id), 403);
-        }
+        $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
+
+        $schoolClass->users()->syncWithoutDetaching([$user->id]);
+
+        return back()->with('status', 'Usuário adicionado à turma!');
+    }
+
+    public function addToClassMultiple(Request $request)
+    {
+        $request->validate([
+            'usuarios' => ['required', 'array', 'min:1'],
+            'usuarios.*' => ['exists:users,id'],
+            'school_class_id' => ['required', 'exists:school_classes,id'],
+        ]);
+
+        $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
 
         $schoolClass->users()->syncWithoutDetaching($request->usuarios);
 
         return back()->with('status', 'Usuários adicionados à turma!');
+    }
+
+    private function authorizedSchoolClass(int $schoolClassId): SchoolClass
+    {
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
+        $schoolClass = SchoolClass::findOrFail($schoolClassId);
+        abort_unless($etecIds->contains($schoolClass->etec_id), 403);
+
+        return $schoolClass;
     }
 
     public function destroy(Request $request, User $user)

@@ -308,9 +308,13 @@
         @endif
         <div class="grid grid-cols-[auto_1fr] gap-x-large">
             <div
-                class="row-span-3 flex size-32 items-center justify-center rounded-large bg-gray-bg text-gray"
+                class="row-span-3 flex size-32 items-center justify-center rounded-large p-regular"
+                style="background-color: var(--color-{{ $schoolClass->color->code }}-bg); color: var(--color-{{ $schoolClass->color->code }})"
             >
-                <x-lucide-bot class="size-16" />
+                <x-dynamic-component
+                    :component="'lucide-' . $schoolClass->icon->code"
+                    class="size-16"
+                />
             </div>
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">{{ $schoolClass->name }}</h1>
@@ -351,7 +355,7 @@
                 </span>
                 <span class="group/tooltip">
                     <x-lucide-calendar-fold />
-                    <x-tooltip> Série: {{ $schoolClass->grade->name }} </x-tooltip>
+                    <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
                 </span>
                 <span class="group/tooltip">
                     <x-lucide-university />
@@ -362,12 +366,14 @@
         <div class="flex flex-col items-center gap-small rounded-small *:w-full">
             @if (auth()->user()->role === \App\Enums\Role::Coordenador)
                 <div class="flex items-center justify-start gap-smaller">
-                    <button
+                    <x-primary-button
                         type="button"
                         class="flex items-center gap-small rounded-small p-small"
-                        :class="selectionMode
-                            ? 'bg-accent text-text-white hover:bg-accent-hover'
-                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                        x-bind:class="
+                            selectionMode
+                                ? 'bg-accent text-text-white hover:bg-accent-hover'
+                                : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                        "
                         @click="
                             selectionMode = !selectionMode;
                             selected = [];
@@ -377,7 +383,7 @@
                         <x-lucide-copy-x x-show="selectionMode" x-cloak />
                         <span x-show="!selectionMode">Selecionar usuários</span>
                         <span x-show="selectionMode" x-cloak>Cancelar seleção</span>
-                    </button>
+                    </x-primary-button>
 
                     <div
                         x-show="selectionMode"
@@ -390,47 +396,47 @@
                         x-transition:leave-end="opacity-0"
                         class="flex flex-1 items-center gap-smaller"
                     >
-                        <button
+                        <x-primary-button
                             type="button"
                             class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
                             {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values())" --}}
                         >
                             <x-icons.select-all />
                             <x-tooltip> Selecionar todos </x-tooltip>
-                        </button>
-                        <button
+                        </x-primary-button>
+                        <x-primary-button
                             type="button"
                             class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
                             @click="selected = []"
                         >
                             <x-icons.select-remove />
                             <x-tooltip> Limpar seleção </x-tooltip>
-                        </button>
-                        <button
+                        </x-primary-button>
+                        <x-primary-button
                             type="button"
                             class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
                             {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values()).filter(id => !selected.includes(id))" --}}
                         >
                             <x-icons.select-invert />
                             <x-tooltip> Inverter seleção </x-tooltip>
-                        </button>
+                        </x-primary-button>
                     </div>
 
-                    <button
+                    <x-primary-button
                         type="button"
                         class="items-center gap-small rounded-small p-small disabled:cursor-not-allowed"
-                        :class="[
+                        x-bind:class="[
                             selectionMode ? 'flex' : 'hidden',
                             selected.length > 0
                                 ? 'bg-danger text-text-white hover:bg-danger-hover'
                                 : 'bg-bg-primary-disabled text-text-disabled',
                         ]"
-                        :disabled="selected.length == 0"
+                        x-bind:disabled="selected.length == 0"
                         @click="if (selected.length > 0) removeSelectedModal = true;"
                     >
                         <x-lucide-trash-2 />
                         Remover selecionados
-                    </button>
+                    </x-primary-button>
                 </div>
             @endif
             <div

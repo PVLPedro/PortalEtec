@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id'])]
+#[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id', 'color_id', 'icon_id'])]
 class SchoolClass extends Model
 {
     protected function name(): Attribute
@@ -36,6 +36,16 @@ class SchoolClass extends Model
     public function shift(): BelongsTo
     {
         return $this->belongsTo(Shift::class);
+    }
+
+    public function color(): BelongsTo
+    {
+        return $this->belongsTo(Color::class);
+    }
+
+    public function icon(): BelongsTo
+    {
+        return $this->belongsTo(Icon::class);
     }
 
     public function users(): BelongsToMany

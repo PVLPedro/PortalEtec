@@ -19,9 +19,13 @@
                     class="grid grid-cols-[54px_1fr] gap-regular rounded-regular border border-border p-regular shadow-md hover:bg-bg-secondary-hover"
                 >
                     <span
-                        class="flex size-14 items-center justify-center rounded-small bg-blue-bg p-large text-blue"
+                        class="flex size-16 items-center justify-center rounded-small p-regular"
+                        style="background-color: var(--color-{{ $schoolClass->color->code }}-bg); color: var(--color-{{ $schoolClass->color->code }})"
                     >
-                        <x-lucide-graduation-cap />
+                        <x-dynamic-component
+                            :component="'lucide-' . $schoolClass->icon->code"
+                            class="size-full"
+                        />
                     </span>
                     <span class="flex flex-col items-start gap-small">
                         <x-card-text>

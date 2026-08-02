@@ -17,13 +17,13 @@
     --color-bg-primary-hover: hsl(240, 20%, 90%);
     --color-bg-primary-disabled: hsl(240, 0%, 93%);
 
-    --color-bg-secondary: hsl(240, 20%, 98%);
-    --color-bg-secondary-hover: hsl(240, 20%, 93%);
-    --color-bg-secondary-disabled: hsl(240, 0%, 96%);
+    --color-bg-secondary: hsl(240, 20%, 97%);
+    --color-bg-secondary-hover: hsl(240, 20%, 92%);
+    --color-bg-secondary-disabled: hsl(240, 0%, 95%);
 
-    --color-bg-tertiary: hsl(240, 20%, 96.5%);
-    --color-bg-tertiary-hover: hsl(240, 20%, 91.5%);
-    --color-bg-tertiary-disabled: hsl(240, 0%, 94.5%);
+    --color-bg-tertiary: hsl(240, 20%, 98%);
+    --color-bg-tertiary-hover: hsl(240, 20%, 95%);
+    --color-bg-tertiary-disabled: hsl(240, 0%, 97%);
 
     --color-bg-transparent: hsl(0, 0%, 30%);
 
@@ -125,85 +125,15 @@
 
     --color-notify: hsl(0, 100%, 65%);
 
-    --color-danger: hsl(350, 100%, 60%);
-    --color-danger-bg: hsl(350, 100%, 80%);
-    --color-danger-hover: hsl(350, 100%, 75%);
-    --color-danger-disabled: hsl(350, 75%, 93%);
+    --color-valid: hsl(120, 100%, 50%);
+    --color-valid-bg: hsl(120, 100%, 50%, 12%);
+    --color-valid-hover: hsl(120, 100%, 75%);
+    --color-valid-disabled: hsl(120, 60%, 80%);
 
-    --color-valid: hsl(115, 100%, 60%);
-    --color-valid-bg: hsl(115, 100%, 80%);
-    --color-valid-hover: hsl(115, 100%, 75%);
-    --color-valid-disabled: hsl(115, 60%, 90%);
-
-    --color-warning: hsl(25, 100%, 30%);
-    --color-warning-bg: hsl(25, 100%, 60%, 12%);
-    --color-warning-hover: hsl(25, 100%, 70%);
-    --color-warning-disabled: hsl(25, 60%, 50%);
-
-    --color-red: hsl(0, 100%, 60%);
-    --color-red-bg: hsl(0, 100%, 60%, 12%);
-    --color-red-hover: hsl(0, 100%, 75%);
-    --color-red-disabled: hsl(0, 70%, 50%);
-
-    --color-orange: hsl(25, 100%, 60%);
-    --color-orange-bg: hsl(25, 100%, 60%, 12%);
-    --color-orange-hover: hsl(25, 100%, 70%);
-    --color-orange-disabled: hsl(25, 60%, 50%);
-
-    --color-yellow: hsl(45, 100%, 50%);
-    --color-yellow-bg: hsl(45, 100%, 50%, 12%);
-    --color-yellow-hover: hsl(45, 100%, 60%);
-    --color-yellow-disabled: hsl(45, 60%, 50%);
-
-    --color-lime: hsl(65, 100%, 45%);
-    --color-lime-bg: hsl(65, 100%, 45%, 12%);
-    --color-lime-hover: hsl(65, 100%, 70%);
-    --color-lime-disabled: hsl(65, 60%, 50%);
-
-    --color-green: hsl(120, 100%, 45%);
-    --color-green-bg: hsl(120, 100%, 55%, 12%);
-    --color-green-hover: hsl(120, 100%, 70%);
-    --color-green-disabled: hsl(120, 60%, 50%);
-
-    --color-turquoise: hsl(160, 100%, 40%);
-    --color-turquoise-bg: hsl(160, 100%, 50%, 12%);
-    --color-turquoise-hover: hsl(160, 100%, 70%);
-    --color-turquoise-disabled: hsl(160, 60%, 50%);
-
-    --color-sky: hsl(190, 100%, 40%);
-    --color-sky-bg: hsl(190, 100%, 50%, 12%);
-    --color-sky-hover: hsl(190, 100%, 60%);
-    --color-sky-disabled: hsl(190, 70%, 40%);
-
-    --color-blue: hsl(230, 100%, 60%);
-    --color-blue-bg: hsl(230, 100%, 70%, 8%);
-    --color-blue-hover: hsl(230, 100%, 60%);
-    --color-blue-disabled: hsl(230, 70%, 40%);
-
-    --color-purple: hsl(275, 100%, 50%);
-    --color-purple-bg: hsl(275, 100%, 60%, 12%);
-    --color-purple-hover: hsl(275, 100%, 70%);
-    --color-purple-disabled: hsl(275, 60%, 50%);
-
-    --color-magenta: hsl(295, 100%, 50%);
-    --color-magenta-bg: hsl(295, 100%, 60%, 12%);
-    --color-magenta-hover: hsl(295, 100%, 70%);
-    --color-magenta-disabled: hsl(295, 60%, 50%);
-
-    --color-pink: hsl(335, 100%, 50%);
-    --color-pink-bg: hsl(335, 100%, 60%, 12%);
-    --color-pink-hover: hsl(335, 100%, 70%);
-    --color-pink-disabled: hsl(335, 60%, 50%);
-
-    --color-brown: hsl(30, 100%, 40%);
-    --color-brown-bg: hsl(30, 100%, 30%, 12%);
-    --color-brown-hover: hsl(30, 100%, 70%);
-    --color-brown-disabled: hsl(30, 60%, 50%);
-
-    --color-gray: hsl(270, 8%, 40%);
-    --color-gray-bg: hsl(270, 8%, 50%, 12%);
-    --color-gray-hover: hsl(270, 8%, 70%);
-    --color-gray-disabled: hsl(270, 0%, 50%);
+    --color-danger: hsl(0, 100%, 50%);
+    --color-danger-bg: hsl(0, 100%, 50%, 12%);
+    --color-danger-hover: hsl(0, 100%, 75%);
+    --color-danger-disabled: hsl(0, 60%, 80%);
 
     --spacing-smaller: 4px;
     --spacing-small: 8px;
@@ -232,6 +162,78 @@
     --breakpoint-sm: 1024px;
 }
 
+@theme static {
+    --color-red: hsl(0, 100%, 50%);
+    --color-red-bg: hsl(0, 100%, 60%, 12%);
+    --color-red-hover: hsl(0, 100%, 75%);
+    --color-red-disabled: hsl(0, 60%, 80%);
+
+    --color-orange: hsl(35, 100%, 50%);
+    --color-orange-bg: hsl(35, 100%, 60%, 12%);
+    --color-orange-hover: hsl(35, 100%, 70%);
+    --color-orange-disabled: hsl(35, 60%, 80%);
+
+    --color-yellow: hsl(55, 100%, 50%);
+    --color-yellow-bg: hsl(55, 100%, 50%, 12%);
+    --color-yellow-hover: hsl(55, 100%, 60%);
+    --color-yellow-disabled: hsl(55, 60%, 80%);
+
+    --color-lime: hsl(80, 100%, 50%);
+    --color-lime-bg: hsl(80, 100%, 45%, 12%);
+    --color-lime-hover: hsl(80, 100%, 70%);
+    --color-lime-disabled: hsl(80, 60%, 80%);
+
+    --color-green: hsl(120, 100%, 50%);
+    --color-green-bg: hsl(120, 100%, 55%, 12%);
+    --color-green-hover: hsl(120, 100%, 70%);
+    --color-green-disabled: hsl(120, 60%, 80%);
+
+    --color-turquoise: hsl(150, 100%, 50%);
+    --color-turquoise-bg: hsl(150, 100%, 50%, 12%);
+    --color-turquoise-hover: hsl(150, 100%, 70%);
+    --color-turquoise-disabled: hsl(150, 60%, 80%);
+
+    --color-cyan: hsl(180, 100%, 50%);
+    --color-cyan-bg: hsl(180, 100%, 50%, 12%);
+    --color-cyan-hover: hsl(180, 100%, 60%);
+    --color-cyan-disabled: hsl(180, 60%, 80%);
+
+    --color-light-blue: hsl(210, 100%, 50%);
+    --color-light-blue-bg: hsl(210, 100%, 70%, 8%);
+    --color-light-blue-hover: hsl(210, 100%, 60%);
+    --color-light-blue-disabled: hsl(210, 60%, 80%);
+
+    --color-dark-blue: hsl(240, 100%, 50%);
+    --color-dark-blue-bg: hsl(240, 100%, 70%, 8%);
+    --color-dark-blue-hover: hsl(240, 100%, 60%);
+    --color-dark-blue-disabled: hsl(240, 60%, 80%);
+
+    --color-purple: hsl(270, 100%, 50%);
+    --color-purple-bg: hsl(270, 100%, 60%, 12%);
+    --color-purple-hover: hsl(270, 100%, 70%);
+    --color-purple-disabled: hsl(270, 60%, 80%);
+
+    --color-magenta: hsl(300, 100%, 50%);
+    --color-magenta-bg: hsl(300, 100%, 60%, 12%);
+    --color-magenta-hover: hsl(300, 100%, 70%);
+    --color-magenta-disabled: hsl(300, 60%, 80%);
+
+    --color-pink: hsl(330, 100%, 50%);
+    --color-pink-bg: hsl(330, 100%, 60%, 12%);
+    --color-pink-hover: hsl(330, 100%, 70%);
+    --color-pink-disabled: hsl(330, 60%, 80%);
+
+    --color-brown: hsl(30, 100%, 35%);
+    --color-brown-bg: hsl(30, 100%, 30%, 12%);
+    --color-brown-hover: hsl(30, 100%, 70%);
+    --color-brown-disabled: hsl(30, 60%, 80%);
+
+    --color-gray: hsl(270, 8%, 40%);
+    --color-gray-bg: hsl(270, 8%, 50%, 12%);
+    --color-gray-hover: hsl(270, 8%, 70%);
+    --color-gray-disabled: hsl(270, 60%, 80%);
+}
+
 * {
     font-family: 'Poppins', sans-serif !important;
 }
@@ -252,20 +254,20 @@ input::placeholder {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--color-border);
-    border: 2px solid var(--color-bg-primary);
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-bg-tertiary);
     border-radius: 50vh;
     /* cursor: var(--cursor-pointer), pointer; */
 }
 
-::-webkit-scrollbar-track {
-    border-radius: 50vh;
-    background-color: hsl(from var(--color-bg-transparent) h s l / 0.5);
-    border: 2px solid var(--color-bg-primary);
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-border);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-border-hover);
+::-webkit-scrollbar-track {
+    border-radius: 50vh;
+    background-color: var(--color-bg-tertiary);
+    border: 2px solid var(--color-bg-tertiary);
 }
 
 ::-webkit-scrollbar-button {
@@ -278,4 +280,87 @@ input::placeholder {
     height: 12px;
     width: 12px;
     background-color: transparent;
+}
+
+/*
+ * Estilização global do Choices.js usando as variáveis do tema Tailwind.
+ */
+
+.choices * {
+    font-size: var(--text-base) !important;
+    z-index: 1 !important;
+}
+
+.choices__inner,
+.choices__list--dropdown {
+    border-radius: var(--radius-regular) !important;
+    border: 1px solid var(--color-border) !important;
+    background-color: var(--color-bg-secondary) !important;
+    padding: var(--spacing-small) !important;
+    font-family: var(--font-poppins) !important;
+    color: var(--color-text) !important;
+    font-size: var(--text-base) !important;
+}
+
+.choices__input {
+    background-color: transparent !important;
+    color: var(--color-text) !important;
+    font-size: var(--text-base) !important;
+}
+
+.choices__placeholder {
+    color: var(--color-secondary) !important;
+    opacity: 1 !important;
+    font-size: var(--text-base) !important;
+}
+
+/* Estado de foco — replica o anel de foco que o restante dos inputs/selects usa */
+.choices.is-focused .choices__inner {
+    border-color: var(--color-accent) !important;
+}
+
+.choices.is-focused .choices__list--dropdown {
+    box-shadow: 2px 2px 4px 0 var(--color-border);
+}
+
+/* Item selecionado (modo single-select) */
+.choices__list--single .choices__item {
+    color: var(--color-text) !important;
+}
+
+/* Opção da dropdown com destaque (hover / navegação por teclado) */
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background-color: var(--color-bg-secondary-hover) !important;
+    color: var(--color-text) !important;
+}
+
+/* Select desabilitado */
+.choices.is-disabled .choices__inner {
+    background-color: var(--color-bg-secondary-disabled);
+    color: var(--color-text-disabled);
+    cursor: not-allowed !important;
+}
+
+.choices__color-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 6px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--color-border);
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.choices__icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 6px;
+    vertical-align: middle;
+    color: var(--color-text); /* o SVG do Lucide usa stroke="currentColor" por padrão */
+}
+
+.choices__icon svg {
+    width: 24px;
+    height: 24px;
 }

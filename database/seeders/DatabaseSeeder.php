@@ -9,6 +9,8 @@ use Database\Seeders\EtecSeeder;
 use Database\Seeders\CourseSeeder;
 use Database\Seeders\GradeSeeder;
 use Database\Seeders\ShiftSeeder;
+use Database\Seeders\ColorSeeder;
+use Database\Seeders\IconSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +25,8 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             GradeSeeder::class,
             ShiftSeeder::class,
+            ColorSeeder::class,
+            IconSeeder::class,
         ]);
     }
 }

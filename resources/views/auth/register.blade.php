@@ -198,33 +198,6 @@
     </section>
 
     @push ('scripts')
-        {{--
-            choices.min.css e choices.min.js agora vêm do guest.blade.php (compartilhado
-            entre as páginas que usam essa lib). Aqui só o override visual desta tela e
-            a inicialização do componente.
-        --}}
-        <style>
-            .choices__inner,
-            .choices__list--dropdown {
-                border-radius: var(--radius-small);
-                border-color: var(--color-border);
-                background-color: var(--color-bg-secondary);
-                padding: var(--spacing-small);
-                box-shadow: var(--shadow-md);
-                font-family: var(--font-poppins);
-                color: var(--color-text);
-                font-size: var(--text-base);
-            }
-
-            .choices__input {
-                background-color: transparent;
-            }
-
-            .choices__placeholder {
-                color: var(--color-secondary);
-            }
-        </style>
-
         <script>
             $(function () {
                 const roleSelect = document.getElementById('role');

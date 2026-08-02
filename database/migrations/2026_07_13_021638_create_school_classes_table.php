@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->foreignId('grade_id')->constrained('grades')->cascadeOnDelete();
             $table->foreignId('shift_id')->constrained('shifts')->cascadeOnDelete();
+            $table->foreignId('color_id')->constrained('colors')->cascadeOnDelete();
+            $table->foreignId('icon_id')->constrained('icons')->cascadeOnDelete();
             $table->timestamps();
         });
     }
