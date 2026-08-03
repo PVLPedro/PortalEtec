@@ -28,7 +28,7 @@
 
     <!-- Page Content -->
     <main
-        class="grid h-full scrollbar-gutter-both grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary p-larger"
+        class="grid h-full scrollbar-gutter-both grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary px-regular py-larger"
     >
         {{ $slot }}
     </main>

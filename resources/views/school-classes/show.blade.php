@@ -12,9 +12,20 @@
             removeSelectedModal: false,
             userName: 'name',
             userRole: 'role',
+            section: 'disciplinesSection',
         }"
         class="flex w-full flex-col items-center gap-regular *:w-full"
     >
+        <div class="flex items-center gap-regular">
+            <x-primary-link
+                href="{{ url()->previous() }}"
+                class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+            >
+                <x-lucide-chevron-left />
+                Voltar
+            </x-primary-link>
+            <h2 class="flex-1 text-xl font-semibold">Turma</h2>
+        </div>
         @if (session('status'))
             <div class="mb-4 rounded bg-green-100 p-3 text-green-800">{{ session('status') }}</div>
         @endif
@@ -298,7 +309,7 @@
                                 type="submit"
                                 class="flex items-center gap-small rounded-small bg-danger p-small text-text-white hover:bg-danger-hover"
                             >
-                                <x-lucide-trash-2 />
+                                <x-lucide-user-minus />
                                 Remover selecionados
                             </button>
                         </div>
@@ -306,9 +317,9 @@
                 </x-backdrop>
             </div>
         @endif
-        <div class="grid grid-cols-[auto_1fr] gap-x-large">
+        <x-card class="flex gap-regular">
             <div
-                class="row-span-3 flex size-32 items-center justify-center rounded-large p-regular"
+                class="flex size-32 items-center justify-center rounded-large p-regular"
                 style="background-color: var(--color-{{ $schoolClass->color->code }}-bg); color: var(--color-{{ $schoolClass->color->code }})"
             >
                 <x-dynamic-component
@@ -316,229 +327,86 @@
                     class="size-16"
                 />
             </div>
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-semibold">{{ $schoolClass->name }}</h1>
-
-                @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                    <div class="flex items-center gap-small justify-self-end">
-                        <x-primary-button
-                            @click="editingModal = !editingModal"
-                            class="bg-accent text-text-white hover:bg-accent-hover"
-                        >
-                            <x-lucide-pencil-line />
-                            Editar
-                        </x-primary-button>
-
-                        <x-primary-button
-                            @click="confirmDeleteModal = !confirmDeleteModal"
-                            class="bg-danger text-text-white hover:bg-danger-hover"
-                        >
-                            <x-lucide-trash-2 />
-                            Excluir turma
-                        </x-primary-button>
-                    </div>
-                @endif
+            <div class="flex flex-1 flex-col">
+                <h2 class="text-2xl font-semibold">{{ $schoolClass->name }}</h2>
+                <h2 class="flex-1 text-xl font-medium text-secondary">
+                    {{ $schoolClass->etec->name }}
+                </h2>
+                <div
+                    class="flex gap-small *:relative *:flex *:items-center *:justify-center *:p-small *:text-secondary *:hover:text-accent"
+                >
+                    <span class="group/tooltip">
+                        <x-lucide-graduation-cap />
+                        <x-tooltip> Curso: {{ $schoolClass->course->name }} </x-tooltip>
+                    </span>
+                    <span class="group/tooltip">
+                        <x-lucide-alarm-clock />
+                        <x-tooltip> Período: {{ $schoolClass->shift->name }} </x-tooltip>
+                    </span>
+                    <span class="group/tooltip">
+                        <x-lucide-calendar-fold />
+                        <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
+                    </span>
+                    <span class="group/tooltip">
+                        <x-lucide-university />
+                        <x-tooltip> {{ $schoolClass->etec->name }} </x-tooltip>
+                    </span>
+                </div>
             </div>
-            <div class="flex items-center">
-                <h2 class="text-xl font-medium text-secondary">{{ $schoolClass->etec->name }}</h2>
-            </div>
-            <div
-                class="flex items-center gap-small *:relative *:flex *:h-full *:items-center *:justify-center *:p-small *:text-secondary *:hover:text-accent"
-            >
-                <span class="group/tooltip">
-                    <x-lucide-graduation-cap />
-                    <x-tooltip> Curso: {{ $schoolClass->course->name }} </x-tooltip>
-                </span>
-                <span class="group/tooltip">
-                    <x-lucide-alarm-clock />
-                    <x-tooltip> Período: {{ $schoolClass->shift->name }} </x-tooltip>
-                </span>
-                <span class="group/tooltip">
-                    <x-lucide-calendar-fold />
-                    <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
-                </span>
-                <span class="group/tooltip">
-                    <x-lucide-university />
-                    <x-tooltip> {{ $schoolClass->etec->name }} </x-tooltip>
-                </span>
-            </div>
-        </div>
-        <div class="flex flex-col items-center gap-small rounded-small *:w-full">
             @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                <div class="flex items-center justify-start gap-smaller">
+                <div class="flex items-start gap-small">
                     <x-primary-button
-                        type="button"
-                        class="flex items-center gap-small rounded-small p-small"
-                        x-bind:class="
-                            selectionMode
-                                ? 'bg-accent text-text-white hover:bg-accent-hover'
-                                : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
-                        "
-                        @click="
-                            selectionMode = !selectionMode;
-                            selected = [];
-                        "
+                        @click="editingModal = !editingModal"
+                        class="bg-accent text-text-white hover:bg-accent-hover"
                     >
-                        <x-lucide-copy x-show="!selectionMode" class="text-inherit" />
-                        <x-lucide-copy-x x-show="selectionMode" x-cloak />
-                        <span x-show="!selectionMode">Selecionar usuários</span>
-                        <span x-show="selectionMode" x-cloak>Cancelar seleção</span>
+                        <x-lucide-pencil-line />
+                        Editar
                     </x-primary-button>
 
-                    <div
-                        x-show="selectionMode"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="flex flex-1 items-center gap-smaller"
-                    >
-                        <x-primary-button
-                            type="button"
-                            class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
-                            {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values())" --}}
-                        >
-                            <x-icons.select-all />
-                            <x-tooltip> Selecionar todos </x-tooltip>
-                        </x-primary-button>
-                        <x-primary-button
-                            type="button"
-                            class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
-                            @click="selected = []"
-                        >
-                            <x-icons.select-remove />
-                            <x-tooltip> Limpar seleção </x-tooltip>
-                        </x-primary-button>
-                        <x-primary-button
-                            type="button"
-                            class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
-                            {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values()).filter(id => !selected.includes(id))" --}}
-                        >
-                            <x-icons.select-invert />
-                            <x-tooltip> Inverter seleção </x-tooltip>
-                        </x-primary-button>
-                    </div>
-
                     <x-primary-button
-                        type="button"
-                        class="items-center gap-small rounded-small p-small disabled:cursor-not-allowed"
-                        x-bind:class="[
-                            selectionMode ? 'flex' : 'hidden',
-                            selected.length > 0
-                                ? 'bg-danger text-text-white hover:bg-danger-hover'
-                                : 'bg-bg-primary-disabled text-text-disabled',
-                        ]"
-                        x-bind:disabled="selected.length == 0"
-                        @click="if (selected.length > 0) removeSelectedModal = true;"
+                        @click="confirmDeleteModal = !confirmDeleteModal"
+                        class="bg-danger text-text-white hover:bg-danger-hover"
                     >
                         <x-lucide-trash-2 />
-                        Remover selecionados
+                        Excluir turma
                     </x-primary-button>
                 </div>
             @endif
+        </x-card>
+        <x-card class="flex flex-1 flex-col gap-regular">
             <div
-                class="relative grid size-full grid-cols-[auto_repeat(2,minmax(0,1fr))_repeat(2,auto)] rounded-regular border border-border"
+                class="flex gap-regular border-b border-b-border pb-regular *:flex *:flex-1 *:gap-small *:rounded-regular *:p-regular *:text-center *:font-semibold *:uppercase"
             >
-                <div class="col-span-full grid grid-cols-subgrid bg-accent-bg">
-                    <span class="col-span-2 flex flex-col justify-center p-large">
-                        <x-card-text>
-                            <x-slot name="primary">
-                                Nome
-                            </x-slot>
-                            <x-slot name="secondary">
-                                Email
-                            </x-slot>
-                        </x-card-text>
-                    </span>
-                    <span class="flex items-center p-large font-semibold">Cargo</span>
-                    @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                        <span
-                            class="col-span-2 flex items-center justify-center p-large font-semibold"
-                            >Ações</span
-                        >
-                    @endif
-                </div>
-
-                @forelse ($schoolClass->users as $usuario)
-                    <div class="col-span-full grid grid-cols-subgrid border-t border-t-border">
-                        <label
-                            for="{{ "user-checkbox" . $usuario->id }}"
-                            class="relative flex items-center justify-center overflow-hidden"
-                            :class="selectionMode
-                                ? 'w-auto opacity-100 p-large'
-                                : 'w-0 opacity-0 p-0'"
-                        >
-                            @if ($usuario->role !== \App\Enums\Role::Coordenador)
-                                <input
-                                    type="checkbox"
-                                    id="{{ "user-checkbox" . $usuario->id }}"
-                                    class="peer size-6 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
-                                    value="{{ $usuario->id }}"
-                                    :disabled="!selectionMode"
-                                    x-model="selected"
-                                />
-                                <x-lucide-check
-                                    class="pointer-events-none absolute top-1/2 left-1/2 hidden size-4 -translate-1/2 stroke-3 peer-checked:block peer-checked:text-text-white peer-hover:block peer-hover:text-text peer-hover:opacity-50 peer-checked:peer-hover:text-text-white peer-checked:peer-hover:opacity-100"
-                                />
-                            @endif
-                        </label>
-                        <div class="group contents">
-                            <label
-                                for="{{ "user-checkbox" . $usuario->id }}"
-                                class="flex flex-col justify-center p-large"
-                                @if ($usuario->role->value != 'coordenador')
-                                    :class="selectionMode &&
-                                    'group-hover:bg-bg-secondary-hover hover:cursor-pointer'"
-                                @endif
-                            >
-                                <x-card-text>
-                                    <x-slot name="primary">
-                                        {{ $usuario->name }}
-                                    </x-slot>
-                                    <x-slot name="secondary">
-                                        {{ $usuario->email }}
-                                    </x-slot>
-                                </x-card-text>
-                            </label>
-                            <label
-                                for="{{ "user-checkbox" . $usuario->id }}"
-                                class="flex items-center p-large capitalize"
-                                @if ($usuario->role->value != 'coordenador')
-                                    :class="selectionMode &&
-                                    'group-hover:bg-bg-secondary-hover hover:cursor-pointer'"
-                                @endif
-                                >{{ $usuario->role->value }}
-                            </label>
-                        </div>
-                        @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                            <a
-                                href="{{ route('users.edit', $usuario) }}"
-                                class="group/tooltip relative flex items-center justify-center p-large font-semibold hover:bg-bg-secondary-hover"
-                            >
-                                <x-lucide-square-pen />
-                                <x-tooltip> Editar </x-tooltip>
-                            </a>
-                            @if ($usuario->role->value != 'coordenador')
-                                <span
-                                    class="group/tooltip relative flex items-center justify-center p-large font-semibold text-danger hover:bg-bg-secondary-hover"
-                                    @click="userToRemove = {{ $usuario->id }}; userNameToRemove = '{{ $usuario->name }}'; confirmUserRemove = true"
-                                >
-                                    <x-lucide-trash-2 />
-                                    <x-tooltip> Remover </x-tooltip>
-                                </span>
-                            @endif
-                        @endif
-                    </div>
-                @empty
-                    <div class="col-span-full grid grid-cols-subgrid border-t border-t-border">
-                        <span class="col-span-full font-semibold">Nenhum usuário na turma</span>
-                    </div>
-                @endforelse
+                <button
+                    @click="section = 'disciplinesSection'"
+                    :class="section == 'disciplinesSection'
+                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                >
+                    <x-lucide-book-marked />
+                    Disciplinas
+                </button>
+                <button
+                    @click="section = 'membersSection'"
+                    :class="section == 'membersSection'
+                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                >
+                    <x-lucide-users />
+                    Membros
+                </button>
+                <button
+                    @click="section = 'announcementSection'"
+                    :class="section == 'announcementSection'
+                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                >
+                    <x-lucide-message-square-text />
+                    Comunicados
+                </button>
             </div>
-        </div>
+            @include ('school-classes.partials.show-members')
+        </x-card>
     </div>
 
     {{-- @forelse ($schoolClass->users as $usuario)

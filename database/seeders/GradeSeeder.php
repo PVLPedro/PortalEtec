@@ -12,7 +12,15 @@ class GradeSeeder extends Seeder
      */
     public function run(): void
     {
-        $grades = [['name' => '1º Ano'], ['name' => '2º Ano'], ['name' => '3º Ano']];
+        $grades = [
+            ['name' => '1º Ano'],
+            ['name' => '2º Ano'],
+            ['name' => '3º Ano'],
+            ['name' => '1º Semestre'],
+            ['name' => '2º Semestre'],
+            ['name' => '3º Semestre'],
+            ['name' => '4º Semestre'],
+        ];
 
         foreach ($grades as $grade) {
             \App\Models\Grade::create($grade);

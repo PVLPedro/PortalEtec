@@ -70,20 +70,20 @@
                 <div class="flex items-center *:h-full">
                     <a
                         href="{{ route('users.edit', $usuario) }}"
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text hover:bg-bg-secondary-hover"
+                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
                     >
                         <x-lucide-pencil-line />
                         <x-tooltip> Editar </x-tooltip>
                     </a>
                     <button
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text hover:bg-bg-secondary-hover"
+                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
                         @click="userToAdd = {{ $usuario->id }}; userNameToAdd = '{{ $usuario->name }}'; userRoleToAdd = '{{ ($usuario->role->value) }}'; addModal = true"
                     >
                         <x-lucide-book-plus />
                         <x-tooltip> Adicionar à Turma </x-tooltip>
                     </button>
                     <button
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-danger hover:bg-bg-secondary-hover"
+                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-danger uppercase hover:bg-bg-secondary-hover"
                         @click="userToDelete = {{ $usuario->id }}; userNameToDelete = '{{ $usuario->name }}'; userRoleToDelete = '{{ ($usuario->role->value) }}'; deleteModal = true"
                     >
                         <x-lucide-trash-2 />

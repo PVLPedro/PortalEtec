@@ -288,7 +288,6 @@ input::placeholder {
 
 .choices * {
     font-size: var(--text-base) !important;
-    z-index: 1 !important;
 }
 
 .choices__inner,
@@ -357,7 +356,7 @@ input::placeholder {
     align-items: center;
     margin-right: 6px;
     vertical-align: middle;
-    color: var(--color-text); /* o SVG do Lucide usa stroke="currentColor" por padrão */
+    color: var(--color-text);
 }
 
 .choices__icon svg {
