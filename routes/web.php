@@ -36,13 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
             'school-classes.store',
         );
-    });
 
-    Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
-        'school-classes.show',
-    );
-
-    Route::middleware('role:coordenador,professor')->group(function () {
         Route::get('/turmas/{schoolClass}/editar', [SchoolClassController::class, 'edit'])->name(
             'school-classes.edit',
         );
@@ -57,6 +51,10 @@ Route::middleware('auth')->group(function () {
             'removeUser',
         ])->name('school-classes.remove-user');
     });
+
+    Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
+        'school-classes.show',
+    );
 
     Route::middleware('role:coordenador')->group(function () {
         Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');

@@ -1,4 +1,10 @@
 <x-app-layout>
+    <style>
+        :root {
+            --color-school-class: var(--color-{{ $schoolClass->color->code }});
+            --color-school-class-bg: var(--color-{{ $schoolClass->color->code }}-bg);
+        }
+    </style>
     <div
         x-data="{
             editingModal: false,
@@ -12,18 +18,12 @@
             removeSelectedModal: false,
             userName: 'name',
             userRole: 'role',
-            section: 'disciplinesSection',
+            section: 'membersSection',
         }"
-        class="flex w-full flex-col items-center gap-regular *:w-full"
+        class="grid size-full grid-rows-[auto_auto_1fr] gap-regular *:w-full"
     >
         <div class="flex items-center gap-regular">
-            <x-primary-link
-                href="{{ url()->previous() }}"
-                class="bg-bg-primary text-text hover:bg-bg-primary-hover"
-            >
-                <x-lucide-chevron-left />
-                Voltar
-            </x-primary-link>
+            <x-back-link />
             <h2 class="flex-1 text-xl font-semibold">Turma</h2>
         </div>
         @if (session('status'))
@@ -317,70 +317,92 @@
                 </x-backdrop>
             </div>
         @endif
-        <x-card class="flex gap-regular">
-            <div
-                class="flex size-32 items-center justify-center rounded-large p-regular"
-                style="background-color: var(--color-{{ $schoolClass->color->code }}-bg); color: var(--color-{{ $schoolClass->color->code }})"
-            >
-                <x-dynamic-component
-                    :component="'lucide-' . $schoolClass->icon->code"
-                    class="size-16"
-                />
+        <x-card class="flex flex-col gap-regular">
+            <div class="flex gap-regular">
+                <div class="flex items-center">
+                    <div
+                        class="flex size-16 items-center justify-center rounded-small bg-(--color-school-class-bg) p-regular text-(--color-school-class)"
+                    >
+                        <x-dynamic-component
+                            :component="'lucide-' . $schoolClass->icon->code"
+                            class="size-8"
+                        />
+                    </div>
+                </div>
+                <div class="flex flex-1 flex-col">
+                    <h2 class="text-2xl font-semibold">{{ $schoolClass->name }}</h2>
+                    <h2 class="flex-1 text-xl font-medium text-secondary">
+                        {{ $schoolClass->etec->name }}
+                    </h2>
+                    <div
+                        class="hidden gap-small *:relative *:flex *:items-center *:justify-center *:p-small *:text-secondary *:hover:text-accent"
+                    >
+                        <span class="group/tooltip">
+                            <x-lucide-graduation-cap />
+                            <x-tooltip> Curso: {{ $schoolClass->course->name }} </x-tooltip>
+                        </span>
+                        <span class="group/tooltip">
+                            <x-lucide-alarm-clock />
+                            <x-tooltip> Período: {{ $schoolClass->shift->name }} </x-tooltip>
+                        </span>
+                        <span class="group/tooltip">
+                            <x-lucide-calendar-fold />
+                            <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
+                        </span>
+                        <span class="group/tooltip">
+                            <x-lucide-university />
+                            <x-tooltip> {{ $schoolClass->etec->name }} </x-tooltip>
+                        </span>
+                    </div>
+                </div>
+                @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                    <div class="flex items-start gap-small">
+                        <x-primary-link
+                            href="{{ route('school-classes.edit', $schoolClass) }}"
+                            class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                        >
+                            <x-lucide-settings />
+                            Opções
+                        </x-primary-link>
+                    </div>
+                @endif
             </div>
-            <div class="flex flex-1 flex-col">
-                <h2 class="text-2xl font-semibold">{{ $schoolClass->name }}</h2>
-                <h2 class="flex-1 text-xl font-medium text-secondary">
-                    {{ $schoolClass->etec->name }}
-                </h2>
-                <div
-                    class="flex gap-small *:relative *:flex *:items-center *:justify-center *:p-small *:text-secondary *:hover:text-accent"
+            <div class="flex items-center gap-small">
+                @php
+                    $disciplinesCount = 0;
+                    // foreach ($schoolClass->disciplines as $disciplina) {
+                    //     $disciplinesCount++;
+                    // }
+                    $usersCount = 0;
+                    foreach ($schoolClass->users as $usuario) {
+                        $usersCount++;
+                    }
+                @endphp
+                <button
+                    @click="section = 'disciplinesSection'"
+                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-accent"
                 >
-                    <span class="group/tooltip">
-                        <x-lucide-graduation-cap />
-                        <x-tooltip> Curso: {{ $schoolClass->course->name }} </x-tooltip>
-                    </span>
-                    <span class="group/tooltip">
-                        <x-lucide-alarm-clock />
-                        <x-tooltip> Período: {{ $schoolClass->shift->name }} </x-tooltip>
-                    </span>
-                    <span class="group/tooltip">
-                        <x-lucide-calendar-fold />
-                        <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
-                    </span>
-                    <span class="group/tooltip">
-                        <x-lucide-university />
-                        <x-tooltip> {{ $schoolClass->etec->name }} </x-tooltip>
-                    </span>
-                </div>
+                    <x-lucide-book-marked class="size-4" />
+                    Disciplinas {{ $disciplinesCount }}
+                </button>
+                <span class="size-1 rounded-full bg-secondary"></span>
+                <button
+                    @click="section = 'membersSection'"
+                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-accent"
+                >
+                    <x-lucide-users class="size-4" />
+                    Membros {{ $usersCount }}
+                </button>
             </div>
-            @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                <div class="flex items-start gap-small">
-                    <x-primary-button
-                        @click="editingModal = !editingModal"
-                        class="bg-accent text-text-white hover:bg-accent-hover"
-                    >
-                        <x-lucide-pencil-line />
-                        Editar
-                    </x-primary-button>
-
-                    <x-primary-button
-                        @click="confirmDeleteModal = !confirmDeleteModal"
-                        class="bg-danger text-text-white hover:bg-danger-hover"
-                    >
-                        <x-lucide-trash-2 />
-                        Excluir turma
-                    </x-primary-button>
-                </div>
-            @endif
         </x-card>
-        <x-card class="flex flex-1 flex-col gap-regular">
+        <x-card class="flex flex-col gap-regular">
             <div
                 class="flex gap-regular border-b border-b-border pb-regular *:flex *:flex-1 *:gap-small *:rounded-regular *:p-regular *:text-center *:font-semibold *:uppercase"
             >
                 <button
                     @click="section = 'disciplinesSection'"
                     :class="section == 'disciplinesSection'
-                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        ? 'bg-(--color-school-class) text-text-white'
                         : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
                 >
                     <x-lucide-book-marked />
@@ -389,7 +411,7 @@
                 <button
                     @click="section = 'membersSection'"
                     :class="section == 'membersSection'
-                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        ? 'bg-(--color-school-class) text-text-white'
                         : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
                 >
                     <x-lucide-users />
@@ -398,7 +420,7 @@
                 <button
                     @click="section = 'announcementSection'"
                     :class="section == 'announcementSection'
-                        ? 'bg-accent text-text-white hover:bg-accent-hover'
+                        ? 'bg-(--color-school-class) text-text-white'
                         : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
                 >
                     <x-lucide-message-square-text />

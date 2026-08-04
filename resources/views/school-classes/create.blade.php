@@ -10,13 +10,7 @@
         class="flex flex-col gap-large *:w-full"
     >
         <div class="flex items-center gap-regular">
-            <x-primary-link
-                href="{{ url()->previous() }}"
-                class="bg-bg-primary text-text hover:bg-bg-primary-hover"
-            >
-                <x-lucide-chevron-left />
-                Voltar
-            </x-primary-link>
+            <x-back-link />
             <h2 class="flex-1 text-xl font-semibold">Nova Turma</h2>
         </div>
         <x-card class="grid grid-cols-[auto_1fr] gap-regular">
@@ -50,7 +44,9 @@
                         >
                             <option value="">Selecione um curso</option>
                             @foreach ($courses as $course)
-                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                <option value="{{ $course->id }}">
+                                    {{ $course->name }} ({{ $course->initialism }})
+                                </option>
                             @endforeach
                         </select>
                         <x-input-error :messages="$errors->get('course_id')" class="" />
@@ -134,19 +130,17 @@
                 </div>
                 <div class="">
                     @if ($preselectedUsers->isNotEmpty())
-                        <div class="">
-                            <p class="font-medium">Usuários que serão adicionados a esta turma:</p>
-                            <ul class="list-inside list-disc">
-                                @foreach ($preselectedUsers as $usuario)
-                                    <li>{{ $usuario->name }}</li>
-                                    <input
-                                        type="hidden"
-                                        name="usuarios[]"
-                                        value="{{ $usuario->id }}"
-                                    />
-                                @endforeach
-                            </ul>
-                        </div>
+                        <h3 class="col-span-full text-lg font-semibold">
+                            Usuários que serão adicionados a este turma:
+                        </h3>
+                        <ul class="list-inside list-disc">
+                            @foreach ($preselectedUsers as $usuario)
+                                <li class="font-medium capitalize">
+                                    {{ $usuario->role->value }} {{ $usuario->name }}
+                                </li>
+                                <input type="hidden" name="usuarios[]" value="{{ $usuario->id }}" />
+                            @endforeach
+                        </ul>
                     @endif
                 </div>
                 <div class="flex justify-end gap-regular self-end justify-self-end">

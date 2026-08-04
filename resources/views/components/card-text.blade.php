@@ -1,5 +1,7 @@
-<span class="text-base/tight font-semibold capitalize"> {{ $primary }} </span>
-<span class="text-sm/tight text-secondary"> {{ $secondary }} </span>
+<span class="flex items-center gap-small text-base/tight font-medium capitalize">
+    {{ $primary }}
+</span>
+<span class="flex items-center gap-small text-sm/tight text-secondary"> {{ $secondary }} </span>
 
 {{--
     Use:

@@ -119,7 +119,7 @@
     --color-bg-transparent-white: hsl(0, 0%, 0%);
 
     --color-accent: hsl(216, 100%, 60%);
-    --color-accent-bg: hsl(216, 100%, 60%, 3%);
+    --color-accent-bg: hsl(216, 100%, 60%, 12%);
     --color-accent-hover: hsl(216, 100%, 65%);
     --color-accent-disabled: hsl(216, 70%, 40%);
 
@@ -130,7 +130,7 @@
     --color-valid-hover: hsl(120, 100%, 75%);
     --color-valid-disabled: hsl(120, 60%, 80%);
 
-    --color-danger: hsl(0, 100%, 50%);
+    --color-danger: hsl(0, 100%, 60%);
     --color-danger-bg: hsl(0, 100%, 50%, 12%);
     --color-danger-hover: hsl(0, 100%, 75%);
     --color-danger-disabled: hsl(0, 60%, 80%);
@@ -141,8 +141,8 @@
     --spacing-large: 16px;
     --spacing-larger: 24px;
 
-    --radius-smaller: 2px;
-    --radius-small: 4px;
+    --radius-smaller: 4px;
+    --radius-small: 6px;
     --radius-regular: 8px;
     --radius-medium: 12px;
     --radius-large: 16px;
@@ -163,10 +163,10 @@
 }
 
 @theme static {
-    --color-red: hsl(0, 100%, 50%);
-    --color-red-bg: hsl(0, 100%, 60%, 12%);
-    --color-red-hover: hsl(0, 100%, 75%);
-    --color-red-disabled: hsl(0, 60%, 80%);
+    --color-red: hsl(10, 100%, 50%);
+    --color-red-bg: hsl(10, 100%, 60%, 12%);
+    --color-red-hover: hsl(10, 100%, 75%);
+    --color-red-disabled: hsl(10, 60%, 80%);
 
     --color-orange: hsl(35, 100%, 50%);
     --color-orange-bg: hsl(35, 100%, 60%, 12%);

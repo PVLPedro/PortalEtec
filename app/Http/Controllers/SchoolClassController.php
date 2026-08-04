@@ -46,7 +46,7 @@ class SchoolClassController extends Controller
 
         $preselectedUsers = User::whereIn('id', $request->query('usuarios', []))
             ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
-            ->get(['id', 'name']);
+            ->get(['id', 'name', 'role']);
 
         return view('school-classes.create', [
             'courses' => Course::all(),
@@ -92,7 +92,7 @@ class SchoolClassController extends Controller
     {
         $this->authorizeClass($schoolClass);
 
-        $schoolClass->load('users', 'course', 'grade', 'shift');
+        $schoolClass->load(['users', 'course', 'grade', 'shift', 'icon']);
 
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,

@@ -21,12 +21,12 @@
 
             <x-slot name="content">
                 <x-dropdown-link :href="route('profile.edit')">
-                    <x-lucide-user></x-lucide-user>
+                    <x-lucide-user />
                     Perfil
                 </x-dropdown-link>
 
                 <x-dropdown-link :href="route('profile.edit')">
-                    <x-lucide-bolt></x-lucide-bolt>
+                    <x-lucide-settings />
                     Configurações
                 </x-dropdown-link>
 
@@ -40,7 +40,7 @@
                         "
                         class="text-red"
                     >
-                        <x-lucide-log-out></x-lucide-log-out>
+                        <x-lucide-log-out />
                         <span>Desconectar-se</span>
                     </x-dropdown-link>
                 </form>
