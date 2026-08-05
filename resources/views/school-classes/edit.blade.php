@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl leading-tight font-semibold text-gray-800">Editar Turma</h2>
+        <h2 class="text-xl leading-tight font-semibold text-gray-800">{{ __('schoolclasses.edit.title') }}</h2>
     </x-slot>
 
     <div class="py-12">
@@ -11,7 +11,7 @@
                     @method ('PUT')
 
                     <div>
-                        <x-input-label for="course_id" value="Curso" />
+                        <x-input-label for="course_id" value="__('schoolclasses.create.label.course')" />
                         <select
                             id="course_id"
                             name="course_id"
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <x-input-label for="grade_id" value="Série" />
+                        <x-input-label for="grade_id" value="__('schoolclasses.create.label.grade')" />
                         <select
                             id="grade_id"
                             name="grade_id"
@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <x-input-label for="shift_id" value="Turno" />
+                        <x-input-label for="shift_id" value="__('schoolclasses.create.label.shift')" />
                         <select
                             id="shift_id"
                             name="shift_id"
@@ -72,12 +72,12 @@
 
                     <div class="mt-6 flex items-center justify-between">
                         <a
-                            href="{{ route('school-classes.index') }}"
+                            href="{{ route('schoolclasses.index') }}"
                             class="text-sm text-gray-600 underline"
                         >
-                            Cancelar
+                             {{ __('schoolclasses.edit.cancel') }}
                         </a>
-                        <x-primary-button>Salvar</x-primary-button>
+                        <x-primary-button>{{ __('schoolclasses.edit.submit') }}</x-primary-button>
                     </div>
                 </form>
             </div>
