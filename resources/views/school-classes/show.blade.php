@@ -16,7 +16,7 @@
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
                     <div class="flex items-center gap-2">
-                        <button @click="editando = true" class="text-sm underline">Editar</button>
+                        <button @click="editando = true" class="text-sm underline">{{ __('schoolclasses.show.edit_button') }}</button>
 
                         <form
                             method="POST"
@@ -35,7 +35,7 @@
 
                             <template x-if="!confirmando">
                                 <button type="submit" class="text-sm text-red-600 underline">
-                                    Excluir turma
+                                    {{ __('schoolclasses.show.delete.button') }}
                                 </button>
                             </template>
 
@@ -43,7 +43,7 @@
                                 <input
                                     type="password"
                                     name="password"
-                                    placeholder="Sua senha"
+                                    placeholder="{{ __('schoolclasses.show.password_placeholder') }}"
                                     class="rounded-md border-gray-300 text-sm"
                                     required
                                 />
@@ -51,14 +51,14 @@
                                     type="submit"
                                     class="text-sm font-semibold text-red-600 underline"
                                 >
-                                    Confirmar exclusão
+                                    {{ __('schoolclasses.show.delete.confirm') }}
                                 </button>
                                 <button
                                     type="button"
                                     @click="confirmando = false"
                                     class="text-sm underline"
                                 >
-                                    Cancelar
+                                    {{ __('schoolclasses.show.delete.cancel') }}
                                 </button>
                             </div>
                         </form>
@@ -76,7 +76,7 @@
                     @method ('PUT')
 
                     <div>
-                        <x-input-label value="Curso" />
+                        <x-input-label value="__('schoolclasses.create.label.course')" />
                         <select name="course_id" required class="rounded-md border-gray-300">
                             @foreach ($courses as $course)
                                 <option
@@ -90,7 +90,7 @@
                     </div>
 
                     <div>
-                        <x-input-label value="Série" />
+                        <x-input-label value="__('schoolclasses.create.label.grade')" />
                         <select name="grade_id" required class="rounded-md border-gray-300">
                             @foreach ($grades as $grade)
                                 <option
@@ -104,7 +104,7 @@
                     </div>
 
                     <div>
-                        <x-input-label value="Turno" />
+                        <x-input-label value="__('schoolclasses.create.label.shift')" />
                         <select name="shift_id" required class="rounded-md border-gray-300">
                             @foreach ($shifts as $shift)
                                 <option
@@ -117,7 +117,7 @@
                         </select>
                     </div>
 
-                    <x-primary-button>Salvar</x-primary-button>
+                    <x-primary-button>{{ __('schoolclasses.show.save') }}</x-primary-button>
                 </form>
             </div>
 
@@ -125,8 +125,8 @@
                 <table class="w-full text-left">
                     <thead class="border-b">
                         <tr>
-                            <th class="p-3">Nome</th>
-                            <th class="p-3">Cargo</th>
+                            <th class="p-3">{{ __('schoolclasses.show.table.name') }}</th>
+                            <th class="p-3">{{ __('schoolclasses.show.table.role') }}</th>
                             <th class="p-3"></th>
                         </tr>
                     </thead>
@@ -158,7 +158,7 @@
                                                     type="submit"
                                                     class="text-sm text-red-600 underline"
                                                 >
-                                                    Remover
+                                                     {{ __('schoolclasses.show.remove_user.button') }}
                                                 </button>
                                             </template>
 
@@ -170,7 +170,7 @@
                                                 <input
                                                     type="password"
                                                     name="password"
-                                                    placeholder="Sua senha"
+                                                    placeholder="{{ __('schoolclasses.show.password_placeholder') }}"
                                                     class="w-32 rounded-md border-gray-300 text-sm"
                                                     required
                                                 />
@@ -178,14 +178,14 @@
                                                     type="submit"
                                                     class="text-sm font-semibold text-red-600 underline"
                                                 >
-                                                    Confirmar
+                                                     {{ __('schoolclasses.show.remove_user.confirm') }}
                                                 </button>
                                                 <button
                                                     type="button"
                                                     @click="confirmando = false"
                                                     class="text-sm underline"
                                                 >
-                                                    Cancelar
+                                                    {{ __('schoolclasses.show.remove_user.cancel') }}
                                                 </button>
                                             </div>
                                         </form>
@@ -195,7 +195,7 @@
                         @empty
                             <tr>
                                 <td class="p-3 text-gray-500" colspan="3">
-                                    Nenhum membro nesta turma ainda.
+                                    {{ __('schoolclasses.show.no_members') }}
                                 </td>
                             </tr>
                         @endforelse

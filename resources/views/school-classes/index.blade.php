@@ -2,14 +2,14 @@
     <div class="">
         <div class="mx-auto max-w-5xl">
             <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-xl font-semibold">Turmas</h2>
+                <h2 class="text-xl font-semibold">{{ __ ('schoolclasses.index.title') }}</h2>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
                     <a
                         href="{{ route('school-classes.create') }}"
                         class="inline-block rounded-md bg-indigo-600 px-4 py-2 text-white"
                     >
-                        + Nova Turma
+                        {{ __('schoolclasses.index.create_button') }}
                     </a>
                     </button>
                 @endif
@@ -32,7 +32,7 @@
                         </div>
                     </a>
                 @empty
-                    <p class="text-gray-500">Nenhuma turma criada ainda.</p>
+                    <p class="text-gray-500">{{ __('schoolclasses.index.empty') }}</p>
                 @endforelse
             </div>
         </div>
