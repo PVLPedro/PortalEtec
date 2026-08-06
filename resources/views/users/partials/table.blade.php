@@ -23,8 +23,8 @@
         >
             <x-lucide-copy x-show="!selectionMode" class="text-inherit" />
             <x-lucide-copy-x x-show="selectionMode" x-cloak />
-            <span x-show="!selectionMode">Selecionar usuários</span>
-            <span x-show="selectionMode" x-cloak>Cancelar seleção</span>
+            <span x-show="!selectionMode">{{ __('users.table.select_users') }}</span>
+            <span x-show="selectionMode" x-cloak>{{ __('users.table.cancel_selection') }}</span>
         </button>
 
         <div
@@ -44,7 +44,7 @@
                 @click="selected = @json($usuarios->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values())"
             >
                 <x-icons.select-all />
-                <x-tooltip> Selecionar todos </x-tooltip>
+                <x-tooltip> {{ __('users.table.select_all_tooltip') }} </x-tooltip>
             </button>
             <button
                 type="button"
@@ -52,7 +52,7 @@
                 @click="selected = []"
             >
                 <x-icons.select-remove />
-                <x-tooltip> Limpar seleção </x-tooltip>
+               <x-tooltip> {{ __('users.table.clear_selection_tooltip') }} </x-tooltip>
             </button>
             <button
                 type="button"
@@ -60,7 +60,7 @@
                 @click="selected = @json($usuarios->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values()).filter(id => !selected.includes(id))"
             >
                 <x-icons.select-invert />
-                <x-tooltip> Inverter seleção </x-tooltip>
+                <x-tooltip> {{ __('users.table.invert_selection_tooltip') }} </x-tooltip>
             </button>
         </div>
 
@@ -77,7 +77,7 @@
             @click="if (selected.length > 0) schoolClassModal = true;"
         >
             <x-lucide-book-plus />
-            Adicionar à Turma
+            {{ __('users.table.add_to_class_button') }}
         </button>
         <div
             x-show="schoolClassModal"
@@ -95,7 +95,7 @@
 
                 <x-close-button @click="schoolClassModal = false" />
 
-                <h3 class="py-smaller text-center font-semibold">Adicionar à Turma</h3>
+                <h3 class="py-smaller text-center font-semibold">{{ __('users.table.add_to_class_modal.title') }}</h3>
 
                 <template x-for="id in selected" :key="id">
                     <input type="hidden" name="usuarios[]" :value="id" />
@@ -106,7 +106,7 @@
                     class="flex items-center gap-small rounded-small border border-border p-small text-text"
                     x-show="!newSchoolClass"
                 >
-                    <option value="">Selecione uma Turma</option>
+                    <option value="">{{ __('users.table.add_to_class_modal.select_class_placeholder') }}</option>
                     @foreach ($schoolClasses as $schoolClass)
                         <option value="{{ $schoolClass->id }}">{{ $schoolClass->nome }}</option>
                     @endforeach
@@ -118,8 +118,8 @@
                     x-show="!newSchoolClass"
                     class="flex items-center gap-small rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"
                 >
-                    <x-lucide-plus />
-                    Criar nova turma
+                 <x-lucide-plus />
+                 {{ __('users.table.add_to_class_modal.create_new_class_button') }}
                 </button>
 
                 <div x-show="newSchoolClass" x-cloak class="space-y-regular">
@@ -127,7 +127,7 @@
                         name="nova_turma[course_id]"
                         class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                     >
-                        <option value="">Selecione um curso</option>
+                       <option value="">{{ __('users.table.add_to_class_modal.course_placeholder') }}</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}">{{ $course->course_name }}</option>
                         @endforeach
@@ -136,7 +136,7 @@
                         name="nova_turma[grade_id]"
                         class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                     >
-                        <option value="">Selecione uma série</option>
+                        <option value="">{{ __('users.table.add_to_class_modal.grade_placeholder') }}</option>
                         @foreach ($grades as $grade)
                             <option value="{{ $grade->id }}">{{ $grade->name }}</option>
                         @endforeach
@@ -145,7 +145,7 @@
                         name="nova_turma[shift_id]"
                         class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                     >
-                        <option value="">Selecione um turno</option>
+                        <option value="">{{ __('users.table.add_to_class_modal.shift_placeholder') }}</option>
                         @foreach ($shifts as $shift)
                             <option value="{{ $shift->id }}">{{ $shift->name }}</option>
                         @endforeach
@@ -159,7 +159,7 @@
                     class="flex items-center gap-small rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"
                 >
                     <x-lucide-arrow-left />
-                    Adicionar a uma existente
+                    {{ __('users.table.add_to_class_modal.back_to_existing_button') }}
                 </button>
 
                 <div class="flex justify-between">
@@ -169,14 +169,14 @@
                         class="flex items-center gap-smaller rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"
                     >
                         <x-lucide-x />
-                        Cancelar
+                        {{ __('users.table.add_to_class_modal.cancel') }}
                     </button>
                     <button
                         type="submit"
                         class="flex items-center gap-smaller rounded-small bg-accent p-small text-text-white hover:bg-accent-hover"
                     >
                         <x-lucide-check />
-                        Confirmar
+                        {{ __('users.table.add_to_class_modal.confirm') }}
                     </button>
                 </div>
             </form>
@@ -194,7 +194,7 @@
             @click="if (selected.length > 0) deleteSelectedModal = true;"
         >
             <x-lucide-trash-2 />
-            Excluir selecionados
+            {{ __('users.table.delete_selected_button') }}
         </button>
         <div
             x-show="deleteSelectedModal"
@@ -207,33 +207,31 @@
                 action="{{ route('users.destroyMultiple') }}"
                 class="[&>*:not(.keep-auto)]:w-full relative flex w-full max-w-120 flex-col items-center gap-regular rounded-large bg-bg-secondary p-large shadow-md"
                 @click.outside="deleteSelectedModal = false"
-                onsubmit="
-                    return confirm(
-                        'Excluir os usuários selecionados? Esta ação não pode ser desfeita.'
-                    );
-                "
-            >
+                onsubmit=
+                "return confirm('{{ __('users.table.delete_selected_modal.confirm_js') }}');"
+
+                >
                 @csrf
                 @method ('DELETE')
 
                 <x-close-button @click="deleteSelectedModal = false" />
 
-                <h3 class="py-smaller text-center font-semibold">Exclusão de Usuários</h3>
+                <h3 class="py-smaller text-center font-semibold">{{ __('users.table.delete_selected_modal.title') }}</h3>
 
                 <template x-for="id in selected" :key="id">
                     <input type="hidden" name="ids[]" :value="id" />
                 </template>
 
                 <label for="bulk-password" class="text-sm font-medium text-secondary">
-                    Confirme sua senha para excluir
-                    <span x-text="selected.length"></span> usuário(s) selecionado(s):
+                    {{ __('users.table.delete_selected_modal.confirm_label') }}
+                    <span x-text="selected.length"></span>{{ __('users.table.delete_selected_modal.selected_suffix') }}
                 </label>
                 <input
                     id="bulk-password"
                     type="password"
                     name="password"
                     class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                    placeholder="Sua senha"
+                    placeholder="{{ __('users.table.delete_selected_modal.password_placeholder') }}"
                 />
 
                 <div class="flex justify-between">
@@ -243,25 +241,25 @@
                         class="flex items-center gap-smaller rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"
                     >
                         <x-lucide-x />
-                        Cancelar
+                        {{ __('users.table.delete_selected_modal.cancel') }}
                     </button>
                     <button
                         type="submit"
                         class="flex items-center gap-small rounded-small bg-danger p-small text-text-white hover:bg-danger-hover"
                     >
                         <x-lucide-trash-2 />
-                        Excluir selecionados
+                        {{ __('users.table.delete_selected_modal.submit') }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <span class="p-small text-center font-semibold">Nome</span>
-    <span class="p-small text-center font-semibold">Email</span>
-    <span class="p-small text-center font-semibold">Cargo</span>
-    <span class="p-small text-center font-semibold">Ações</span>
-    <span class=""></span>
+                <span class="p-small text-center font-semibold">{{ __('users.table.headers.name') }}</span>
+                <span class="p-small text-center font-semibold">{{ __('users.table.headers.email') }}</span>
+                <span class="p-small text-center font-semibold">{{ __('users.table.headers.role') }}</span>
+                <span class="p-small text-center font-semibold">{{ __('users.table.headers.actions') }}</span>
+                <span class=""></span>
 
     @foreach ($usuarios as $usuario)
         <label
@@ -296,7 +294,7 @@
             class="group/tooltip relative flex items-center justify-center rounded-small p-small font-semibold hover:bg-bg-secondary-hover"
         >
             <x-lucide-square-pen />
-            <x-tooltip> Editar </x-tooltip>
+            <x-tooltip> {{ __('users.table.edit_tooltip') }} </x-tooltip>
         </a>
         <label
             for="{{ "user-checkbox" . $usuario->id }}"

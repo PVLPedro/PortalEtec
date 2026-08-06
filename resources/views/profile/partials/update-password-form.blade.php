@@ -1,13 +1,9 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">{{ __('Update Password') }}</h2>
+        <h2 class="text-lg font-medium text-gray-900">{{ __('profile.password.title') }}</h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{
-                __(
-                    'Ensure your account is using a long, random password to stay secure.',
-                )
-            }}
+            {{ __('profile.password.description') }}
         </p>
     </header>
 
@@ -16,7 +12,7 @@
         @method ('put')
 
         <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
+            <x-input-label for="update_password_current_password" :value="__('profile.password.label.current_password')" />
             <x-text-input
                 id="update_password_current_password"
                 name="current_password"
@@ -31,7 +27,7 @@
         </div>
 
         <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
+            <x-input-label for="update_password_password" :value="__('profile.password.label.new_password')" />
             <x-text-input
                 id="update_password_password"
                 name="password"
@@ -45,7 +41,7 @@
         <div>
             <x-input-label
                 for="update_password_password_confirmation"
-                :value="__('Confirm Password')"
+                :value="__('profile.password.label.confirm_password')"
             />
             <x-text-input
                 id="update_password_password_confirmation"
@@ -61,7 +57,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button>{{ __('profile.save') }}</x-primary-button>
 
             @if (session('status') === 'password-updated')
                 <p
@@ -70,7 +66,7 @@
                     x-transition
                     x-init="setTimeout(() => (show = false), 2000)"
                     class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                >{{ __('profile.save') }}</p>
             @endif
         </div>
     </form>
