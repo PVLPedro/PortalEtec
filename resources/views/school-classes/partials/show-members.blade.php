@@ -1,4 +1,34 @@
-<div x-show="section == 'membersSection'" class="flex flex-col gap-regular">
+<div
+    x-show="section == 'membersSection'"
+    x-data="{
+    perPage: 10,
+    currentPage: 1,
+    totalUsers: {{ $schoolClass->users->count() }},
+    get totalPages() {
+        return Math.max(1, Math.ceil(this.totalUsers / this.perPage));
+    },
+    get rangeStart() {
+        return this.totalUsers === 0 ? 0 : (this.currentPage - 1) * this.perPage + 1;
+    },
+    get rangeEnd() {
+        return Math.min(this.currentPage * this.perPage, this.totalUsers);
+    },
+    setPerPage(value) {
+        this.perPage = value;
+        this.currentPage = 1;
+    },
+    goToPage(page) {
+        this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+    },
+    prevPage() {
+        this.goToPage(this.currentPage - 1);
+    },
+    nextPage() {
+        this.goToPage(this.currentPage + 1);
+    },
+}"
+    class="flex flex-col gap-regular"
+>
     <div class="flex items-center gap-regular">
         <h2 class="flex-1 text-lg font-semibold">Membros da Turma</h2>
     </div>
@@ -20,29 +50,105 @@
             </x-primary-link>
         @endif
     </div>
+
     <div class="flex flex-col items-center justify-center gap-small">
         <span class="flex items-center gap-smaller text-sm/tight font-medium">
             Páginas
             <x-dot />
-            Exibindo 5 Membros
+            <span
+                x-text="
+                    totalUsers === 0
+                        ? 'Nenhum membro'
+                        : `Exibindo ${rangeStart}-${rangeEnd} de ${totalUsers} Membros`
+                "
+            ></span>
+            <x-dot />
+            <span class="flex items-center gap-smaller">
+                <button
+                    type="button"
+                    class="rounded-small px-small py-smaller font-semibold"
+                    x-bind:class="
+                        perPage === 5
+                            ? 'bg-(--color-school-class) text-text-white'
+                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                    "
+                    @click="setPerPage(5)"
+                >
+                    5
+                </button>
+                <button
+                    type="button"
+                    class="rounded-small px-small py-smaller font-semibold"
+                    x-bind:class="
+                        perPage === 10
+                            ? 'bg-(--color-school-class) text-text-white'
+                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                    "
+                    @click="setPerPage(10)"
+                >
+                    10
+                </button>
+                <button
+                    type="button"
+                    class="rounded-small px-small py-smaller font-semibold"
+                    x-bind:class="
+                        perPage === 15
+                            ? 'bg-(--color-school-class) text-text-white'
+                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                    "
+                    @click="setPerPage(15)"
+                >
+                    15
+                </button>
+                <button
+                    type="button"
+                    class="rounded-small px-small py-smaller font-semibold"
+                    x-bind:class="
+                        perPage === 20
+                            ? 'bg-(--color-school-class) text-text-white'
+                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                    "
+                    @click="setPerPage(20)"
+                >
+                    20
+                </button>
+            </span>
         </span>
-        <div class="flex justify-center gap-small">
-            {{-- @foreach ($pages as $page) --}}
-            <span
-                class="flex size-8 items-center justify-center rounded-small bg-(--color-school-class) p-regular text-sm/tight font-semibold text-text-white"
+
+        <div class="flex items-center justify-center gap-small">
+            <button
+                type="button"
+                class="flex size-8 items-center justify-center rounded-small bg-bg-primary text-text hover:bg-bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-bg-primary"
+                @click="prevPage()"
+                x-bind:disabled="currentPage === 1"
             >
-                {{-- {{ $page->number }} --}}
-                1
-            </span>
-            <span
-                class="flex size-8 items-center justify-center rounded-small bg-bg-primary p-regular text-sm/tight font-medium text-text hover:bg-bg-primary-hover active:bg-(--color-school-class) active:font-semibold active:text-text-white"
+                <x-lucide-chevron-left class="size-4" />
+            </button>
+
+            <template x-for="page in totalPages" :key="page">
+                <span
+                    class="flex size-8 cursor-pointer items-center justify-center rounded-small p-regular text-sm/tight font-medium"
+                    x-bind:class="
+                        page === currentPage
+                            ? 'bg-(--color-school-class) font-semibold text-text-white'
+                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
+                    "
+                    x-text="page"
+                    @click="goToPage(page)"
+                ></span>
+            </template>
+
+            <button
+                type="button"
+                class="flex size-8 items-center justify-center rounded-small bg-bg-primary text-text hover:bg-bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-bg-primary"
+                @click="nextPage()"
+                x-bind:disabled="currentPage === totalPages"
             >
-                {{-- {{ $page->number }} --}}
-                2
-            </span>
-            {{-- @endforeach --}}
+                <x-lucide-chevron-right class="size-4" />
+            </button>
         </div>
     </div>
+
     <div
         class="relative grid size-full max-h-200 grid-cols-[auto_1fr_repeat(2,auto)] rounded-regular border border-border"
     >
@@ -139,7 +245,10 @@
         </div>
 
         @forelse ($schoolClass->users as $usuario)
-            <div class="col-span-full grid grid-cols-subgrid border-t border-t-border">
+            <div
+                class="col-span-full grid grid-cols-subgrid border-t border-t-border"
+                x-show="Math.ceil({{ $loop->iteration }} / perPage) === currentPage"
+            >
                 <label
                     for="{{ "user-checkbox" . $usuario->id }}"
                     class="relative flex items-center justify-center overflow-hidden"
