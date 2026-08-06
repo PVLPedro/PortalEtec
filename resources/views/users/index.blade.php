@@ -33,7 +33,7 @@
                 >
                     <div class="grid grid-cols-2 gap-small">
                         <div>
-                            <x-input-label for="role" :value="__('Tipo de Usuário')" />
+                            <x-input-label for="role" :value="__('users.index.filters.role')" />
 
                             <select
                                 x-model="role_id"
@@ -41,17 +41,17 @@
                                 @change="filtrar()"
                                 class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             >
-                                <option value="">Cargo</option>
-                                <option value="aluno">Aluno</option>
-                                <option value="professor">Professor</option>
-                                <option value="coordenador">Coordenador</option>
+                                <option value="">{{ __('users.index.filters.role_placeholder') }}</option>
+                                <option value="aluno">{{ __('users.index.filters.role_options.aluno') }}</option>
+                                <option value="professor">{{ __('users.index.filters.role_options.professor') }}</option>
+                                <option value="coordenador">{{ __('users.index.filters.role_options.coordenador') }}</option>
                             </select>
 
                             {{-- <x-input-error :messages="$errors->get('role')" class="" /> --}}
                         </div>
 
                         <div>
-                            <x-input-label for="school-class" :value="__('Turma pertencente')" />
+                            <x-input-label for="school-class" :value="__('users.index.filters.school_class')" />
 
                             <select
                                 x-model="school_class_id"
@@ -59,7 +59,8 @@
                                 @change="filtrar()"
                                 class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             >
-                                <option value="">Turma</option>
+                                <option value="">{{ __('users.index.filters.school_class_placeholder') }}</option>
+
                                 @foreach ($schoolClasses as $schoolClass)
                                     <option value="{{ $schoolClass->id }}">
                                         {{ $schoolClass->nome }}
@@ -71,7 +72,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="course" :value="__('Curso designado')" />
+                            <x-input-label for="course" :value="__('users.index.filters.course')" />
 
                             <select
                                 x-model="course_id"
@@ -79,7 +80,8 @@
                                 @change="filtrar()"
                                 class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             >
-                                <option value="">Curso</option>
+                               <option value="">{{ __('users.index.filters.course_placeholder') }}</option>
+
                                 @foreach ($courses as $course)
                                     <option value="{{ $course->id }}">
                                         {{ $course->course_name }}
@@ -91,7 +93,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="grade" :value="__('Série')" />
+                           <x-input-label for="grade" :value="__('users.index.filters.grade')" />
 
                             <select
                                 x-model="grade_id"
@@ -99,7 +101,8 @@
                                 @change="filtrar()"
                                 class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             >
-                                <option value="">Série</option>
+                                <option value="">{{ __('users.index.filters.grade_placeholder') }}</option>
+
                                 @foreach ($grades as $grade)
                                     <option value="{{ $grade->id }}">{{ $grade->name }}</option>
                                 @endforeach
@@ -109,13 +112,14 @@
                         </div>
 
                         <div>
-                            <x-input-label for="rm" :value="__('RM do Aluno')" />
+                            <x-input-label for="rm" :value="__('users.index.filters.rm')" />
+
                             <input
                                 type="text"
                                 id="rm"
                                 x-model="rm"
                                 @input.debounce.400ms="filtrar()"
-                                placeholder="RM"
+                                placeholder="{{ __('users.index.filters.rm_placeholder') }}"
                                 maxlength="7"
                                 class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             />

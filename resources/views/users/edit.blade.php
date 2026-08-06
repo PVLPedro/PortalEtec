@@ -6,7 +6,7 @@
                     @csrf
                     @method ('PUT')
 
-                    <x-input-label for="name" value="Nome" />
+                    <x-input-label for="name" value="__('users.edit.label.name')" />
                     <x-text-input
                         id="name"
                         name="name"
@@ -28,7 +28,7 @@
                     />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
 
-                    <x-primary-button class="mt-6">Salvar</x-primary-button>
+                    <x-primary-button class="mt-6">{{ __('users.edit.submit') }}</x-primary-button>
                 </form>
 
                 @if ($user->role !== \App\Enums\Role::Coordenador)
@@ -39,7 +39,7 @@
                         action="{{ route('users.destroy', $user) }}"
                         onsubmit="
                             return confirm(
-                                'Excluir este usuário? Esta ação não pode ser desfeita.'
+                                '{{ __('users.edit.delete_confirm_js') }}'
                             );
                         "
                     >
@@ -48,7 +48,7 @@
 
                         <x-input-label
                             for="delete_password"
-                            value="Confirme sua senha para excluir este usuário"
+                            value="__('users.edit.label.delete_password')"
                         />
                         <x-text-input
                             id="delete_password"
@@ -63,7 +63,7 @@
                             type="submit"
                             class="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
                         >
-                            Excluir usuário
+                            {{ __('users.edit.delete_button') }}
                         </button>
                     </form>
                 @endif
