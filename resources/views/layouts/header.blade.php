@@ -16,18 +16,18 @@
             </x-slot>
 
             <x-slot name="header">
-                Opções
+                {{ __('layout.header.options') }}
             </x-slot>
 
             <x-slot name="content">
                 <x-dropdown-link :href="route('profile.edit')">
                     <x-lucide-user></x-lucide-user>
-                    Perfil
+                    {{ __('layout.header.profile') }}
                 </x-dropdown-link>
 
                 <x-dropdown-link :href="route('profile.edit')">
                     <x-lucide-bolt></x-lucide-bolt>
-                    Configurações
+                    {{ __('layout.header.settings') }}
                 </x-dropdown-link>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -41,7 +41,7 @@
                         class="text-red"
                     >
                         <x-lucide-log-out></x-lucide-log-out>
-                        <span>Desconectar-se</span>
+                        <span>{{ __('layout.header.logout') }}</span>
                     </x-dropdown-link>
                 </form>
             </x-slot>

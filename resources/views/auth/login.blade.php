@@ -11,7 +11,7 @@
             <x-application-logo class="h-32 w-full fill-current" />
         </a>
 
-        <p class="text-center font-medium {{ $generalTextClass }}">Bem-vindo(a) ao Portal Etec!</p>
+        <p class="text-center font-medium {{ $generalTextClass }}">{{ __('auth.welcome') }}</p>
 
         <x-form-link href="{{ route('register') }}">
             {{ __('auth.login.no_account') }}

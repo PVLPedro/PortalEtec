@@ -11,7 +11,7 @@
             <x-application-logo class="h-32 w-full fill-current" />
         </a>
 
-        <p class="text-center font-medium {{ $generalTextClass }}">Bem-vindo(a) ao Portal Etec!</p>
+        <p class="text-center font-medium {{ $generalTextClass }}">{{ __('auth.welcome') }}</p>
 
         <x-form-link href="{{ route('login') }}">
             {{
@@ -61,7 +61,7 @@
                     <x-input-label for="role" :value="__('auth.register.label.role')" />
 
                     <select id="role" name="role" x-model="role" required>
-                        <option value="">Selecione um cargo</option>
+                        <option value="">{{ __('auth.register.label.role_select') }}</option>
                         @foreach (\App\Enums\Role::cases() as $roleCase)
                             <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
                         @endforeach
@@ -72,8 +72,15 @@
 
                 <!-- RM (só para aluno) -->
                 <div x-show="role === 'aluno'" x-cloak>
-                    <x-input-label for="rm" value="RM" />
-                    <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
+                    <x-input-label for="rm" :value="__('auth.register.label.rm')" />
+                    <x-text-input
+                        id="rm"
+                        name="rm"
+                        type="text"
+                        maxlength="7"
+                        :value="old('rm')"
+                        :placeholder="__('auth.placeholder.rm')"
+                    />
                     <x-input-error :messages="$errors->get('rm')" class="mt-2" />
                 </div>
 
@@ -82,11 +89,11 @@
                     <div x-show="['coordenador', 'professor'].includes(role)" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec-worker') }}"
+                            value="{{ __('auth.register.label.etec_worker') }}"
                         />
                         <select multiple id="etec-worker" name="etecs[]" class="mt-1 block w-full">
                             <option value="">
-                                Etec na qual trabalha (Pode selecionar múltiplas)
+                                {{ __('auth.placeholder.etec_worker') }}
                             </option>
                             @foreach ($etecs as $etec)
                                 <option
@@ -106,10 +113,10 @@
                     <div x-show="role === 'aluno'" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec-student') }}"
+                            value="{{ __('auth.register.label.etec_student') }}"
                         />
                         <select multiple id="etec-student" name="etecs[]" class="mt-1 block w-full">
-                            <option value="">Etec na qual estuda</option>
+                            <option value="">{{ __('auth.placeholder.etec_student') }}</option>
                             @foreach ($etecs as $etec)
                                 <option
                                     value="{{ $etec->id }}"
@@ -248,7 +255,7 @@
                     searchEnabled: true,
                     itemSelectText: '',
                     maxItemCount: 1,
-                    maxItemText: (max) => `Você só pode selecionar ${max} Etec`,
+                    maxItemText: (max) => '{{ __('auth.register.max_etec') }}'.replace(':max', max),
                 });
 
                 // Nome

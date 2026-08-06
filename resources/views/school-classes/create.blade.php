@@ -5,7 +5,7 @@
             <form method="POST" action="{{ route('school-classes.store') }}">
                 @csrf
 
-                <x-input-label for="course_id" value="__('schoolclasses.create.label.course')" />
+                <x-input-label for="course_id" :value="__('schoolclasses.create.label.course')" />
                 <select
                     name="course_id"
                     required
@@ -18,7 +18,7 @@
                 </select>
                 <x-input-error :messages="$errors->get('course_id')" class="mt-2" />
 
-                <x-input-label for="grade_id" value="__('schoolclasses.create.label.grade')" class="mt-4" />
+                <x-input-label for="grade_id" :value="__('schoolclasses.create.label.grade')" class="mt-4" />
                 <select
                     name="grade_id"
                     required
@@ -31,7 +31,7 @@
                 </select>
                 <x-input-error :messages="$errors->get('grade_id')" class="mt-2" />
 
-                <x-input-label for="shift_id" value="__('schoolclasses.create.label.shift')" class="mt-4" />
+                <x-input-label for="shift_id" :value="__('schoolclasses.create.label.shift')" class="mt-4" />
                 <select
                     name="shift_id"
                     required

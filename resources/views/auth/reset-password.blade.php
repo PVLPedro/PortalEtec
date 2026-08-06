@@ -7,7 +7,7 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
+            <x-input-label for="email" :value="__('auth.reset_password.label.email')" />
             <x-text-input
                 id="email"
                 class="mt-1 block w-full"
@@ -23,7 +23,7 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('auth.reset_password.label.password')" />
             <x-text-input
                 id="password"
                 class="mt-1 block w-full"
@@ -37,7 +37,7 @@
 
         <!-- Confirm Password -->
         <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <x-input-label for="password_confirmation" :value="__('auth.reset_password.label.confirm_password')" />
 
             <x-text-input
                 id="password_confirmation"
@@ -52,7 +52,7 @@
         </div>
 
         <div class="mt-4 flex items-center justify-end">
-            <x-primary-button> {{ __('Reset Password') }} </x-primary-button>
+            <x-primary-button> {{ __('auth.reset_password.submit') }} </x-primary-button>
         </div>
     </form>
 </x-guest-layout>

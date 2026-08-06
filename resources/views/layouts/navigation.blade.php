@@ -6,7 +6,7 @@
         id="toggle-sidebar"
         class="flex w-full items-center justify-end gap-regular overflow-hidden rounded-regular border border-border bg-bg-primary p-regular text-start hover:bg-bg-primary-hover"
     >
-        <span class="grow text-lg/tight">Menu</span>
+        <span class="grow text-lg/tight">{{ __('layout.sidebar.menu') }}</span>
         <x-lucide-menu class="shrink-0"></x-lucide-menu>
     </button>
 
@@ -15,7 +15,7 @@
             <x-slot name="icon">
                 <x-lucide-layout-dashboard class="shrink-0"></x-lucide-layout-dashboard>
             </x-slot>
-            <span class="grow"> Visão Geral </span>
+            <span class="grow"> {{ __('layout.sidebar.overview') }} </span>
         </x-nav-link>
 
         <x-nav-link
@@ -25,7 +25,7 @@
             <x-slot name="icon">
                 <x-lucide-book-marked class="shrink-0"></x-lucide-book-marked>
             </x-slot>
-            <span class="grow"> Disciplinas </span>
+            <span class="grow"> {{ __('layout.sidebar.classes') }} </span>
         </x-nav-link>
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
@@ -33,7 +33,7 @@
                 <x-slot name="icon">
                     <x-lucide-file-text class="shrink-0"></x-lucide-file-text>
                 </x-slot>
-                <span class="grow"> Usuários </span>
+                <span class="grow"> {{ __('layout.sidebar.users') }} </span>
             </x-nav-link>
         @endif
     </div>

@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'welcome' => 'Bem-vindo(a) ao Portal Etec!',
+
     'login' => [
         'label' => [
             'email' => 'Digite seu email institucional',
@@ -33,7 +35,8 @@ return [
             'role' => 'Tipo de usuário',
             'role_select' => 'Selecione um cargo',
 
-            'rm' => 'Digite seu RM de Aluno',
+            'rm' => 'RM',
+
             'etec_student' => 'Selecione sua Etec',
             'etec_worker' => 'Selecione suas Etecs',
 
@@ -43,6 +46,8 @@ return [
         'already_account' => 'Já possui uma conta? Entre com ela',
 
         'sign_up' => 'Criar Conta',
+
+        'max_etec' => 'Você só pode selecionar :max Etec',
     ],
 
     'rules' => [
@@ -61,6 +66,41 @@ return [
         'name' => 'Nome',
         'email' => 'Email',
         'password' => 'Senha',
+        'rm' => 'Digite seu RM de Aluno',
+        'etec_worker' => 'Etec na qual trabalha (Pode selecionar múltiplas)',
+        'etec_student' => 'Etec na qual estuda',
+    ],
+
+    'forgot_password' => [
+        'description' => 'Esqueceu sua senha? Sem problemas. Basta nos informar seu endereço de e-mail que enviaremos um link de redefinição de senha para você escolher uma nova.',
+        'label' => [
+            'email' => 'Email',
+        ],
+        'submit' => 'Enviar Link de Redefinição de Senha',
+    ],
+
+    'confirm_password' => [
+        'description' => 'Esta é uma área segura da aplicação. Confirme sua senha antes de continuar.',
+        'label' => [
+            'password' => 'Senha',
+        ],
+        'submit' => 'Confirmar',
+    ],
+
+    'reset_password' => [
+        'label' => [
+            'email' => 'Email',
+            'password' => 'Senha',
+            'confirm_password' => 'Confirmar Senha',
+        ],
+        'submit' => 'Redefinir Senha',
+    ],
+
+    'verify_email' => [
+        'description' => 'Obrigado por se cadastrar! Antes de começar, você poderia verificar seu endereço de e-mail clicando no link que acabamos de enviar? Se você não recebeu o e-mail, ficaremos felizes em enviar outro.',
+        'link_sent' => 'Um novo link de verificação foi enviado para o endereço de e-mail informado no cadastro.',
+        'resend' => 'Reenviar E-mail de Verificação',
+        'logout' => 'Sair',
     ],
 
     'failed' => 'As credenciais não coincidem.',
