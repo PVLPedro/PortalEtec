@@ -252,14 +252,9 @@
 
         @forelse ($schoolClass->users as $usuario)
             <div
-            <<<<<<<head
-
                 class="col-span-full grid grid-cols-subgrid gap-smaller border-t border-t-border p-smaller"
-                ="======"
-                class="col-span-full grid grid-cols-subgrid border-t border-t-border"
                 x-show="Math.ceil({{ $loop->iteration }} / perPage) === currentPage"
             >
-                >>>>>> 64fae4a1d6f137096baf49e36aea5c082eaa424e >
                 <label
                     for="{{ "user-checkbox" . $usuario->id }}"
                     class="relative flex h-16 items-center justify-center overflow-hidden transition-all"
@@ -322,7 +317,7 @@
                         </span>
                     @endif
                 </div>
-                </div>
+            </div>
         @empty
             <div class="col-span-full flex items-center gap-regular p-regular">
                 <p class="text-secondary">Nenhum Membro na Turma ainda.</p>
