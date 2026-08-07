@@ -1,4 +1,10 @@
 <x-app-layout>
+    <style>
+        :root {
+            --color-school-class: var(--color-accent);
+            --color-school-class-bg: var(--color-accent-bg);
+        }
+    </style>
     <div
         x-data="{
             course: 'Curso',
@@ -7,33 +13,54 @@
             colorCode: 'accent',
             iconCode: 'graduation-cap',
         }"
-        class="flex flex-col gap-large *:w-full"
+        class="grid grid-cols-1 gap-large *:w-full"
     >
         <div class="flex items-center gap-regular">
             <x-back-link />
             <h2 class="flex-1 text-xl font-semibold">Nova Turma</h2>
         </div>
         <x-card class="grid grid-cols-[auto_1fr] gap-regular">
-            <h3 class="col-span-full text-lg font-semibold">Pré-visualização da Turma</h3>
+            <span class="col-span-full flex flex-col">
+                <h3 class="text-lg font-semibold">Pré-visualização da Turma</h3>
+                <p class="text-sm text-secondary">Assim aparecerá a Turma para os Membros</p>
+            </span>
             <div
-                class="flex size-32 items-center justify-center rounded-large p-regular"
-                style="background-color: var(--color-accent-bg); color: var(--color-accent)"
+                class="flex size-16 items-center justify-center rounded-small bg-(--color-school-class-bg) p-regular text-(--color-school-class)"
             >
-                <x-dynamic-component :component="'lucide-graduation-cap'" class="size-16" />
+                <x-dynamic-component :component="'lucide-graduation-cap'" class="size-8" />
             </div>
             <div class="flex items-center justify-between">
                 <span class="" :text="grade + course + shift"></span>
             </div>
         </x-card>
-        <x-card class="flex-1">
+        <x-card class="">
             <form
                 method="POST"
                 action="{{ route('school-classes.store') }}"
                 class="grid h-full grid-cols-2 gap-regular"
             >
                 @csrf
+                <div class="flex items-center">
+                    <h3 class="text-lg font-semibold">Configurações da Turma</h3>
+                </div>
+                <div class="flex justify-end gap-regular self-end justify-self-end">
+                    <x-primary-link
+                        href="{{ url()->previous() }}"
+                        class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                    >
+                        <x-lucide-x />
+                        Cancelar
+                    </x-primary-link>
+                    <x-primary-button
+                        type="submit"
+                        class="bg-accent text-text-white hover:bg-accent-hover"
+                    >
+                        <x-lucide-check />
+                        Criar
+                    </x-primary-button>
+                </div>
                 <div class="grid auto-rows-min gap-regular">
-                    <h3 class="col-span-full text-lg font-semibold">Opções Gerais</h3>
+                    <h3 class="col-span-full text-base font-semibold">Opções Gerais</h3>
                     <div>
                         <x-input-label for="course_id" value="Curso" />
                         <select
@@ -85,7 +112,7 @@
                     </div>
                 </div>
                 <div class="grid auto-rows-min gap-regular">
-                    <h3 class="col-span-full text-lg font-semibold">Personalização</h3>
+                    <h3 class="col-span-full text-base font-semibold">Personalização</h3>
                     <div>
                         <x-input-label for="color_id" value="Cor" class="" />
                         <select
@@ -107,67 +134,29 @@
                         <x-input-error :messages="$errors->get('color_id')" class="" />
                     </div>
 
-                    <div>
-                        <x-input-label for="icon_id" value="Ícone" class="" />
-                        <select
-                            id="icon_id"
-                            name="icon_id"
-                            required
-                            class="block w-full rounded-md border-gray-300"
-                        >
-                            <option value="">Selecione um ícone</option>
-                            @foreach ($icons as $icon)
-                                <option
-                                    value="{{ $icon->id }}"
-                                    data-custom-properties='{"iconCode": "{{ $icon->code }}"}'
-                                >
-                                    {{ $icon->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <x-input-error :messages="$errors->get('icon_id')" class="" />
-                    </div>
-                </div>
-                <div class="">
                     @if ($preselectedUsers->isNotEmpty())
-                        <h3 class="col-span-full text-lg font-semibold">
-                            Usuários que serão adicionados a este turma:
-                        </h3>
-                        <ul class="list-inside list-disc">
-                            @foreach ($preselectedUsers as $usuario)
-                                <li class="font-medium capitalize">
-                                    {{ $usuario->role->value }} {{ $usuario->name }}
-                                </li>
-                                <input type="hidden" name="usuarios[]" value="{{ $usuario->id }}" />
-                            @endforeach
-                        </ul>
+                        <h3 class="col-span-full text-base font-semibold">Membros</h3>
+                        <span class="">Estes Usuários serão adicionados como Membros:</span>
+                        <div>
+                            <span class="flex flex-wrap gap-small">
+                                @foreach ($preselectedUsers as $usuario)
+                                    <span
+                                        class="rounded-full bg-bg-secondary px-small py-smaller font-medium text-secondary capitalize"
+                                    >
+                                        {{ $usuario->role->value }} {{ $usuario->name }}
+                                    </span>
+                                    <input
+                                        type="hidden"
+                                        name="usuarios[]"
+                                        value="{{ $usuario->id }}"
+                                    />
+                                @endforeach
+                            </span>
+                        </div>
                     @endif
-                </div>
-                <div class="flex justify-end gap-regular self-end justify-self-end">
-                    <x-primary-link
-                        href="{{ url()->previous() }}"
-                        class="bg-bg-primary text-text hover:bg-bg-primary-hover"
-                    >
-                        <x-lucide-x />
-                        Cancelar
-                    </x-primary-link>
-                    <x-primary-button
-                        type="submit"
-                        class="bg-accent text-text-white hover:bg-accent-hover"
-                    >
-                        <x-lucide-check />
-                        Criar
-                    </x-primary-button>
                 </div>
             </form>
         </x-card>
-        <div id="icon-templates" class="hidden" aria-hidden="true">
-            @foreach ($icons as $icon)
-                <div data-icon-code="{{ $icon->code }}">
-                    <x-dynamic-component :component="'lucide-' . $icon->code" class="size-4" />
-                </div>
-            @endforeach
-        </div>
     </div>
 
     @push ('scripts')
@@ -232,33 +221,6 @@
                         };
 
                         return makeDecoratedTemplates(template, this.config.itemSelectText, swatch);
-                    },
-                });
-
-                // Select de Ícone, com o SVG do Lucide clonado do container oculto
-                new Choices($('#icon_id').get(0), {
-                    searchEnabled: true,
-                    itemSelectText: '',
-                    shouldSort: false,
-                    placeholder: true,
-                    allowHTML: true,
-                    callbackOnCreateTemplates: function (template) {
-                        const icon = (data) => {
-                            const code = data.customProperties && data.customProperties.iconCode;
-                            if (!code) return '';
-
-                            const source = document.querySelector(
-                                `#icon-templates [data-icon-code="${code}"]`
-                            );
-
-                            // Se o code não corresponder a nenhum ícone renderizado,
-                            // não quebra o layout, só não mostra nada
-                            return source
-                                ? `<span class="choices__icon">${source.innerHTML}</span>`
-                                : '';
-                        };
-
-                        return makeDecoratedTemplates(template, this.config.itemSelectText, icon);
                     },
                 });
             });

@@ -19,6 +19,7 @@
             userName: 'name',
             userRole: 'role',
             section: 'membersSection',
+            {{-- section: 'disciplinesSection', --}}
         }"
         class="grid size-full grid-rows-[auto_auto_1fr] gap-regular *:w-full"
     >
@@ -334,26 +335,6 @@
                     <h2 class="flex-1 text-xl font-medium text-secondary">
                         {{ $schoolClass->etec->name }}
                     </h2>
-                    <div
-                        class="hidden gap-small *:relative *:flex *:items-center *:justify-center *:p-small *:text-secondary *:hover:text-accent"
-                    >
-                        <span class="group/tooltip">
-                            <x-lucide-graduation-cap />
-                            <x-tooltip> Curso: {{ $schoolClass->course->name }} </x-tooltip>
-                        </span>
-                        <span class="group/tooltip">
-                            <x-lucide-alarm-clock />
-                            <x-tooltip> Período: {{ $schoolClass->shift->name }} </x-tooltip>
-                        </span>
-                        <span class="group/tooltip">
-                            <x-lucide-calendar-fold />
-                            <x-tooltip> {{ $schoolClass->grade->name }} </x-tooltip>
-                        </span>
-                        <span class="group/tooltip">
-                            <x-lucide-university />
-                            <x-tooltip> {{ $schoolClass->etec->name }} </x-tooltip>
-                        </span>
-                    </div>
                 </div>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador)
                     <div class="flex items-start gap-small">
@@ -380,7 +361,7 @@
                 @endphp
                 <button
                     @click="section = 'disciplinesSection'"
-                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-accent"
+                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-(--color-school-class)"
                 >
                     <x-lucide-book-marked class="size-4" />
                     Disciplinas {{ $disciplinesCount }}
@@ -388,7 +369,7 @@
                 <span class="size-1 rounded-full bg-secondary"></span>
                 <button
                     @click="section = 'membersSection'"
-                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-accent"
+                    class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-(--color-school-class)"
                 >
                     <x-lucide-users class="size-4" />
                     Membros {{ $usersCount }}
@@ -397,36 +378,61 @@
         </x-card>
         <x-card class="flex flex-col gap-regular">
             <div
-                class="flex gap-regular border-b border-b-border pb-regular *:flex *:flex-1 *:gap-small *:rounded-regular *:p-regular *:text-center *:font-semibold *:uppercase"
+                class="flex gap-regular *:flex *:flex-1 *:gap-small *:rounded-t-regular *:border-b-4 *:p-regular *:text-center *:font-semibold *:uppercase *:hover:bg-bg-tertiary-hover"
             >
                 <button
                     @click="section = 'disciplinesSection'"
                     :class="section == 'disciplinesSection'
-                        ? 'bg-(--color-school-class) text-text-white'
-                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                        ? 'border-b-(--color-school-class) text-text'
+                        : 'border-b-border text-secondary'"
+                    class="transition-colors duration-200"
                 >
-                    <x-lucide-book-marked />
+                    <x-lucide-book-marked
+                        x-bind:class="
+                            section == 'disciplinesSection'
+                                ? 'text-(--color-school-class)'
+                                : 'text-secondary'
+                        "
+                        class="transition-colors duration-200"
+                    />
                     Disciplinas
                 </button>
                 <button
                     @click="section = 'membersSection'"
                     :class="section == 'membersSection'
-                        ? 'bg-(--color-school-class) text-text-white'
-                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                        ? 'border-b-(--color-school-class) text-text'
+                        : 'border-b-border text-secondary'"
+                    class="transition-colors duration-200"
                 >
-                    <x-lucide-users />
+                    <x-lucide-users
+                        x-bind:class="
+                            section == 'membersSection'
+                                ? 'text-(--color-school-class)'
+                                : 'text-secondary'
+                        "
+                        class="transition-colors duration-200"
+                    />
                     Membros
                 </button>
                 <button
                     @click="section = 'announcementSection'"
                     :class="section == 'announcementSection'
-                        ? 'bg-(--color-school-class) text-text-white'
-                        : 'bg-bg-primary text-text hover:bg-bg-primary-hover'"
+                        ? 'border-b-(--color-school-class) text-text'
+                        : 'border-b-border text-secondary'"
+                    class="transition-colors duration-200"
                 >
-                    <x-lucide-message-square-text />
+                    <x-lucide-message-square-text
+                        x-bind:class="
+                            section == 'announcementSection'
+                                ? 'text-(--color-school-class)'
+                                : 'text-secondary'
+                        "
+                        class="transition-colors duration-200"
+                    />
                     Comunicados
                 </button>
             </div>
+            @include ('school-classes.partials.show-disciplines')
             @include ('school-classes.partials.show-members')
         </x-card>
     </div>

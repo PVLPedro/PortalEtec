@@ -23,7 +23,7 @@ class SchoolClassController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
-            ->with(['course', 'grade', 'shift', 'color', 'icon'])
+            ->with(['course', 'grade', 'shift', 'color'])
             ->withCount('users')
             ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
             ->orderBy('grades.name')
@@ -36,7 +36,6 @@ class SchoolClassController extends Controller
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
             'colors' => Color::all(),
-            'icons' => Icon::all(),
         ]);
     }
 
@@ -65,7 +64,6 @@ class SchoolClassController extends Controller
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
             'color_id' => ['required', 'exists:colors,id'],
-            'icon_id' => ['required', 'exists:icons,id'],
             'usuarios' => ['sometimes', 'array'],
             'usuarios.*' => ['exists:users,id'],
         ]);
@@ -77,7 +75,6 @@ class SchoolClassController extends Controller
             'grade_id' => $validated['grade_id'],
             'shift_id' => $validated['shift_id'],
             'color_id' => $validated['color_id'],
-            'icon_id' => $validated['icon_id'],
             'etec_id' => $etecIds->first(),
         ]);
 
@@ -92,7 +89,7 @@ class SchoolClassController extends Controller
     {
         $this->authorizeClass($schoolClass);
 
-        $schoolClass->load(['users', 'course', 'grade', 'shift', 'icon']);
+        $schoolClass->load(['users', 'course', 'grade', 'shift']);
 
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
@@ -127,7 +124,6 @@ class SchoolClassController extends Controller
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
             'color_id' => ['required', 'exists:colors,id'],
-            'icon_id' => ['required', 'exists:icons,id'],
         ]);
 
         $schoolClass->update($validated);

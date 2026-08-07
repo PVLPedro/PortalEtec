@@ -22,11 +22,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             EtecSeeder::class,
             UserSeeder::class,
+            IconSeeder::class,
             CourseSeeder::class,
             GradeSeeder::class,
             ShiftSeeder::class,
             ColorSeeder::class,
-            IconSeeder::class,
         ]);
     }
 }

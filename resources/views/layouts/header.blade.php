@@ -38,7 +38,7 @@
                             event.preventDefault();
                             this.closest('form').submit();
                         "
-                        class="text-red"
+                        class="text-danger"
                     >
                         <x-lucide-log-out />
                         <span>Desconectar-se</span>

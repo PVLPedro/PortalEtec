@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('initialism', 6)->nullable();
             $table->string('name', 100);
+            $table->foreignId('icon_id')->constrained('icons')->cascadeOnDelete();
             $table->timestamps();
         });
     }

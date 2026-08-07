@@ -13,17 +13,17 @@
     <div class="flex w-full flex-col items-start gap-smaller">
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <x-slot name="icon">
-                <x-lucide-layout-dashboard class="shrink-0"></x-lucide-layout-dashboard>
+                <x-lucide-layout-dashboard class="mr-0.5 shrink-0" />
             </x-slot>
             <span class="grow"> Visão Geral </span>
         </x-nav-link>
 
         <x-nav-link
             :href="route('school-classes.index')"
-            :active="request()->routeIs('school-classes.index')"
+            :active="request()->routeIs('school-classes.*')"
         >
             <x-slot name="icon">
-                <x-lucide-graduation-cap class="shrink-0"></x-lucide-graduation-cap>
+                <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
             </x-slot>
             <span class="grow"> Turmas </span>
         </x-nav-link>
@@ -31,7 +31,7 @@
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
             <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                 <x-slot name="icon">
-                    <x-lucide-file-text class="shrink-0"></x-lucide-file-text>
+                    <x-lucide-file-text class="mr-0.5 shrink-0" />
                 </x-slot>
                 <span class="grow"> Usuários </span>
             </x-nav-link>

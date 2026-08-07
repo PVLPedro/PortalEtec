@@ -16,7 +16,7 @@
     />
 </head>
 <body
-    class="grid h-dvh grid-rows-[auto_auto_1fr] gap-small bg-bg-primary p-small text-text md:grid-cols-[auto_1fr] md:grid-rows-[auto_1fr] md:gap-regular md:p-regular"
+    class="grid h-dvh grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-regular bg-bg-primary p-regular text-text"
 >
     @include ('layouts.header')
 
@@ -28,7 +28,7 @@
 
     <!-- Page Content -->
     <main
-        class="grid h-full scrollbar-gutter-both grid-cols-1 gap-regular overflow-y-auto rounded-large border border-border bg-bg-secondary px-regular py-larger"
+        class="grid h-full scrollbar-gutter-both grid-cols-1 gap-regular overflow-auto rounded-large border border-border bg-bg-secondary p-regular *:*:w-full *:w-full *:max-w-8xl *:justify-self-center"
     >
         {{ $slot }}
     </main>

@@ -1,4 +1,10 @@
-<div x-show="section == 'membersSection'" class="flex flex-col gap-regular">
+<div
+    x-show="section == 'membersSection'"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-end="opacity-100 scale-100"
+    class="flex flex-col gap-regular justify-self-start"
+>
     <div class="flex items-center gap-regular">
         <h2 class="flex-1 text-lg font-semibold">Membros da Turma</h2>
     </div>
@@ -6,17 +12,20 @@
         <div
             class="flex flex-1 items-center justify-start gap-small rounded-small border border-border bg-bg-secondary p-small text-base text-text"
         >
-            <x-lucide-user-search />
+            <label for="member-search">
+                <x-lucide-user-search />
+            </label>
             <input
                 placeholder="Pesquisar Membro (Nome, Cargo ou Email)"
                 type="text"
-                class="flex-1 outline-0"
+                class="flex-1 border-b-2 border-b-transparent text-text outline-0 placeholder:text-secondary focus:border-b-(--color-school-class)"
+                id="member-search"
             />
         </div>
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
             <x-primary-link href="" class="bg-accent text-text-white hover:bg-accent-hover">
                 <x-lucide-user-plus />
-                <span>Adicionar Usuários</span>
+                <span>Adicionar Membros</span>
             </x-primary-link>
         @endif
     </div>
@@ -124,7 +133,7 @@
             @endif
         </div>
         <div class="col-span-full grid grid-cols-subgrid bg-(--color-school-class-bg)">
-            <span class="col-span-2 flex flex-col justify-center p-large">
+            <span class="col-start-2 flex flex-col justify-center p-large">
                 <x-card-text>
                     <x-slot name="primary">
                         Nome
@@ -139,13 +148,15 @@
         </div>
 
         @forelse ($schoolClass->users as $usuario)
-            <div class="col-span-full grid grid-cols-subgrid border-t border-t-border">
+            <div
+                class="col-span-full grid grid-cols-subgrid gap-smaller border-t border-t-border p-smaller"
+            >
                 <label
                     for="{{ "user-checkbox" . $usuario->id }}"
-                    class="relative flex items-center justify-center overflow-hidden"
+                    class="relative flex h-16 items-center justify-center overflow-hidden transition-all"
                     :class="selectionMode
-                        ? 'w-auto opacity-100 p-large border-r border-r-border'
-                        : 'w-0 opacity-0 p-0 border-0'"
+                        ? 'w-16 opacity-100 border-r border-r-border'
+                        : 'w-0 opacity-0 border-0'"
                 >
                     @if ($usuario->role !== \App\Enums\Role::Coordenador)
                         <input
@@ -164,10 +175,10 @@
                 <div class="group contents">
                     <label
                         for="{{ "user-checkbox" . $usuario->id }}"
-                        class="flex flex-col justify-center rounded-l-regular p-large"
+                        class="flex flex-col justify-center rounded-regular p-regular"
                         @if ($usuario->role->value != 'coordenador')
                             :class="selectionMode &&
-                            'group-hover:bg-bg-secondary-hover hover:cursor-pointer'"
+                            'hover:bg-bg-secondary-hover hover:cursor-pointer'"
                         @endif
                     >
                         <x-card-text>
@@ -181,35 +192,39 @@
                             </x-slot>
                         </x-card-text>
                     </label>
+                    @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                        <a
+                            href="{{ route('users.edit', $usuario) }}"
+                            class="group/tooltip relative flex items-center justify-center rounded-regular font-semibold text-border uppercase group-hover:text-accent hover:bg-bg-secondary-hover"
+                        >
+                            <span class="flex size-16 items-center justify-center">
+                                <x-lucide-square-pen class="size-5" />
+                                <x-tooltip> Editar </x-tooltip>
+                            </span>
+                        </a>
+                        <span
+                            class="group/tooltip items-cen ter relative flex justify-center rounded-regular font-semibold text-border uppercase group-hover:text-danger hover:bg-bg-secondary-hover"
+                            @click="userToRemove = {{ $usuario->id }}; userNameToRemove = '{{ $usuario->name }}'; confirmUserRemove = true"
+                        >
+                            <span class="flex size-16 items-center justify-center">
+                                <x-lucide-user-minus class="size-5" />
+                                <x-tooltip> Remover </x-tooltip>
+                            </span>
+                        </span>
+                    @endif
                 </div>
-                @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                    <a
-                        href="{{ route('users.edit', $usuario) }}"
-                        class="group/tooltip relative flex items-center justify-center rounded-regular p-large font-semibold uppercase hover:bg-bg-secondary-hover"
-                    >
-                        <x-lucide-square-pen class="size-5" />
-                        <x-tooltip> Editar </x-tooltip>
-                    </a>
-                    <span
-                        class="group/tooltip relative flex items-center justify-center rounded-regular p-large font-semibold text-danger uppercase hover:bg-bg-secondary-hover"
-                        @click="userToRemove = {{ $usuario->id }}; userNameToRemove = '{{ $usuario->name }}'; confirmUserRemove = true"
-                    >
-                        <x-lucide-user-minus class="size-5" />
-                        <x-tooltip> Remover </x-tooltip>
-                    </span>
-                @endif
             </div>
         @empty
             <div class="col-span-full flex items-center gap-regular p-regular">
-                <p class="text-secondary">Nenhum usuário na turma ainda.</p>
-                <x-form-link href="">
-                    Adicionar usuários
-                    <x-slot name="icon">
-                        <x-lucide-square-arrow-out-up-right
-                            class="size-4 stroke-3"
-                        ></x-lucide-square-arrow-out-up-right>
-                    </x-slot>
-                </x-form-link>
+                <p class="text-secondary">Nenhum Membro na Turma ainda.</p>
+                @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                    <x-form-link href="">
+                        Adicionar Membros
+                        <x-slot name="icon">
+                            <x-lucide-square-arrow-out-up-right class="size-4 stroke-3" />
+                        </x-slot>
+                    </x-form-link>
+                @endif
             </div>
         @endforelse
     </div>
