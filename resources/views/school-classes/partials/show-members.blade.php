@@ -28,7 +28,7 @@
         },
     }"
     x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100"
     class="flex flex-col gap-regular"
 >
@@ -163,7 +163,7 @@
                 <div class="col-span-full flex items-center justify-start gap-smaller p-large">
                     <x-primary-button
                         type="button"
-                        class="flex items-center gap-small rounded-small p-small"
+                        class=""
                         x-bind:class="
                             selectionMode
                                 ? 'bg-accent text-text-white hover:bg-accent-hover'
