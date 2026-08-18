@@ -9,6 +9,8 @@ use App\Models\SchoolClass;
 use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Shift;
+use App\Models\Side;
+use App\Models\UserStudent;
 use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +79,19 @@ class UserManagementController extends Controller
     {
         $this->authorize('manage', $user);
 
-        return view('users.edit', compact('user'));
+        $schoolClass = $user->isStudent()
+            ? SchoolClass::whereHas('users', fn($q) => $q->where('users.id', $user->id))->first()
+            : null;
+
+        return view('users.edit', [
+            'user' => $user,
+            'sides' => Side::all(),
+            'userStudent' => $schoolClass
+                ? UserStudent::where('user_id', $user->id)
+                    ->where('id_class', $schoolClass->id)
+                    ->first()
+                : null,
+        ]);
     }
 
     public function update(Request $request, User $user)
@@ -86,9 +100,35 @@ class UserManagementController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:aluno,professor,coordenador'],
+            'id_side' => ['nullable', 'exists:side,id_side'],
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+        ]);
+
+        if ($user->isStudent()) {
+            $schoolClass = SchoolClass::whereHas(
+                'users',
+                fn($q) => $q->where('users.id', $user->id),
+            )->first();
+
+            if ($schoolClass) {
+                $existing = UserStudent::where('user_id', $user->id)
+                    ->where('id_class', $schoolClass->id)
+                    ->first();
+
+                UserStudent::updateOrCreate(
+                    ['user_id' => $user->id, 'id_class' => $schoolClass->id],
+                    [
+                        'id_side' => $validated['id_side'] ?? null,
+                        'rm' => $existing->rm ?? 0,
+                    ],
+                );
+            }
+        }
 
         return redirect()->route('users.index')->with('status', 'User updated!');
     }

@@ -28,6 +28,31 @@
                     />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
 
+                    @if ($user->isStudent())
+                        <x-input-label for="id_side" value="Lado" class="mt-4" />
+                        <select
+                            id="id_side"
+                            name="id_side"
+                            class="mt-1 block w-full rounded-md border-gray-300"
+                        >
+                            <option
+                                value=""
+                                @selected (old('id_side', optional($userStudent)->id_side) === null)
+                            >
+                                Não definido
+                            </option>
+                            @foreach ($sides as $side)
+                                <option
+                                    value="{{ $side->id_side }}"
+                                    @selected ((int) old('id_side', optional($userStudent)->id_side) === $side->id_side)
+                                >
+                                    {{ $side->side_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('id_side')" class="mt-2" />
+                    @endif
+
                     <x-primary-button class="mt-6">{{ __('users.edit.submit') }}</x-primary-button>
                 </form>
 

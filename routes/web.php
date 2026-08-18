@@ -36,6 +36,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
             'school-classes.store',
         );
+        Route::patch('/turmas/{schoolClass}/usuarios/{user}/side', [
+            SchoolClassController::class,
+            'updateSide',
+        ])->name('school-classes.update-side');
     });
 
     Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(

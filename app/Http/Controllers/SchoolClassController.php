@@ -8,6 +8,8 @@ use App\Models\Etec;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
+use App\Models\Side;
+use App\Models\UserStudent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +46,7 @@ class SchoolClassController extends Controller
             'shifts' => Shift::all(),
         ]);
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -65,11 +68,16 @@ class SchoolClassController extends Controller
 
         $schoolClass->load('users', 'course', 'grade', 'shift');
 
+        // Registros de user_students dessa turma, indexados por user_id
+        $studentSides = UserStudent::where('id_class', $schoolClass->id)->get()->keyBy('user_id');
+
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'sides' => Side::all(),
+            'studentSides' => $studentSides,
         ]);
     }
 
@@ -118,6 +126,29 @@ class SchoolClassController extends Controller
         $schoolClass->users()->detach($user->id);
 
         return back()->with('status', 'Usuário removido da turma!');
+    }
+
+    public function updateSide(Request $request, SchoolClass $schoolClass, User $user)
+    {
+        $this->authorizeClass($schoolClass);
+
+        $validated = $request->validate([
+            'id_side' => ['nullable', 'exists:side,id_side'],
+        ]);
+
+        $existing = UserStudent::where('user_id', $user->id)
+            ->where('id_class', $schoolClass->id)
+            ->first();
+
+        UserStudent::updateOrCreate(
+            ['user_id' => $user->id, 'id_class' => $schoolClass->id],
+            [
+                'id_side' => $validated['id_side'],
+                'rm' => $existing->rm ?? 0,
+            ],
+        );
+
+        return back()->with('status', 'Turma atualizada!');
     }
 
     private function authorizeClass(SchoolClass $schoolClass): void
