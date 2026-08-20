@@ -285,6 +285,10 @@
  * Estilização global do Choices.js usando as variáveis do tema Tailwind.
  */
 
+.choices {
+    box-shadow: var(--shadow-md) !important;
+}
+
 .choices * {
     font-size: var(--text-base) !important;
 }
@@ -298,6 +302,7 @@
     font-family: var(--font-poppins) !important;
     color: var(--color-text) !important;
     font-size: var(--text-base) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 .choices__input {
@@ -317,9 +322,9 @@
     border-color: var(--color-accent) !important;
 }
 
-.choices.is-focused .choices__list--dropdown {
-    box-shadow: 2px 2px 4px 0 var(--color-border);
-}
+/* .choices.is-focused .choices__list--dropdown {
+
+} */
 
 /* Item selecionado (modo single-select) */
 .choices__list--single .choices__item {
@@ -361,4 +366,33 @@
 .choices__icon svg {
     width: 24px;
     height: 24px;
+}
+
+.choices__list--multiple .choices__item {
+    background-color: var(--color-accent-bg) !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-text) !important;
+    border-radius: var(--radius-regular) !important;
+    font-size: var(--text-sm) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: var(--radius-small) !important;
+    padding: var(--spacing-small) !important;
+    margin-right: 0 !important;
+    word-break: normal !important;
+    & * {
+        flex-shrink: 0 !important;
+    }
+}
+
+.choices__button {
+    height: 100% !important;
+    width: 20px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    margin: 0 !important;
+    color: var(--color-text) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-x-icon lucide-x'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>") !important;
+    background-size: 100% !important;
 }

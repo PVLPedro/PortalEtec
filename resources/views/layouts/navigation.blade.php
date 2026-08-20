@@ -29,7 +29,7 @@
         </x-nav-link>
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 <x-slot name="icon">
                     <x-lucide-file-text class="mr-0.5 shrink-0" />
                 </x-slot>

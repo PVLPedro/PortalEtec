@@ -1,12 +1,12 @@
-<header class="t-0 sticky col-span-2 flex items-center justify-between text-text">
+<header class="t-0 sticky z-10 col-span-2 flex items-center justify-between text-text">
     <figure class="relative h-18 px-regular">
         <a href="{{ route('dashboard') }}">
             <x-application-logo class="h-full" />
         </a>
     </figure>
     <ul class="flex items-center justify-center gap-smaller p-regular">
-        <x-etec-switcher />
-        <x-theme></x-theme>
+        {{-- <x-etec-switcher /> --}}
+        <x-theme />
         <x-dropdown>
             <x-lucide-user />
             <x-slot name="trigger">

@@ -82,7 +82,7 @@
                     <div x-show="['coordenador', 'professor'].includes(role)" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec-worker') }}"
+                            value="{{ __('auth.register.label.etec_worker') }}"
                         />
                         <select multiple id="etec-worker" name="etecs[]" class="mt-1 block w-full">
                             <option value="">
@@ -97,7 +97,7 @@
                                             : ''
                                     }}
                                 >
-                                    {{ $etec->nome }}
+                                    {{ $etec->name }} ({{ $etec->code }})
                                 </option>
                             @endforeach
                         </select>
@@ -106,7 +106,7 @@
                     <div x-show="role === 'aluno'" x-cloak>
                         <x-input-label
                             for="etec_id"
-                            value="{{ __('auth.register.label.etec-student') }}"
+                            value="{{ __('auth.register.label.etec_student') }}"
                         />
                         <select multiple id="etec-student" name="etecs[]" class="mt-1 block w-full">
                             <option value="">Etec na qual estuda</option>

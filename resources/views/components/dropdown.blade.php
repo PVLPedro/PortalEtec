@@ -9,7 +9,7 @@
         class="z-50 flex items-center gap-regular rounded-regular p-regular text-lg font-medium hover:bg-bg-primary-hover"
         @click="openDropdown = !openDropdown"
     >
-        <x-lucide-user class="size-8"></x-lucide-user>
+        <x-lucide-user class="size-8" />
         {{ $trigger }}
     </div>
 
@@ -21,7 +21,7 @@
         x-transition:leave="transition ease-in duration-75"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute right-0 bottom-0 z-50 flex translate-y-[calc(100%+var(--spacing-small))] flex-col items-start justify-center gap-smaller rounded-md border border-border bg-bg-secondary shadow-md"
+        class="absolute right-0 bottom-0 z-50 flex translate-y-[calc(100%+var(--spacing-small))] translate-z-2 flex-col items-start justify-center gap-smaller rounded-md border border-border bg-bg-secondary shadow-md"
         style="display: none"
         @click="openDropdown = false"
     >

@@ -74,18 +74,6 @@
                     type="button"
                     class="rounded-small px-small py-smaller font-semibold"
                     x-bind:class="
-                        perPage === 5
-                            ? 'bg-(--color-school-class) text-text-white'
-                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
-                    "
-                    @click="setPerPage(5)"
-                >
-                    5
-                </button>
-                <button
-                    type="button"
-                    class="rounded-small px-small py-smaller font-semibold"
-                    x-bind:class="
                         perPage === 10
                             ? 'bg-(--color-school-class) text-text-white'
                             : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
@@ -93,18 +81,6 @@
                     @click="setPerPage(10)"
                 >
                     10
-                </button>
-                <button
-                    type="button"
-                    class="rounded-small px-small py-smaller font-semibold"
-                    x-bind:class="
-                        perPage === 15
-                            ? 'bg-(--color-school-class) text-text-white'
-                            : 'bg-bg-primary text-text hover:bg-bg-primary-hover'
-                    "
-                    @click="setPerPage(15)"
-                >
-                    15
                 </button>
                 <button
                     type="button"
