@@ -28,8 +28,8 @@ return new class extends Migration {
             // FK para class.id_class
             $table
                 ->foreign('id_class')
-                ->references('id_class')
-                ->on('class')
+                ->references('id')
+                ->on('school_classes')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
         });

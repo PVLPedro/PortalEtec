@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
             SchoolClassController::class,
             'removeUser',
         ])->name('school-classes.remove-user');
+        Route::patch('/turmas/{schoolClass}/usuarios/{user}/lado', [
+            SchoolClassController::class,
+            'updateSide',
+        ])->name('school-classes.update-side');
     });
 
     Route::middleware('role:coordenador')->group(function () {

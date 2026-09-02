@@ -127,20 +127,113 @@
                         <tr>
                             <th class="p-3">Nome</th>
                             <th class="p-3">Cargo</th>
+                            <th class="p-3">Lado</th>
                             <th class="p-3"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($schoolClass->users as $usuario)
+                        @forelse ($schoolClass->teachers as $professor)
+                        <tr class="border-b">
+                            <td class="p-3">{{ $professor->name }}</td>
+                            <td class="p-3">{{ $professor->role->value }}</td>
+                            <td class="p-3"></td>
+                            <td class="p-3 text-right">
+                                @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
+                                    auth()->user()->role === \App\Enums\Role::Professor)
+                                    <form
+                                        method="POST"
+                                        action="{{ route('school-classes.remove-user', [$schoolClass, $professor]) }}"
+                                        x-data="{ confirmando: false }"
+                                        @submit="
+                                            if (!confirmando) {
+                                                $event.preventDefault();
+                                                confirmando = true;
+                                            }
+                                        "
+                                        class="flex items-center justify-end gap-2"
+                                    >
+                                        @csrf
+                                        @method ('DELETE')
+
+                                        <template x-if="!confirmando">
+                                            <button
+                                                type="submit"
+                                                class="text-sm text-red-600 underline"
+                                            >
+                                                Remover
+                                            </button>
+                                        </template>
+
+                                        <div
+                                            x-show="confirmando"
+                                            x-cloak
+                                            class="flex items-center gap-2"
+                                        >
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                placeholder="Sua senha"
+                                                class="w-32 rounded-md border-gray-300 text-sm"
+                                                required
+                                            />
+                                            <button
+                                                type="submit"
+                                                class="text-sm font-semibold text-red-600 underline"
+                                            >
+                                                Confirmar
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="confirmando = false"
+                                                class="text-sm underline"
+                                            >
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+
+                        @forelse ($schoolClass->students as $matricula)
                             <tr class="border-b">
-                                <td class="p-3">{{ $usuario->name }}</td>
-                                <td class="p-3">{{ $usuario->role->value }}</td>
+                                <td class="p-3">{{ $matricula->user->name }}</td>
+                                <td class="p-3">{{ $matricula->user->role->value }}</td>
+                                <td class="p-3">
+                                    <form
+                                        method="POST"
+                                        action="{{ route('school-classes.update-side', [$schoolClass, $matricula->user]) }}"
+                                        x-data
+                                        @change="$el.submit()"
+                                    >
+                                        @csrf
+                                        @method ('PATCH')
+
+                                        <select
+                                            name="id_side"
+                                            class="rounded-md border-gray-300 text-sm"
+                                        >
+                                            <option value="" @selected (!$matricula->id_side)>
+                                                Não definido
+                                            </option>
+                                            @foreach ($sides as $side)
+                                                <option
+                                                    value="{{ $side->id_side }}"
+                                                    @selected ($matricula->id_side === $side->id_side)
+                                                >
+                                                    {{ $side->side_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                </td>
                                 <td class="p-3 text-right">
                                     @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                                         auth()->user()->role === \App\Enums\Role::Professor)
                                         <form
                                             method="POST"
-                                            action="{{ route('school-classes.remove-user', [$schoolClass, $usuario]) }}"
+                                            action="{{ route('school-classes.remove-user', [$schoolClass, $matricula->user]) }}"
                                             x-data="{ confirmando: false }"
                                             @submit="
                                                 if (!confirmando) {
@@ -193,11 +286,13 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td class="p-3 text-gray-500" colspan="3">
-                                    Nenhum membro nesta turma ainda.
-                                </td>
-                            </tr>
+                            @if ($schoolClass->teachers->isEmpty())
+                                <tr>
+                                    <td class="p-3 text-gray-500" colspan="4">
+                                        Nenhum membro nesta turma ainda.
+                                    </td>
+                                </tr>
+                            @endif
                         @endforelse
                     </tbody>
                 </table>

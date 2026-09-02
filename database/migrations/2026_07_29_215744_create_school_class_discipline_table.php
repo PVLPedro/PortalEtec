@@ -5,31 +5,21 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
-            $table->unsignedInteger('id_side')->nullable()->after('id_teacher');
+        Schema::create('school_class_discipline', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('school_class_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('discipline_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('id_teacher')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
 
-            $table
-                ->foreign('id_side')
-                ->references('id_side')
-                ->on('side')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+            $table->unique(['school_class_id', 'discipline_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
-            $table->dropForeign(['id_side']);
-            $table->dropColumn('id_side');
-        });
+        Schema::dropIfExists('school_class_discipline');
     }
 };
