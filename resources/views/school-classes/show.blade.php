@@ -431,9 +431,9 @@
                     />
                     Comunicados
                 </button>
-            </div>
-            @include ('school-classes.partials.show-disciplines')
-            @include ('school-classes.partials.show-members')
+
+                @include ('school-classes.partials.show-disciplines')
+                @include ('school-classes.partials.show-members')
         </x-card>
     </div>
 

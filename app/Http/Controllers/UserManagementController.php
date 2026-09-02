@@ -9,6 +9,8 @@ use App\Models\SchoolClass;
 use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Shift;
+use App\Models\Side;
+use App\Models\UserStudent;
 use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,24 +53,39 @@ class UserManagementController extends Controller
             })
             ->when(
                 $request->school_class_id,
-                fn($q) => $q->whereHas(
-                    'schoolClasses',
-                    fn($sub) => $sub->where('school_classes.id', $request->school_class_id),
-                ),
+                fn($q) => $q->where(function ($sub) use ($request) {
+                    $sub->whereHas(
+                        'student',
+                        fn($s) => $s->where('id_class', $request->school_class_id),
+                    )->orWhereHas(
+                        'teachingClasses',
+                        fn($t) => $t->where('school_classes.id', $request->school_class_id),
+                    );
+                }),
             )
             ->when(
                 $request->grade_id,
-                fn($q) => $q->whereHas(
-                    'schoolClasses',
-                    fn($sub) => $sub->where('grade_id', $request->grade_id),
-                ),
+                fn($q) => $q->where(function ($sub) use ($request) {
+                    $sub->whereHas(
+                        'student.schoolClass',
+                        fn($s) => $s->where('grade_id', $request->grade_id),
+                    )->orWhereHas(
+                        'teachingClasses',
+                        fn($t) => $t->where('grade_id', $request->grade_id),
+                    );
+                }),
             )
             ->when(
                 $request->course_id,
-                fn($q) => $q->whereHas(
-                    'schoolClasses',
-                    fn($sub) => $sub->where('course_id', $request->course_id),
-                ),
+                fn($q) => $q->where(function ($sub) use ($request) {
+                    $sub->whereHas(
+                        'student.schoolClass',
+                        fn($s) => $s->where('course_id', $request->course_id),
+                    )->orWhereHas(
+                        'teachingClasses',
+                        fn($t) => $t->where('course_id', $request->course_id),
+                    );
+                }),
             )
             ->get();
     }
@@ -77,7 +94,15 @@ class UserManagementController extends Controller
     {
         $this->authorize('manage', $user);
 
-        return view('users.edit', compact('user'));
+        $userStudent = $user->isStudent()
+            ? UserStudent::where('user_id', $user->id)->first()
+            : null;
+
+        return view('users.edit', [
+            'user' => $user,
+            'sides' => Side::all(),
+            'userStudent' => $userStudent,
+        ]);
     }
 
     public function update(Request $request, User $user)
@@ -86,9 +111,22 @@ class UserManagementController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:aluno,professor,coordenador'],
+            'id_side' => ['nullable', 'exists:side,id_side'],
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+        ]);
+
+        if ($user->isStudent()) {
+            $userStudent = UserStudent::where('user_id', $user->id)->first();
+
+            if ($userStudent) {
+                $userStudent->update(['id_side' => $validated['id_side'] ?? null]);
+            }
+        }
 
         return redirect()->route('users.index')->with('status', 'User updated!');
     }
@@ -98,7 +136,28 @@ class UserManagementController extends Controller
         abort_if($user->role === Role::Coordenador, 403);
 
         $request->validate([
-            'school_class_id' => ['required', 'exists:school_classes,id'],
+            'usuarios' => ['required', 'array', 'min:1'],
+            'usuarios.*' => ['exists:users,id'],
+            'school_class_id' => [
+                'required_without:nova_turma.course_id',
+                'nullable',
+                'exists:school_classes,id',
+            ],
+            'nova_turma.course_id' => [
+                'required_without:school_class_id',
+                'nullable',
+                'exists:courses,id',
+            ],
+            'nova_turma.grade_id' => [
+                'required_with:nova_turma.course_id',
+                'nullable',
+                'exists:grades,id',
+            ],
+            'nova_turma.shift_id' => [
+                'required_with:nova_turma.course_id',
+                'nullable',
+                'exists:shifts,id',
+            ],
         ]);
 
         $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
@@ -118,7 +177,27 @@ class UserManagementController extends Controller
 
         $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
 
-        $schoolClass->users()->syncWithoutDetaching($request->usuarios);
+        $usuarios = User::whereIn('id', $request->usuarios)->get();
+
+        $professorIds = $usuarios->filter(fn($u) => $u->isTeacher())->pluck('id');
+        $alunoIds = $usuarios->filter(fn($u) => $u->isStudent())->pluck('id');
+
+        if ($professorIds->isNotEmpty()) {
+            $schoolClass->teachers()->syncWithoutDetaching($professorIds);
+        }
+
+        foreach ($alunoIds as $alunoId) {
+            $existing = UserStudent::where('user_id', $alunoId)->first();
+
+            UserStudent::updateOrCreate(
+                ['user_id' => $alunoId],
+                [
+                    'id_class' => $schoolClass->id,
+                    'rm' => $existing->rm ?? 0,
+                    'id_side' => $existing->id_side ?? null,
+                ],
+            );
+        }
 
         return back()->with('status', 'Usuários adicionados à turma!');
     }
@@ -158,10 +237,6 @@ class UserManagementController extends Controller
         return redirect()->route('users.index')->with('status', 'Users removed!');
     }
 
-    /**
-     * Confirms the logged-in coordinator's password and ensures no
-     * coordinator is among the users being deleted.
-     */
     private function authorizeDeletion(Request $request, array $ids): void
     {
         $request->validate(

@@ -5,12 +5,14 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Enums\Role;
 use App\Models\Etec;
+use App\Models\UserStudent;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        $etec = Etec::first();
         $firstEtec = Etec::first();
         $camargoEtec = Etec::where('code', 12)->first();
         $belemEtec = Etec::where('code', 220)->first();
@@ -45,65 +47,23 @@ class UserSeeder extends Seeder
             ->etecs()
             ->attach($camargoEtec->id, ['rm' => '3333333']);
 
-        User::factory()
-            ->create([
-                'name' => 'Yuji',
-                'email' => 'yuji@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($camargoEtec->id, ['rm' => '4444444']);
+        $yuji = User::factory()->create([
+            'name' => 'Yuji',
+            'email' => 'yuji@aluno.cps.sp.gov.br',
+            'password' => 'password',
+            'role' => Role::Aluno,
+        ]);
+        $yuji->etecs()->attach($etec->id, ['role' => Role::Aluno->value]);
+        UserStudent::create(['user_id' => $yuji->id, 'rm' => 1234567]);
 
-        User::factory()
-            ->create([
-                'name' => 'Samuel',
-                'email' => 'samuel@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($camargoEtec->id, ['rm' => '5555555']);
-
-        User::factory()
-            ->create([
-                'name' => 'Gustavo Rafael',
-                'email' => 'gustavo.rafael@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($belemEtec->id, ['rm' => '6666666']);
-
-        User::factory()
-            ->create([
-                'name' => 'Yasmim',
-                'email' => 'yasmim@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($belemEtec->id, ['rm' => '7777777']);
-
-        User::factory()
-            ->create([
-                'name' => 'Carolina',
-                'email' => 'carolina@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($belemEtec->id, ['rm' => '8888888']);
-
-        User::factory()
-            ->create([
-                'name' => 'Eduardo',
-                'email' => 'eduardo@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($belemEtec->id, ['rm' => '9999999']);
+        $samuel = User::factory()->create([
+            'name' => 'samuelgato',
+            'email' => 'samuelgato@aluno.cps.sp.gov.br',
+            'password' => 'password',
+            'role' => Role::Aluno,
+        ]);
+        $samuel->etecs()->attach($etec->id, ['role' => Role::Aluno->value]);
+        UserStudent::create(['user_id' => $samuel->id, 'rm' => 1234568]);
 
         User::factory()
             ->create([
@@ -113,7 +73,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Professor,
             ])
             ->etecs()
-            ->attach($camargoEtec->id);
+            ->attach($etec->id, ['role' => Role::Professor->value]);
 
         User::factory()
             ->create([
@@ -123,7 +83,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($camargoEtec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
 
         User::factory()
             ->create([
@@ -133,7 +93,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($camargoEtec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
 
         User::factory()
             ->create([
@@ -143,6 +103,6 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($belemEtec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
     }
 }

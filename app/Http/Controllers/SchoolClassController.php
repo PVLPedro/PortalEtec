@@ -9,7 +9,8 @@ use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
 use App\Models\Color;
-use App\Models\Icon;
+use App\Models\Side;
+use App\Models\UserStudent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,7 @@ class SchoolClassController extends Controller
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
             ->with(['course', 'grade', 'shift', 'color'])
-            ->withCount('users')
+            ->withCount('students')
             ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
             ->orderBy('grades.name')
             ->addSelect('school_classes.*')
@@ -89,7 +90,16 @@ class SchoolClassController extends Controller
     {
         $this->authorizeClass($schoolClass);
 
-        $schoolClass->load(['users', 'course', 'grade', 'shift']);
+        $schoolClass->load([
+            'students.user',
+            'students.side',
+            'teachers',
+            'course',
+            'grade',
+            'shift',
+        ]);
+
+        $sides = Side::all();
 
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
@@ -98,6 +108,7 @@ class SchoolClassController extends Controller
             'shifts' => Shift::all(),
             'colors' => Color::all(),
             'icons' => Icon::all(),
+            'sides' => $sides,
         ]);
     }
 
@@ -146,9 +157,32 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
         $this->requirePassword($request);
 
-        $schoolClass->users()->detach($user->id);
+        if ($user->isStudent()) {
+            UserStudent::where('user_id', $user->id)
+                ->where('id_class', $schoolClass->id)
+                ->update(['id_class' => null]);
+        } else {
+            $schoolClass->teachers()->detach($user->id);
+        }
 
         return back()->with('status', 'Usuário removido da turma!');
+    }
+
+    public function updateSide(Request $request, SchoolClass $schoolClass, User $user)
+    {
+        $this->authorizeClass($schoolClass);
+
+        $validated = $request->validate([
+            'id_side' => ['nullable', 'exists:side,id_side'],
+        ]);
+
+        $userStudent = UserStudent::where('user_id', $user->id)
+            ->where('id_class', $schoolClass->id)
+            ->firstOrFail();
+
+        $userStudent->update(['id_side' => $validated['id_side']]);
+
+        return back()->with('status', 'Turma atualizada!');
     }
 
     private function authorizeClass(SchoolClass $schoolClass): void
@@ -158,9 +192,6 @@ class SchoolClassController extends Controller
         abort_unless($etecIds->contains($schoolClass->etec_id), 403);
     }
 
-    /**
-     * Confirms the logged-in user's own password before a destructive action.
-     */
     private function requirePassword(Request $request): void
     {
         $request->validate(

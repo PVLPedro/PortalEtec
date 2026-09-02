@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
             GradeSeeder::class,
             ShiftSeeder::class,
             ColorSeeder::class,
+            DisciplineSeeder::class,
+            SideSeeder::class,
         ]);
     }
 }
