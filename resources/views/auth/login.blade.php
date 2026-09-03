@@ -5,7 +5,7 @@
     <section
         class="relative flex max-h-[90dvh] w-full max-w-120 flex-col items-center gap-large overflow-auto rounded-regular bg-bg-secondary p-large shadow-md"
     >
-        <x-theme class="fixed top-large right-large"></x-theme>
+        <x-theme class="fixed top-large right-large text-text" />
 
         <a href="/">
             <x-application-logo class="h-32 w-full fill-current" />

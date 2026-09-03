@@ -9,7 +9,6 @@
         class="z-50 flex items-center gap-regular rounded-regular p-regular text-lg font-medium hover:bg-bg-primary-hover"
         @click="openDropdown = !openDropdown"
     >
-        <x-lucide-user class="size-8" />
         {{ $trigger }}
     </div>
 

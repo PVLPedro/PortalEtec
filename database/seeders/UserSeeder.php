@@ -17,36 +17,6 @@ class UserSeeder extends Seeder
         $camargoEtec = Etec::where('code', 12)->first();
         $belemEtec = Etec::where('code', 220)->first();
 
-        User::factory()
-            ->create([
-                'name' => 'Pedro',
-                'email' => 'pedro@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($camargoEtec->id, ['rm' => '1111111']);
-
-        User::factory()
-            ->create([
-                'name' => 'Davi',
-                'email' => 'davi@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($camargoEtec->id, ['rm' => '2222222']);
-
-        User::factory()
-            ->create([
-                'name' => 'Gustavo Lopez',
-                'email' => 'gustavo.lopez@aluno.cps.sp.gov.br',
-                'password' => 'password',
-                'role' => Role::Aluno,
-            ])
-            ->etecs()
-            ->attach($camargoEtec->id, ['rm' => '3333333']);
-
         $yuji = User::factory()->create([
             'name' => 'Yuji',
             'email' => 'yuji@aluno.cps.sp.gov.br',

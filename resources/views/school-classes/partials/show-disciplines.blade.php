@@ -55,18 +55,18 @@
     <div
         class="relative grid size-full max-h-200 grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-regular"
     >
-        @forelse ($schoolClass->users as $discipline)
+        {{-- @forelse ($schoolClass->users as $discipline)
             @php
-                $discipline == null;
-                $discipline->icon_code == null;
-                if ($discipline->icon_code == null) {
-                    $discipline->icon_code = $schoolClass->icon->code;
-                }
-                $discipline->color_code == null;
-                if ($discipline->color_code == null) {
-                    $discipline->color_code = $schoolClass->color->code;
-                }
-                $discipline->name == 'Matemática';
+                // $discipline == null;
+                // $discipline->icon_code == null;
+                // if ($discipline->icon_code == null) {
+                //     $discipline->icon_code = $schoolClass->icon->code;
+                // }
+                // $discipline->color_code == null;
+                // if ($discipline->color_code == null) {
+                //     $discipline->color_code = $schoolClass->color->code;
+                // }
+                // $discipline->name == 'Matemática';
             @endphp
             <a
                 class="grid grid-cols-[auto_1fr] gap-regular rounded-regular border border-border bg-bg-secondary p-regular hover:bg-bg-secondary-hover"
@@ -94,6 +94,6 @@
                     </x-form-link>
                 @endif
             </div>
-        @endforelse
+        @endforelse --}}
     </div>
 </div>

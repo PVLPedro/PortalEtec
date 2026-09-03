@@ -349,22 +349,11 @@
                 @endif
             </div>
             <div class="flex items-center gap-small">
-                @php
-                    $disciplinesCount = 0;
-                    // foreach ($schoolClass->disciplines as $disciplina) {
-                    //     $disciplinesCount++;
-                    // }
-                    $usersCount = 0;
-                    foreach ($schoolClass->users as $usuario) {
-                        $usersCount++;
-                    }
-                @endphp
                 <button
                     @click="section = 'disciplinesSection'"
                     class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-(--color-school-class)"
                 >
                     <x-lucide-book-marked class="size-4" />
-                    Disciplinas {{ $disciplinesCount }}
                 </button>
                 <span class="size-1 rounded-full bg-secondary"></span>
                 <button
@@ -372,7 +361,6 @@
                     class="flex items-center gap-smaller text-left text-sm/tight font-medium text-secondary hover:text-(--color-school-class)"
                 >
                     <x-lucide-users class="size-4" />
-                    Membros {{ $usersCount }}
                 </button>
             </div>
         </x-card>
@@ -431,9 +419,10 @@
                     />
                     Comunicados
                 </button>
+            </div>
 
-                @include ('school-classes.partials.show-disciplines')
-                @include ('school-classes.partials.show-members')
+            @include ('school-classes.partials.show-disciplines')
+            @include ('school-classes.partials.show-members')
         </x-card>
     </div>
 

@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
 use App\Models\Color;
+use App\Models\Icon;
 use App\Models\Side;
 use App\Models\UserStudent;
 use App\Http\Controllers\Controller;

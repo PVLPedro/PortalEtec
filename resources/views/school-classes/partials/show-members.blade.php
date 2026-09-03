@@ -3,7 +3,7 @@
     x-data="{
         perPage: 10,
         currentPage: 1,
-        totalUsers: {{ $schoolClass->users->count() }},
+        totalUsers: {{ $schoolClass->students->count() + $schoolClass->teachers->count() }},
         get totalPages() {
             return Math.max(1, Math.ceil(this.totalUsers / this.perPage));
         },
@@ -132,7 +132,7 @@
     </div>
 
     <div
-        class="relative grid size-full max-h-200 grid-cols-[auto_1fr_repeat(2,auto)] rounded-regular border border-border"
+        class="relative grid size-full max-h-200 grid-cols-[auto_1fr_repeat(3,auto)] rounded-regular border border-border"
     >
         <div class="col-span-full grid grid-cols-subgrid">
             @if (auth()->user()->role === \App\Enums\Role::Coordenador)
@@ -226,24 +226,24 @@
             </span>
         </div>
 
-        @forelse ($schoolClass->users as $usuario)
+        @forelse ($schoolClass->students as $matricula)
             <div
                 class="col-span-full grid grid-cols-subgrid gap-smaller border-t border-t-border p-smaller"
                 x-show="Math.ceil({{ $loop->iteration }} / perPage) === currentPage"
             >
                 <label
-                    for="{{ "user-checkbox" . $usuario->id }}"
+                    for="{{ "user-checkbox" . $matricula->user->id }}"
                     class="relative flex h-16 items-center justify-center overflow-hidden transition-all"
                     :class="selectionMode
                         ? 'w-16 opacity-100 border-r border-r-border'
                         : 'w-0 opacity-0 border-0'"
                 >
-                    @if ($usuario->role !== \App\Enums\Role::Coordenador)
+                    @if ($matricula->user->role !== \App\Enums\Role::Coordenador)
                         <input
                             type="checkbox"
-                            id="{{ "user-checkbox" . $usuario->id }}"
+                            id="{{ "user-checkbox" . $matricula->user->id }}"
                             class="peer size-6 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
-                            value="{{ $usuario->id }}"
+                            value="{{ $matricula->user->id }}"
                             :disabled="!selectionMode"
                             x-model="selected"
                         />
@@ -254,27 +254,28 @@
                 </label>
                 <div class="group contents">
                     <label
-                        for="{{ "user-checkbox" . $usuario->id }}"
+                        for="{{ "user-checkbox" . $matricula->user->id }}"
                         class="flex flex-col justify-center rounded-regular p-regular"
-                        @if ($usuario->role->value != 'coordenador')
+                        @if ($matricula->user->role->value != 'coordenador')
                             :class="selectionMode &&
                             'hover:bg-bg-secondary-hover hover:cursor-pointer'"
                         @endif
                     >
                         <x-card-text>
                             <x-slot name="primary">
-                                {{ $usuario->name }}
+                                {{ $matricula->user->name }}
                                 <x-dot />
-                                {{ $usuario->role->value }}
+                                {{ $matricula->user->role->value }}
                             </x-slot>
                             <x-slot name="secondary">
-                                {{ $usuario->email }}
+                                {{ $matricula->user->rm }}
                             </x-slot>
                         </x-card-text>
                     </label>
                     @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                        @include ('components.side-dropdown')
                         <a
-                            href="{{ route('users.edit', $usuario) }}"
+                            href="{{ route('users.edit', $matricula->user) }}"
                             class="group/tooltip relative flex items-center justify-center rounded-regular font-semibold text-border uppercase group-hover:text-accent hover:bg-bg-secondary-hover"
                         >
                             <span class="flex size-16 items-center justify-center">
@@ -283,8 +284,8 @@
                             </span>
                         </a>
                         <span
-                            class="group/tooltip items-cen ter relative flex justify-center rounded-regular font-semibold text-border uppercase group-hover:text-danger hover:bg-bg-secondary-hover"
-                            @click="userToRemove = {{ $usuario->id }}; userNameToRemove = '{{ $usuario->name }}'; confirmUserRemove = true"
+                            class="group/tooltip relative flex items-center justify-center rounded-regular font-semibold text-border uppercase group-hover:text-danger hover:bg-bg-secondary-hover"
+                            @click="userToRemove = {{ $matricula->user->id }}; userNameToRemove = '{{ $matricula->user->name }}'; confirmUserRemove = true"
                         >
                             <span class="flex size-16 items-center justify-center">
                                 <x-lucide-user-minus class="size-5" />

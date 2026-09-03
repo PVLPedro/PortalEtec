@@ -8,8 +8,8 @@
         {{-- <x-etec-switcher /> --}}
         <x-theme />
         <x-dropdown>
-            <x-lucide-user />
             <x-slot name="trigger">
+                <x-lucide-user class="size-8" />
                 <button class="">
                     <div>{{ Auth::user()->name }}</div>
                 </button>
