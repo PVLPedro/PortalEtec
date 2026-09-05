@@ -81,7 +81,27 @@ class SchoolClassController extends Controller
         ]);
 
         if (!empty($validated['usuarios'])) {
-            $schoolClass->users()->syncWithoutDetaching($validated['usuarios']);
+            $usuarios = User::whereIn('id', $validated['usuarios'])->get();
+
+            $professorIds = $usuarios->filter(fn($u) => $u->isTeacher())->pluck('id');
+            $alunoIds = $usuarios->filter(fn($u) => $u->isStudent())->pluck('id');
+
+            if ($professorIds->isNotEmpty()) {
+                $schoolClass->teachers()->syncWithoutDetaching($professorIds);
+            }
+
+            foreach ($alunoIds as $alunoId) {
+                $existing = UserStudent::where('user_id', $alunoId)->first();
+
+                UserStudent::updateOrCreate(
+                    ['user_id' => $alunoId],
+                    [
+                        'id_class' => $schoolClass->id,
+                        'rm' => $existing->rm ?? 0,
+                        'id_side' => $existing->id_side ?? null,
+                    ],
+                );
+            }
         }
 
         return redirect()->route('school-classes.index')->with('status', 'Turma criada!');
@@ -183,7 +203,7 @@ class SchoolClassController extends Controller
 
         $userStudent->update(['id_side' => $validated['id_side']]);
 
-        return back()->with('status', 'Turma atualizada!');
+        return response()->json(['message' => 'Turma atualizada!']);
     }
 
     private function authorizeClass(SchoolClass $schoolClass): void

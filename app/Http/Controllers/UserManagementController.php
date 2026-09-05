@@ -136,8 +136,6 @@ class UserManagementController extends Controller
         abort_if($user->role === Role::Coordenador, 403);
 
         $request->validate([
-            'usuarios' => ['required', 'array', 'min:1'],
-            'usuarios.*' => ['exists:users,id'],
             'school_class_id' => [
                 'required_without:nova_turma.course_id',
                 'nullable',
@@ -162,7 +160,20 @@ class UserManagementController extends Controller
 
         $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
 
-        $schoolClass->users()->syncWithoutDetaching([$user->id]);
+        if ($user->isTeacher()) {
+            $schoolClass->teachers()->syncWithoutDetaching([$user->id]);
+        } elseif ($user->isStudent()) {
+            $existing = UserStudent::where('user_id', $user->id)->first();
+
+            UserStudent::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'id_class' => $schoolClass->id,
+                    'rm' => $existing->rm ?? 0,
+                    'id_side' => $existing->id_side ?? null,
+                ],
+            );
+        }
 
         return back()->with('status', 'Usuário adicionado à turma!');
     }
