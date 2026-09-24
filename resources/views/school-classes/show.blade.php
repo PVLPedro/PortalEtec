@@ -120,6 +120,28 @@
                                     Atualmente: {{ $schoolClass->shift->name }}
                                 </x-secondary-text>
                             </div>
+                            <div>
+                                <div>
+                                    <x-input-label for="color_id" value="Cor" class="" />
+                                    <select
+                                        id="color_id"
+                                        name="color_id"
+                                        required
+                                        class="block w-full rounded-md border-gray-300"
+                                    >
+                                        <option value="">Selecione uma cor</option>
+                                        @foreach ($colors as $color)
+                                            <option
+                                                value="{{ $color->id }}"
+                                                data-custom-properties='{"colorCode": "{{ $color->code }}"}'
+                                            >
+                                                {{ $color->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error :messages="$errors->get('color_id')" class="" />
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex justify-between">
@@ -337,14 +359,15 @@
                     </h2>
                 </div>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                    <div class="flex items-start gap-small">
-                        <x-primary-link
-                            href="{{ route('school-classes.edit', $schoolClass) }}"
-                            class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                    <div>
+                        <x-primary-button
+                            type="button"
+                            @click="editingModal = !editingModal"
+                            class="bg-bg-primary text-text hover:bg-bg-primary-hover h-auto"
                         >
                             <x-lucide-settings />
                             Opções
-                        </x-primary-link>
+                        </x-primary-button>
                     </div>
                 @endif
             </div>
