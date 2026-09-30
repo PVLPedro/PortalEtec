@@ -10,8 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
-            $table->unsignedInteger('id_side')->nullable()->after('id_teacher');
+        Schema::table('user_students', function (Blueprint $table) {
+            $table->unsignedInteger('id_side')->nullable()->after('id_class');
 
             $table
                 ->foreign('id_side')
@@ -27,7 +27,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
+        Schema::table('user_students', function (Blueprint $table) {
             $table->dropForeign(['id_side']);
             $table->dropColumn('id_side');
         });
