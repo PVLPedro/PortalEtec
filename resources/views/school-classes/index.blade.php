@@ -14,7 +14,7 @@
         </div>
         <div class="grid grid-cols-2 gap-large">
             @forelse ($schoolClasses as $schoolClass)
-                <a href="{{ route('school-classes.show', $schoolClass) }}" class="">
+                <a href="{{ route('school-class.show', $schoolClass) }}" class="">
                     <x-card
                         class="grid grid-cols-[auto_1fr] gap-regular hover:bg-bg-tertiary-hover"
                     >

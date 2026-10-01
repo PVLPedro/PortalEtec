@@ -20,8 +20,28 @@ use Illuminate\Validation\ValidationException;
 
 class SchoolClassController extends Controller
 {
+    public function mine(Request $request)
+    {
+        $schoolClass = auth()->user()->currentSchoolClass();
+
+        if (!$schoolClass) {
+            return redirect()
+                ->route('dashboard')
+                ->with('status', 'Você ainda não foi adicionado a nenhuma turma.');
+        }
+
+        return redirect()->route(
+            'school-class.show',
+            ['schoolClass' => $schoolClass] + $request->only('secao'),
+        );
+    }
+
     public function index()
     {
+        if (auth()->user()->isStudent()) {
+            return redirect()->route('school-class.mine');
+        }
+
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
@@ -188,6 +208,14 @@ class SchoolClassController extends Controller
 
     private function authorizeClass(SchoolClass $schoolClass): void
     {
+        $user = auth()->user();
+
+        if ($user->isStudent()) {
+            abort_unless((int) $user->student?->id_class === (int) $schoolClass->id, 403);
+
+            return;
+        }
+
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         abort_unless($etecIds->contains($schoolClass->etec_id), 403);

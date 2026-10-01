@@ -5,6 +5,16 @@
             --color-school-class-bg: var(--color-{{ $schoolClass->color->code }}-bg);
         }
     </style>
+    @php
+        $sections = [
+            'disciplinas' => 'disciplinesSection',
+            'atividades' => 'activitiesSection',
+            'comunicados' => 'announcementsSection',
+            'membros' => 'membersSection',
+        ];
+        $initialSection = $sections[request('secao')] ?? 'disciplinesSection';
+        $sectionSlugs = array_flip($sections);
+    @endphp
     <div
         x-data="{
             editingModal: false,
@@ -18,9 +28,19 @@
             removeSelectedModal: false,
             userName: 'name',
             userRole: 'role',
-            section: 'membersSection',
-            {{-- section: 'disciplinesSection', --}}
+            section: '{{ $initialSection }}',
+            slugToId: @js($sections),
+            idToSlug: @js($sectionSlugs),
         }"
+        x-init="
+            $watch('section', (id) => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('secao', idToSlug[id]);
+                history.replaceState(null, '', url);
+                $dispatch('section-changed', idToSlug[id]);
+            })
+        "
+        x-on:set-section.window="section = slugToId[$event.detail] ?? section"
         class="grid size-full grid-rows-[auto_auto_1fr] gap-regular *:w-full"
     >
         <div class="flex items-center gap-regular">
@@ -37,189 +57,168 @@
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
             <div class="contents" id="modals">
-                <x-backdrop
-                    x-show="editingModal"
-                    x-cloak
-                    class=""
-                    @keydown.escape.window="editingModal = false"
+                <x-app-modal
+                    name="edit-class"
+                    title="Edição da Turma"
+                    :action="route('school-classes.update', $schoolClass)"
                 >
-                    <x-form-modal
-                        method="POST"
-                        action="{{ route('school-classes.update', $schoolClass) }}"
-                        @click.outside="editingModal = false"
-                    >
-                        @csrf
-                        @method ('PUT')
+                    @csrf
+                    @method ('PUT')
 
-                        <x-close-button @click="editingModal = false" />
-
-                        <h3 class="py-smaller text-center font-semibold">Editar Turma</h3>
-
-                        <div class="space-y-regular">
-                            <div>
-                                <x-input-label for="course_id"> Curso </x-input-label>
-                                <select
-                                    name="course_id"
-                                    id="course_id"
-                                    required
-                                    class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                                >
-                                    @foreach ($courses as $course)
-                                        <option
-                                            value="{{ $course->id }}"
-                                            @selected ($course->id === $schoolClass->course_id)
-                                        >
-                                            {{ $course->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-secondary-text>
-                                    Atualmente: {{ $schoolClass->course->name }}
-                                </x-secondary-text>
-                            </div>
-                            <div>
-                                </select>
-                                <x-input-label for="grade_id"> Série </x-input-label>
-                                <select
-                                    name="grade_id"
-                                    id="grade_id"
-                                    required
-                                    class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                                >
-                                    @foreach ($grades as $grade)
-                                        <option
-                                            value="{{ $grade->id }}"
-                                            @selected ($grade->id === $schoolClass->grade_id)
-                                        >
-                                            {{ $grade->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-secondary-text>
-                                    Atualmente: {{ $schoolClass->grade->name }}
-                                </x-secondary-text>
-                            </div>
-                            <div>
-                                <x-input-label for="shift_id"> Turno </x-input-label>
-                                <select
-                                    name="shift_id"
-                                    id="shift_id"
-                                    required
-                                    class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                                >
-                                    @foreach ($shifts as $shift)
-                                        <option
-                                            value="{{ $shift->id }}"
-                                            @selected ($shift->id === $schoolClass->shift_id)
-                                        >
-                                            {{ $shift->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-secondary-text>
-                                    Atualmente: {{ $schoolClass->shift->name }}
-                                </x-secondary-text>
-                            </div>
-                            <div>
-                                <div>
-                                    <x-input-label for="color_id" value="Cor" class="" />
-                                    <select
-                                        id="color_id"
-                                        name="color_id"
-                                        required
-                                        class="block w-full rounded-md border-gray-300"
+                    <div class="space-y-regular">
+                        <div>
+                            <x-input-label for="course_id"> Curso </x-input-label>
+                            <select
+                                name="course_id"
+                                id="course_id"
+                                required
+                                class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                            >
+                                @foreach ($courses as $course)
+                                    <option
+                                        value="{{ $course->id }}"
+                                        @selected ($course->id === $schoolClass->course_id)
                                     >
-                                        <option value="">Selecione uma cor</option>
-                                        @foreach ($colors as $color)
-                                            <option
-                                                value="{{ $color->id }}"
-                                                data-custom-properties='{"colorCode": "{{ $color->code }}"}'
-                                            >
-                                                {{ $color->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <x-input-error :messages="$errors->get('color_id')" class="" />
-                                </div>
-                            </div>
+                                        {{ $course->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-secondary-text>
+                                Atualmente: {{ $schoolClass->course->name }}
+                            </x-secondary-text>
                         </div>
-
-                        <div class="flex justify-between">
-                            <x-primary-button
-                                type="button"
-                                @click="editingModal = false"
-                                class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                        <div>
+                            </select>
+                            <x-input-label for="grade_id"> Série </x-input-label>
+                            <select
+                                name="grade_id"
+                                id="grade_id"
+                                required
+                                class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
                             >
-                                <x-lucide-x />
-                                Cancelar
-                            </x-primary-button>
-                            <x-primary-button
-                                type="submit"
-                                class="bg-accent text-text-white hover:bg-accent-hover"
-                            >
-                                <x-lucide-check />
-                                Salvar
-                            </x-primary-button>
+                                @foreach ($grades as $grade)
+                                    <option
+                                        value="{{ $grade->id }}"
+                                        @selected ($grade->id === $schoolClass->grade_id)
+                                    >
+                                        {{ $grade->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-secondary-text>
+                                Atualmente: {{ $schoolClass->grade->name }}
+                            </x-secondary-text>
                         </div>
-                    </x-form-modal>
-                </x-backdrop>
+                        <div>
+                            <x-input-label for="shift_id"> Turno </x-input-label>
+                            <select
+                                name="shift_id"
+                                id="shift_id"
+                                required
+                                class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                            >
+                                @foreach ($shifts as $shift)
+                                    <option
+                                        value="{{ $shift->id }}"
+                                        @selected ($shift->id === $schoolClass->shift_id)
+                                    >
+                                        {{ $shift->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-secondary-text>
+                                Atualmente: {{ $schoolClass->shift->name }}
+                            </x-secondary-text>
+                        </div>
+                        <div>
+                            <x-input-label for="color_id" value="Cor" class="" />
+                            <select
+                                id="color_id"
+                                name="color_id"
+                                required
+                                class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                            >
+                                <option value="">Selecione uma cor</option>
+                                @foreach ($colors as $color)
+                                    <option
+                                        value="{{ $color->id }}"
+                                        @selected ($color->id === $schoolClass->color_id)
+                                    >
+                                        {{ $color->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('color_id')" class="" />
+                        </div>
+                    </div>
 
-                <x-backdrop
-                    x-show="confirmDeleteModal"
-                    x-cloak
-                    class=""
-                    @keydown.escape.window="confirmDeleteModal = false"
+                    <div class="flex justify-between">
+                        <x-primary-button
+                            type="button"
+                            @click="open = false"
+                            class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                        >
+                            <x-lucide-x />
+                            Cancelar
+                        </x-primary-button>
+                        <x-primary-button
+                            type="button"
+                            @click="
+                                open = false;
+                                $dispatch('open-modal', { name: 'delete-class' });
+                            "
+                            class="h-auto bg-danger text-text-white hover:bg-danger-hover"
+                        >
+                            <x-lucide-trash-2 />
+                            Excluir
+                        </x-primary-button>
+                        <x-primary-button
+                            type="submit"
+                            class="bg-accent text-text-white hover:bg-accent-hover"
+                        >
+                            <x-lucide-check />
+                            Salvar
+                        </x-primary-button>
+                    </div>
+                </x-app-modal>
+
+                <x-app-modal
+                    name="delete-class"
+                    title="Exclusão"
+                    :action="route('school-classes.destroy', $schoolClass)"
                 >
-                    <x-form-modal
-                        method="POST"
-                        action="{{ route('school-classes.destroy', $schoolClass) }}"
-                        x-data=""
-                        @submit="
-                            if (!confirmDeleteModal) {
-                                $event.preventDefault();
-                                confirmDeleteModal = true;
-                            }
-                        "
-                        @click.outside="confirmDeleteModal = false"
-                    >
-                        @csrf
-                        @method ('DELETE')
+                    @method ('DELETE')
 
-                        <x-close-button @click="confirmDeleteModal = false" />
+                    <label for="bulk_password" class="text-sm font-medium text-secondary">
+                        Confirme sua senha para excluir a Turma {{ $schoolClass->name }}
+                    </label>
 
-                        <h3 class="py-smaller text-center font-semibold">Exclusão</h3>
+                    <input
+                        id="bulk_password"
+                        type="password"
+                        name="password"
+                        class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
+                        placeholder="Sua senha"
+                    />
 
-                        <label for="bulk_password" class="text-sm font-medium text-secondary">
-                            Confirme sua senha para excluir a Turma {{ $schoolClass->name }}
-                        </label>
-
-                        <input
-                            id="bulk_password"
-                            type="password"
-                            name="password"
-                            class="flex w-full items-center gap-small rounded-small border border-border p-small text-text"
-                            placeholder="Sua senha"
-                        />
-
-                        <div class="flex justify-between">
-                            <x-primary-button
-                                type="button"
-                                @click="confirmDeleteModal = false"
-                                class="bg-bg-primary text-text hover:bg-bg-primary-hover"
-                            >
-                                <x-lucide-x />
-                                Cancelar
-                            </x-primary-button>
-                            <x-primary-button
-                                type="submit"
-                                class="bg-danger text-text-white hover:bg-danger-hover"
-                            >
-                                <x-lucide-trash-2 />
-                                Excluir
-                            </x-primary-button>
-                        </div>
-                    </x-form-modal>
-                </x-backdrop>
+                    <div class="flex justify-between">
+                        <x-primary-button
+                            type="button"
+                            @click="open = false"
+                            class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                        >
+                            <x-lucide-x />
+                            Cancelar
+                        </x-primary-button>
+                        <x-primary-button
+                            type="submit"
+                            class="bg-danger text-text-white hover:bg-danger-hover"
+                        >
+                            <x-lucide-trash-2 />
+                            Excluir
+                        </x-primary-button>
+                    </div>
+                </x-app-modal>
 
                 <x-backdrop
                     x-show="confirmUserRemove"
@@ -362,8 +361,8 @@
                     <div>
                         <x-primary-button
                             type="button"
-                            @click="editingModal = !editingModal"
-                            class="bg-bg-primary text-text hover:bg-bg-primary-hover h-auto"
+                            @click="$dispatch('open-modal', { name: 'edit-class' })"
+                            class="h-auto bg-bg-primary text-text hover:bg-bg-primary-hover"
                         >
                             <x-lucide-settings />
                             Opções
@@ -409,6 +408,40 @@
                     Disciplinas
                 </button>
                 <button
+                    @click="section = 'activitiesSection'"
+                    :class="section == 'activitiesSection'
+                        ? 'border-b-(--color-school-class) text-text'
+                        : 'border-b-border text-secondary'"
+                    class="transition-colors duration-200"
+                >
+                    <x-lucide-notebook
+                        x-bind:class="
+                            section == 'activitiesSection'
+                                ? 'text-(--color-school-class)'
+                                : 'text-secondary'
+                        "
+                        class="transition-colors duration-200"
+                    />
+                    Atividades
+                </button>
+                <button
+                    @click="section = 'announcementsSection'"
+                    :class="section == 'announcementsSection'
+                        ? 'border-b-(--color-school-class) text-text'
+                        : 'border-b-border text-secondary'"
+                    class="transition-colors duration-200"
+                >
+                    <x-lucide-message-square-text
+                        x-bind:class="
+                            section == 'announcementsSection'
+                                ? 'text-(--color-school-class)'
+                                : 'text-secondary'
+                        "
+                        class="transition-colors duration-200"
+                    />
+                    Comunicados
+                </button>
+                <button
                     @click="section = 'membersSection'"
                     :class="section == 'membersSection'
                         ? 'border-b-(--color-school-class) text-text'
@@ -425,26 +458,11 @@
                     />
                     Membros
                 </button>
-                <button
-                    @click="section = 'announcementSection'"
-                    :class="section == 'announcementSection'
-                        ? 'border-b-(--color-school-class) text-text'
-                        : 'border-b-border text-secondary'"
-                    class="transition-colors duration-200"
-                >
-                    <x-lucide-message-square-text
-                        x-bind:class="
-                            section == 'announcementSection'
-                                ? 'text-(--color-school-class)'
-                                : 'text-secondary'
-                        "
-                        class="transition-colors duration-200"
-                    />
-                    Comunicados
-                </button>
             </div>
 
             @include ('school-classes.partials.show-disciplines')
+            @include ('school-classes.partials.show-activities')
+            @include ('school-classes.partials.show-announcements')
             @include ('school-classes.partials.show-members')
         </x-card>
     </div>

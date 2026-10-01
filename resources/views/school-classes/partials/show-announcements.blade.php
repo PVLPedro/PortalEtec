@@ -1,5 +1,5 @@
 <div
-    x-show="section == 'disciplinesSection'"
+    x-show="section == 'announcementsSection'"
     x-data="{
         perPage: 10,
         currentPage: 1,
@@ -30,29 +30,29 @@
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100"
-    class="flex flex-col gap-regular justify-self-start"
+    class="flex flex-col gap-regular"
 >
     <div class="flex items-center gap-regular">
-        <h2 class="flex-1 text-lg font-semibold">Disciplinas da Turma</h2>
+        <h2 class="flex-1 text-lg font-semibold">Comunicados da Turma</h2>
     </div>
     <div class="flex items-center gap-regular">
         <div
             class="flex flex-1 items-center justify-start gap-small rounded-small border border-border bg-bg-secondary p-small text-base text-text"
         >
-            <label for="discipline-search">
-                <x-lucide-book-search />
+            <label for="member-search">
+                <x-lucide-search />
             </label>
             <input
-                placeholder="Pesquisar Disciplina"
+                placeholder="Pesquisar Comunicados"
                 type="text"
                 class="flex-1 border-b-2 border-b-transparent text-text outline-0 placeholder:text-secondary focus:border-b-(--color-school-class)"
-                id="discipline-search"
+                id="member-search"
             />
         </div>
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
             <x-primary-link href="" class="bg-accent text-text-white hover:bg-accent-hover">
-                <x-lucide-book-plus />
-                <span>Criar Disciplina</span>
+                <x-lucide-message-square-plus />
+                <span>Postar Comunicado</span>
             </x-primary-link>
         @endif
     </div>
@@ -64,8 +64,8 @@
             <span
                 x-text="
                     totalUsers === 0
-                        ? 'Nenhuma Disciplina'
-                        : `Exibindo ${rangeStart}-${rangeEnd} de ${totalUsers} Disciplinas`
+                        ? 'Nenhum Comunicado'
+                        : `Exibindo ${rangeStart}-${rangeEnd} de ${totalUsers} Comunicados`
                 "
             ></span>
             <x-dot />
@@ -133,73 +133,39 @@
     <div
         class="relative grid size-full max-h-200 grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-regular"
     >
-        {{-- @forelse ($schoolClass->students as $discipline)
-            @php
-                $discipline == null;
-                $discipline->icon_code == null;
-                if ($discipline->icon_code == null) {
-                    $discipline->icon_code = $schoolClass->icon->code;
-                }
-                $discipline->color_code == null;
-                if ($discipline->color_code == null) {
-                    $discipline->color_code = $schoolClass->color->code;
-                }
-                $discipline->name == 'Matemática';
-            @endphp --}}
         <a
             class="grid grid-cols-[auto_1fr] gap-regular rounded-regular border border-border bg-bg-secondary p-regular hover:bg-bg-secondary-hover"
         >
             <div
-                class="row-span-2 flex size-16 items-center justify-center rounded-small bg-light-blue-bg p-regular text-light-blue"
+                class="row-span-2 flex size-16 items-center justify-center rounded-small p-regular text-(--color-school-class)"
             >
-                <x-lucide-drafting-compass class="size-8" />
+                <x-lucide-message-square-text class="size-8" />
             </div>
-            <span class="flex text-lg/tight font-medium"> Matemática </span>
+            <span class="flex text-lg/tight font-medium">
+                Aula online devido à reforma na escola
+            </span>
             <span class="flex items-center gap-smaller text-base/tight font-medium">
-                Atualizações
-                <x-lucide-bell class="size-4 stroke-3" />
+                <span> 25/09/2026 </span>
+                <x-lucide-dot class="size-4 stroke-3" />
+                <span> João Edison </span>
             </span>
         </a>
         <a
             class="grid grid-cols-[auto_1fr] gap-regular rounded-regular border border-border bg-bg-secondary p-regular hover:bg-bg-secondary-hover"
         >
             <div
-                class="row-span-2 flex size-16 items-center justify-center rounded-small bg-purple-bg p-regular text-purple"
+                class="row-span-2 flex size-16 items-center justify-center rounded-small border-border p-regular text-(--color-school-class)"
             >
-                <x-lucide-book-open-text class="size-8" />
+                <x-lucide-message-square-text class="size-8" />
             </div>
-            <span class="flex text-lg/tight font-medium"> Português </span>
+            <span class="flex text-lg/tight font-medium">
+                Reposição de aula no próximo sábado dia 26
+            </span>
             <span class="flex items-center gap-smaller text-base/tight font-medium">
-                Atualizações
-                <x-lucide-bell class="size-4 stroke-3" />
+                <span> 24/09/2026 </span>
+                <x-lucide-dot class="size-4 stroke-3" />
+                <span> Bruno Cano </span>
             </span>
         </a>
-        {{-- <a
-                class="grid grid-cols-[auto_1fr] gap-regular rounded-regular border border-border bg-bg-secondary p-regular hover:bg-bg-secondary-hover"
-            >
-                <div
-                    class="flex size-16 items-center justify-center rounded-small bg-(--color-school-class-bg) p-regular text-(--color-school-class)"
-                    style="background-color: var(--color-{{ $discipline->color_code }}-bg); color: var(--color-{{ $discipline->color_code }})"
-                >
-                    <x-dynamic-component
-                        :component="'lucide-' . $discipline->icon_code"
-                        class="size-8"
-                    />
-                </div>
-                <span class="flex text-lg/tight font-medium"> Matemática </span>
-            </a> --}}
-        {{-- @empty --}}
-        {{-- <div class="col-span-full flex items-center gap-regular p-regular">
-                <p class="text-secondary">Nenhuma Disciplina criada ainda.</p>
-                @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                    <x-form-link href="">
-                        Criar Disciplina
-                        <x-slot name="icon">
-                            <x-lucide-square-arrow-out-up-right class="size-4 stroke-3" />
-                        </x-slot>
-                    </x-form-link>
-                @endif
-            </div> --}}
-        {{-- @endforelse --}}
     </div>
 </div>

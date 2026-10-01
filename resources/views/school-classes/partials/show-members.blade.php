@@ -72,7 +72,7 @@
             <span class="flex items-center gap-smaller">
                 <button
                     type="button"
-                    class="rounded-small px-small py-smaller font-semibold"
+                    class="flex size-8 items-center justify-center rounded-small font-semibold"
                     x-bind:class="
                         perPage === 10
                             ? 'bg-(--color-school-class) text-text-white'
@@ -84,7 +84,7 @@
                 </button>
                 <button
                     type="button"
-                    class="rounded-small px-small py-smaller font-semibold"
+                    class="flex size-8 items-center justify-center rounded-small font-semibold"
                     x-bind:class="
                         perPage === 20
                             ? 'bg-(--color-school-class) text-text-white'

@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->etecs()->first();
     }
 
+    public function currentSchoolClass(): ?SchoolClass
+    {
+        return $this->isStudent() ? $this->student?->schoolClass : null;
+    }
+
     public function hasValidEmailDomain(): bool
     {
         $email = strtolower($this->email);

@@ -28,6 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
 
     Route::get('/turmas', [SchoolClassController::class, 'index'])->name('school-classes.index');
+    Route::get('/minha-turma', [SchoolClassController::class, 'mine'])
+        ->middleware('role:aluno')
+        ->name('school-class.mine');
 
     Route::middleware('role:coordenador,professor')->group(function () {
         Route::get('/turmas/criar', [SchoolClassController::class, 'create'])->name(
@@ -56,8 +59,8 @@ Route::middleware('auth')->group(function () {
         ])->name('school-classes.update-side');
     });
 
-    Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
-        'school-classes.show',
+    Route::get('/turma/{schoolClass}', [SchoolClassController::class, 'show'])->name(
+        'school-class.show',
     );
 
     Route::middleware('role:coordenador')->group(function () {
@@ -90,6 +93,10 @@ Route::middleware('auth')->group(function () {
             'addToClassMultiple',
         ])->name('users.add-to-classMultiple');
     });
+
+    Route::get('turma/atividades', function () {
+        return view('activities.index');
+    })->name('activities.index');
 });
 
 require __DIR__ . '/auth.php';

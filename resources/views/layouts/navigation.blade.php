@@ -1,5 +1,22 @@
+@php
+    $classSections = [
+        'disciplinas' => ['label' => 'Disciplinas', 'icon' => 'book-marked'],
+        'atividades' => ['label' => 'Atividades', 'icon' => 'notebook'],
+        'comunicados' => ['label' => 'Comunicados', 'icon' => 'message-square-text'],
+        'membros' => ['label' => 'Membros', 'icon' => 'users'],
+    ];
+    $onClassPage = request()->routeIs('school-class.show');
+    $currentSection = $onClassPage
+        ? (array_key_exists(request('secao'), $classSections)
+            ? request('secao')
+            : 'disciplinas')
+        : null;
+@endphp
+
 <aside
     id="sidebar"
+    x-data="{ current: @js($currentSection) }"
+    x-on:section-changed.window="current = $event.detail"
     class="sticky flex h-full w-54 flex-col gap-larger self-start overflow-auto rounded-large border border-border bg-bg-secondary p-regular text-nowrap text-text transition-[width] duration-300"
 >
     <button
@@ -18,15 +35,45 @@
             <span class="grow"> Visão Geral </span>
         </x-nav-link>
 
-        <x-nav-link
-            :href="route('school-classes.index')"
-            :active="request()->routeIs('school-classes.*')"
-        >
-            <x-slot name="icon">
-                <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
-            </x-slot>
-            <span class="grow"> Turmas </span>
-        </x-nav-link>
+        @if (auth()->user()->isStudent())
+            <x-nav-link
+                :href="route('school-class.mine')"
+                :active="request()->routeIs('school-class.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
+                </x-slot>
+                <span class="grow"> Turma </span>
+            </x-nav-link>
+        @else
+            <x-nav-link
+                :href="route('school-classes.index')"
+                :active="request()->routeIs('school-classes.*', 'school-class.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
+                </x-slot>
+                <span class="grow"> Turmas </span>
+            </x-nav-link>
+        @endif
+
+        @if ($onClassPage)
+            @foreach ($classSections as $slug => $item)
+                <x-nav-link
+                    :href="route('school-class.show', [request()->route('schoolClass'), 'secao' => $slug])"
+                    x-bind:class="current === '{{ $slug }}' ? 'bg-bg-secondary-hover text-accent' : ''"
+                    x-on:click.prevent="$dispatch('set-section', '{{ $slug }}')"
+                >
+                    <x-slot name="icon">
+                        <x-dynamic-component
+                            :component="'lucide-' . $item['icon']"
+                            class="mr-0.5 shrink-0"
+                        />
+                    </x-slot>
+                    <span class="grow"> {{ $item['label'] }} </span>
+                </x-nav-link>
+            @endforeach
+        @endif
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
             <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
