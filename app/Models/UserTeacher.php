@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserStudent extends Model
+class UserTeacher extends Model
 {
-    protected $table = 'user_students';
+    protected $table = 'user_teachers';
 
     protected $fillable = ['user_id', 'school_class_id'];
 

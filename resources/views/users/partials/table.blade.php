@@ -287,8 +287,11 @@
             @mouseleave="hoveredRow = null"
             :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
             >{{ $usuario->role->value }}
-            @if ($usuario->rm)
-                {{ $usuario->rm }}
+            @if ($usuario->role === \App\Enums\Role::Aluno)
+                {{
+                    $usuario->etecs->first()?->pivot
+                        ->rm
+                }}
             @endif
         </label>
         <a

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\StudentBulkController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\EtecContextController;
@@ -10,11 +11,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (!Auth::check()) {
-        return redirect()->route('login');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
     }
 
-    return redirect()->route('dashboard');
+    return view('auth.select-role');
 });
 
 Route::middleware('auth')->group(function () {
@@ -23,6 +24,10 @@ Route::middleware('auth')->group(function () {
     );
 
     Route::get('/visao-geral', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/manter-sessao', fn() => response()->json(['token' => csrf_token()]))->name(
+        'session.keep-alive',
+    );
 
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
@@ -63,11 +68,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::get('/usuarios', [UserManagementController::class, 'index'])->name('users.index');
-        Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name(
-            'users.edit',
-        );
         Route::get('/usuarios/filtrar', [UserManagementController::class, 'filtrar'])->name(
             'users.filtrar',
+        );
+
+        Route::get('/usuarios/alunos/criar', [StudentBulkController::class, 'create'])->name(
+            'students.bulk.create',
+        );
+        Route::post('/usuarios/alunos', [StudentBulkController::class, 'store'])->name(
+            'students.bulk.store',
+        );
+        Route::get('/usuarios/alunos/resultado/csv', [StudentBulkController::class, 'csv'])->name(
+            'students.bulk.csv',
+        );
+
+        Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name(
+            'users.edit',
         );
         Route::put('/usuarios/{user}', [UserManagementController::class, 'update'])->name(
             'users.update',

@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Aluno,
             ])
             ->etecs()
-            ->attach($etec->id, ['rm' => '1234567']);
+            ->attach($etec->id, ['rm' => '1234567', 'role' => Role::Aluno->value]);
 
         User::factory()
             ->create([
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Aluno,
             ])
             ->etecs()
-            ->attach($etec->id, ['rm' => '1234568']);
+            ->attach($etec->id, ['rm' => '1234568', 'role' => Role::Aluno->value]);
 
         User::factory()
             ->create([
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Professor,
             ])
             ->etecs()
-            ->attach($etec->id);
+            ->attach($etec->id, ['role' => Role::Professor->value]);
 
         User::factory()
             ->create([
@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($etec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
 
         User::factory()
             ->create([
@@ -61,7 +61,7 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($etec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
 
         User::factory()
             ->create([
@@ -71,6 +71,6 @@ class UserSeeder extends Seeder
                 'role' => Role::Coordenador,
             ])
             ->etecs()
-            ->attach($etec->id);
+            ->attach($etec->id, ['role' => Role::Coordenador->value]);
     }
 }
