@@ -17,23 +17,25 @@ class UserSeeder extends Seeder
         $camargoEtec = Etec::where('code', 12)->first();
         $belemEtec = Etec::where('code', 220)->first();
 
-        $yuji = User::factory()->create([
-            'name' => 'Yuji',
-            'email' => 'yuji@aluno.cps.sp.gov.br',
-            'password' => 'password',
-            'role' => Role::Aluno,
-        ]);
-        $yuji->etecs()->attach($etec->id, ['role' => Role::Aluno->value]);
-        UserStudent::create(['user_id' => $yuji->id, 'rm' => 1234567]);
+        User::factory()
+            ->create([
+                'name' => 'Yuji',
+                'email' => 'yuji@aluno.cps.sp.gov.br',
+                'password' => 'password',
+                'role' => Role::Aluno,
+            ])
+            ->etecs()
+            ->attach($etec->id, ['rm' => '1234567', 'role' => Role::Aluno->value]);
 
-        $samuel = User::factory()->create([
-            'name' => 'samuelgato',
-            'email' => 'samuelgato@aluno.cps.sp.gov.br',
-            'password' => 'password',
-            'role' => Role::Aluno,
-        ]);
-        $samuel->etecs()->attach($etec->id, ['role' => Role::Aluno->value]);
-        UserStudent::create(['user_id' => $samuel->id, 'rm' => 1234568]);
+        User::factory()
+            ->create([
+                'name' => 'samuelgato',
+                'email' => 'samuelgato@aluno.cps.sp.gov.br',
+                'password' => 'password',
+                'role' => Role::Aluno,
+            ])
+            ->etecs()
+            ->attach($etec->id, ['rm' => '1234568', 'role' => Role::Aluno->value]);
 
         User::factory()
             ->create([

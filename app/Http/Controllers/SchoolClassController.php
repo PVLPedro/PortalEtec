@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\SchoolClass;
 use App\Models\User;
-use App\Models\Etec;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
@@ -13,8 +12,6 @@ use App\Models\Icon;
 use App\Models\Side;
 use App\Models\UserStudent;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -90,7 +87,7 @@ class SchoolClassController extends Controller
             'usuarios.*' => ['exists:users,id'],
         ]);
 
-        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+        $etec = auth()->user()->activeEtec();
 
         $schoolClass = SchoolClass::create([
             'course_id' => $validated['course_id'],
@@ -99,6 +96,9 @@ class SchoolClassController extends Controller
             'color_id' => $validated['color_id'],
             'etec_id' => $etecIds->first(),
         ]);
+        abort_unless($etec, 403);
+
+        SchoolClass::create([...$validated, 'etec_id' => $etec->id]);
 
         if (!empty($validated['usuarios'])) {
             $schoolClass->users()->syncWithoutDetaching($validated['usuarios']);
@@ -228,13 +228,13 @@ class SchoolClassController extends Controller
                 'password' => ['required', 'string'],
             ],
             [
-                'password.required' => 'Please confirm your password to continue.',
+                'password.required' => 'Por favor, confirme sua senha para continuar.',
             ],
         );
 
         if (!Hash::check($request->input('password'), Auth::user()->password)) {
             throw ValidationException::withMessages([
-                'password' => 'Incorrect password.',
+                'password' => 'Senha incorreta.',
             ]);
         }
     }

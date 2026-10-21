@@ -1,5 +1,4 @@
 <x-guest-layout>
-    <!-- Session Status -->
     <x-auth-session-status class="" :status="session('status')" />
 
     <section
@@ -33,7 +32,6 @@
         >
             @csrf
 
-            <!-- Name -->
             <div class="">
                 <x-input-label for="name" :value="__('auth.register.label.name')" />
                 <x-text-input
@@ -50,19 +48,14 @@
                 <x-input-error :messages="$errors->get('name')" class="" />
             </div>
 
-            {{--
-                Role, RM e Etec compartilham o mesmo estado "role".
-                Antes o x-show do RM ficava FORA do x-data do Role (bug: role
-                não existia naquele escopo). Agora tudo está sob o mesmo x-data.
-            --}}
             <div x-data="{ role: '{{ old('role', '') }}' }" class="flex flex-col gap-regular">
-                <!-- Role -->
                 <div class="">
                     <x-input-label for="role" :value="__('auth.register.label.role')" />
 
                     <select id="role" name="role" x-model="role" required>
                         <option value="">Selecione um cargo</option>
                         @foreach (\App\Enums\Role::cases() as $roleCase)
+                            @continue ($roleCase === \App\Enums\Role::Aluno)
                             <option value="{{ $roleCase->value }}">{{ $roleCase->name }}</option>
                         @endforeach
                     </select>
@@ -70,19 +63,11 @@
                     <x-input-error :messages="$errors->get('role')" class="" />
                 </div>
 
-                <!-- RM (só para aluno) -->
-                <div x-show="role === 'aluno'" x-cloak>
-                    <x-input-label for="rm" value="RM" />
-                    <x-text-input id="rm" name="rm" type="text" maxlength="7" :value="old('rm')" />
-                    <x-input-error :messages="$errors->get('rm')" class="mt-2" />
-                </div>
-
-                <!-- Etec -->
                 <div class="">
-                    <div x-show="['coordenador', 'professor'].includes(role)" x-cloak>
+                    <div x-show="role !== ''" x-cloak>
                         <x-input-label
-                            for="etec_id"
-                            value="{{ __('auth.register.label.etec_worker') }}"
+                            for="etec-worker"
+                            value="{{ __('auth.register.label.etec-worker') }}"
                         />
                         <select multiple id="etec-worker" name="etecs[]" class="mt-1 block w-full">
                             <option value="">
@@ -103,32 +88,9 @@
                         </select>
                     </div>
 
-                    <div x-show="role === 'aluno'" x-cloak>
-                        <x-input-label
-                            for="etec_id"
-                            value="{{ __('auth.register.label.etec_student') }}"
-                        />
-                        <select multiple id="etec-student" name="etecs[]" class="mt-1 block w-full">
-                            <option value="">Etec na qual estuda</option>
-                            @foreach ($etecs as $etec)
-                                <option
-                                    value="{{ $etec->id }}"
-                                    {{
-                                        in_array($etec->id, old('etecs', []))
-                                            ? 'selected'
-                                            : ''
-                                    }}
-                                >
-                                    {{ $etec->nome }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <x-input-error :messages="$errors->get('etec_id')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('etecs')" class="mt-2" />
                 </div>
 
-                <!-- Email Address -->
                 <div class="">
                     <x-input-label for="email" :value="__('auth.register.label.email')" />
                     <div class="flex items-center gap-small">
@@ -142,21 +104,16 @@
                             required
                             autocomplete="username"
                         />
-                        {{-- Mesmo esquema do label do Etec: um único elemento, texto trocado via x-text --}}
                         <x-input-label
                             for="email"
                             class="text-sm whitespace-nowrap text-secondary"
-                            x-text="role === 'aluno'
-                                ? '{{ __('auth.domain.student') }}'
-                                : '{{ __('auth.domain.worker') }}'"
-                            x-cloak
+                            :value="__('auth.domain.worker')"
                         />
                     </div>
                     <x-input-error :messages="$errors->get('email')" class="" />
                 </div>
             </div>
 
-            <!-- Password -->
             <div class="">
                 <x-input-label for="password" :value="__('auth.register.label.password')" />
                 <div class="relative">
@@ -171,7 +128,6 @@
                         required
                         autocomplete="new-password"
                     />
-                    {{-- id renomeado para não colidir com o campo acima (name continua "password" para o back-end) --}}
                     <input type="hidden" id="password-real" name="password" />
 
                     <label
@@ -198,6 +154,28 @@
     </section>
 
     @push ('scripts')
+        <style>
+            .choices__inner,
+            .choices__list--dropdown {
+                border-radius: var(--radius-small);
+                border-color: var(--color-border);
+                background-color: var(--color-bg-secondary);
+                padding: var(--spacing-small);
+                box-shadow: var(--shadow-md);
+                font-family: var(--font-poppins);
+                color: var(--color-text);
+                font-size: var(--text-base);
+            }
+
+            .choices__input {
+                background-color: transparent;
+            }
+
+            .choices__placeholder {
+                color: var(--color-secondary);
+            }
+        </style>
+
         <script>
             $(function () {
                 const roleSelect = document.getElementById('role');
@@ -217,14 +195,7 @@
                     removeItemButton: true,
                     itemSelectText: '',
                 });
-                new Choices('#etec-student', {
-                    searchEnabled: true,
-                    itemSelectText: '',
-                    maxItemCount: 1,
-                    maxItemText: (max) => `Você só pode selecionar ${max} Etec`,
-                });
 
-                // Nome
                 $('#name')
                     .on('blur', function () {
                         $(this).data('touched', true);
@@ -236,7 +207,6 @@
                         }
                     });
 
-                // Email
                 $('#email')
                     .on('blur', function () {
                         $(this).data('touched', true);
@@ -248,7 +218,6 @@
                         }
                     });
 
-                // Toggle de mostrar/ocultar senha (antes em JS vanilla)
                 $('#toggle-password').on('change', function () {
                     $('#password').attr('type', this.checked ? 'text' : 'password');
                 });

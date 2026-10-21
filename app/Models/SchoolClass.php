@@ -50,11 +50,6 @@ class SchoolClass extends Model
         return $this->hasOneThrough(Icon::class, Course::class, 'id', 'id', 'course_id', 'icon_id');
     }
 
-    public function students(): HasMany
-    {
-        return $this->hasMany(UserStudent::class, 'id_class');
-    }
-
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -62,6 +57,18 @@ class SchoolClass extends Model
             'school_class_user',
             'school_class_id',
             'id_teacher',
+        )
+            ->withPivot('discipline_id')
+            ->withTimestamps();
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'school_class_student',
+            'school_class_id',
+            'user_id',
         )->withTimestamps();
     }
 

@@ -67,30 +67,58 @@
                 </label>
             </div>
             @if ($usuario->role->value != 'coordenador')
-                <div class="flex items-center *:h-full">
-                    <a
-                        href="{{ route('users.edit', $usuario) }}"
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
-                    >
-                        <x-lucide-pencil-line />
-                        <x-tooltip> Editar </x-tooltip>
-                    </a>
-                    <button
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
-                        @click="userToAdd = {{ $usuario->id }}; userNameToAdd = '{{ $usuario->name }}'; userRoleToAdd = '{{ ($usuario->role->value) }}'; addModal = true"
-                    >
-                        <x-lucide-book-plus />
-                        <x-tooltip> Adicionar à Turma </x-tooltip>
-                    </button>
-                    <button
-                        class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-danger uppercase hover:bg-bg-secondary-hover"
-                        @click="userToDelete = {{ $usuario->id }}; userNameToDelete = '{{ $usuario->name }}'; userRoleToDelete = '{{ ($usuario->role->value) }}'; deleteModal = true"
-                    >
-                        <x-lucide-trash-2 />
-                        <x-tooltip> Excluir </x-tooltip>
-                    </button>
-                </div>
-            @endif
+            <div class="flex items-center *:h-full">
+                <a
+                    href="{{ route('users.edit', $usuario) }}"
+                    class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
+                >
+                    <x-lucide-pencil-line />
+                    <x-tooltip> Editar </x-tooltip>
+                </a>
+                <button
+                    class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-text uppercase hover:bg-bg-secondary-hover"
+                    @click="userToAdd = {{ $usuario->id }}; userNameToAdd = '{{ $usuario->name }}'; userRoleToAdd = '{{ ($usuario->role->value) }}'; addModal = true"
+                >
+                    <x-lucide-book-plus />
+                    <x-tooltip> Adicionar à Turma </x-tooltip>
+                </button>
+                <button
+                    class="group/tooltip relative flex items-center justify-center rounded-regular bg-bg-secondary p-large text-danger uppercase hover:bg-bg-secondary-hover"
+                    @click="userToDelete = {{ $usuario->id }}; userNameToDelete = '{{ $usuario->name }}'; userRoleToDelete = '{{ ($usuario->role->value) }}'; deleteModal = true"
+                >
+                    <x-lucide-trash-2 />
+                    <x-tooltip> Excluir </x-tooltip>
+                </button>
+            </div>
+            <label
+                for="{{ "user-checkbox" . $usuario->id }}"
+                class="flex items-center rounded-l-small p-small capitalize"
+                @mouseenter="hoveredRow = {{ $usuario->id }}"
+                @mouseleave="hoveredRow = null"
+                :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
+                >{{ $usuario->name }}</label
+            >
+            <label
+                for="{{ "user-checkbox" . $usuario->id }}"
+                class="flex items-center p-small"
+                @mouseenter="hoveredRow = {{ $usuario->id }}"
+                @mouseleave="hoveredRow = null"
+                :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
+                >{{ $usuario->email }}</label
+            >
+            <label
+                for="{{ "user-checkbox" . $usuario->id }}"
+                class="flex items-center rounded-r-small p-small capitalize"
+                @mouseenter="hoveredRow = {{ $usuario->id }}"
+                @mouseleave="hoveredRow = null"
+                :class="hoveredRow === {{ $usuario->id }} && 'bg-bg-secondary-hover'"
+                >{{ $usuario->role->value }}
+                @if ($usuario->role === \App\Enums\Role::Aluno)
+                    {{
+                        $usuario->etecs->first()?->pivot
+                            ->rm
+                    }}
+                @endif
         </div>
     @endforeach
 </div>

@@ -82,6 +82,16 @@
                 </x-slot>
                 <span class="grow"> Usuários </span>
             </x-nav-link>
+
+            <x-nav-link
+                :href="route('students.bulk.create')"
+                :active="request()->routeIs('students.bulk.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-user-plus class="shrink-0"></x-lucide-user-plus>
+                </x-slot>
+                <span class="grow"> Cadastrar Alunos </span>
+            </x-nav-link>
         @endif
     </div>
 </aside>

@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'role', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['name', 'email', 'role', 'password', 'initial_password'])]
+#[Hidden(['password', 'remember_token', 'initial_password'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -43,7 +43,15 @@ class User extends Authenticatable
         return $this->hasOne(UserCoordinator::class);
     }
 
-    public function teachingClasses(): BelongsToMany
+    public function etecs(): BelongsToMany
+    {
+        return $this->belongsToMany(Etec::class, 'etec_worker', 'user_id', 'id_etec')->withPivot(
+            'rm',
+            'role',
+        );
+    }
+
+    public function schoolClasses(): BelongsToMany
     {
         return $this->belongsToMany(
             SchoolClass::class,
@@ -53,27 +61,36 @@ class User extends Authenticatable
         );
     }
 
-    public function etecs(): BelongsToMany
+    public function studentClasses(): BelongsToMany
     {
-        return $this->belongsToMany(Etec::class, 'etec_worker', 'user_id', 'id_etec');
+        return $this->belongsToMany(
+            SchoolClass::class,
+            'school_class_student',
+            'user_id',
+            'school_class_id',
+        )->withTimestamps();
     }
 
-    public function activeEtec()
+    public function activeEtec(): ?Etec
     {
-        return $this->etecs()->first();
-    }
+        $activeId = session('etec_ativa');
 
-    public function currentSchoolClass(): ?SchoolClass
-    {
-        return $this->isStudent() ? $this->student?->schoolClass : null;
+        if ($activeId && $this->etecs->contains($activeId)) {
+            return $this->etecs->find($activeId);
+        }
+
+        return $this->etecs->first();
     }
 
     public function hasValidEmailDomain(): bool
     {
-        $email = strtolower($this->email);
+        if ($this->role === Role::Aluno) {
+            return true;
+        }
+
+        $email = strtolower((string) $this->email);
 
         return match ($this->role) {
-            Role::Aluno => str_ends_with($email, '@aluno.cps.sp.gov.br'),
             Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.sp.gov.br'),
             default => false,
         };

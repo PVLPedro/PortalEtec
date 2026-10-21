@@ -10,7 +10,6 @@ class Side extends Model
     protected $table = 'side';
     protected $primaryKey = 'id_side';
     public $timestamps = false;
-
     protected $fillable = ['side_name'];
 
     public function students(): HasMany

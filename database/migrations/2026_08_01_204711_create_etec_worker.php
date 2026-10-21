@@ -16,7 +16,7 @@ return new class extends Migration {
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->unsignedBigInteger('id_etec');
+            $table->unsignedInteger('id_etec');
             $table
                 ->foreign('id_etec')
                 ->references('id')
