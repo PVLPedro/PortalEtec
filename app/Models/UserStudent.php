@@ -27,4 +27,11 @@ class UserStudent extends Model
     {
         return $this->belongsTo(Side::class, 'id_side', 'id_side');
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function (UserStudent $student) {
+            $student->id_side ??= Side::where('side_name', 'Composto')->value('id_side');
+        });
+    }
 }

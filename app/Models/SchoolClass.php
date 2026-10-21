@@ -62,14 +62,13 @@ class SchoolClass extends Model
             ->withTimestamps();
     }
 
-    public function students(): BelongsToMany
+    /**
+     * Matrículas dos alunos (UserStudent). Cada item tem ->user, ->side, ->rm, ->id_side.
+     * A tabela pivot antiga `school_class_student` não é mais usada.
+     */
+    public function students(): HasMany
     {
-        return $this->belongsToMany(
-            User::class,
-            'school_class_student',
-            'school_class_id',
-            'user_id',
-        )->withTimestamps();
+        return $this->hasMany(UserStudent::class, 'id_class');
     }
 
     public function disciplines(): BelongsToMany

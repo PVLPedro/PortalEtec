@@ -268,7 +268,7 @@
                                 {{ $matricula->user->role->value }}
                             </x-slot>
                             <x-slot name="secondary">
-                                {{ $matricula->user->rm }}
+                                {{ $matricula->rm }}
                             </x-slot>
                         </x-card-text>
                     </label>

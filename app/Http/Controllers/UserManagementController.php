@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
-use App\Models\User;
-use App\Models\SchoolClass;
-use App\Models\Grade;
 use App\Models\Course;
+use App\Models\Grade;
+use App\Models\SchoolClass;
 use App\Models\Shift;
 use App\Models\Side;
+use App\Models\User;
 use App\Models\UserStudent;
-use App\Policies\UserPolicy;
 use App\Support\EmailDomainValidator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -20,6 +20,8 @@ use Illuminate\Validation\ValidationException;
 
 class UserManagementController extends Controller
 {
+    private const TEACHER_NOTICE = 'Professores não entram direto na turma: são vinculados por meio das disciplinas da turma.';
+
     public function index(Request $request)
     {
         return view('users.index', $this->viewData($request));
@@ -36,7 +38,9 @@ class UserManagementController extends Controller
 
         return [
             'usuarios' => $this->usuariosFiltrados($request),
-            'schoolClasses' => SchoolClass::whereIn('etec_id', $etecIds)->get(),
+            'schoolClasses' => SchoolClass::whereIn('etec_id', $etecIds)
+                ->with(['course', 'grade', 'shift'])
+                ->get(),
             'grades' => Grade::all(),
             'courses' => Course::all(),
             'shifts' => Shift::all(),
@@ -48,13 +52,21 @@ class UserManagementController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
         $cargo = Role::tryFrom((string) ($request->cargo ?? $request->role));
 
-        $inClass = fn($query, callable $constraint) => $query->where(
-            fn($group) => $group
-                ->whereHas('schoolClasses', $constraint)
-                ->orWhereHas('studentClasses', $constraint),
+        // Aluno: pela matrícula (user_students -> turma). Professor: pela pivot school_class_user.
+        $inClass = fn($query, string $column, $value) => $query->where(
+            fn($sub) => $sub
+                ->whereHas(
+                    'student.schoolClass',
+                    fn($s) => $s->where("school_classes.$column", $value),
+                )
+                ->orWhereHas(
+                    'schoolClasses',
+                    fn($t) => $t->where("school_classes.$column", $value),
+                ),
         );
 
         return User::whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->with('etecs')
             ->when($cargo, fn($q) => $q->where('role', $cargo->value))
             ->when($request->rm, function ($q) use ($request, $etecIds) {
                 $q->whereHas(
@@ -66,52 +78,10 @@ class UserManagementController extends Controller
             })
             ->when(
                 $request->school_class_id,
-                fn($q) => $q->where(function ($sub) use ($request) {
-                    $sub->whereHas(
-                        'student',
-                        fn($s) => $s->where('id_class', $request->school_class_id),
-                    )->orWhereHas(
-                        'teachingClasses',
-                        fn($t) => $t->where('school_classes.id', $request->school_class_id),
-                    );
-                }),
+                fn($q) => $inClass($q, 'id', $request->school_class_id),
             )
-            ->when(
-                $request->grade_id,
-                fn($q) => $q->where(function ($sub) use ($request) {
-                    $sub->whereHas(
-                        'student.schoolClass',
-                        fn($s) => $s->where('grade_id', $request->grade_id),
-                    )->orWhereHas(
-                        'teachingClasses',
-                        fn($t) => $t->where('grade_id', $request->grade_id),
-                    );
-                }),
-            )
-            ->when(
-                $request->course_id,
-                fn($q) => $q->where(function ($sub) use ($request) {
-                    $sub->whereHas(
-                        'student.schoolClass',
-                        fn($s) => $s->where('course_id', $request->course_id),
-                    )->orWhereHas(
-                        'teachingClasses',
-                        fn($t) => $t->where('course_id', $request->course_id),
-                    );
-                }),
-                fn($q) => $inClass(
-                    $q,
-                    fn($sub) => $sub->where('school_classes.id', $request->school_class_id),
-                ),
-            )
-            ->when(
-                $request->grade_id,
-                fn($q) => $inClass($q, fn($sub) => $sub->where('grade_id', $request->grade_id)),
-            )
-            ->when(
-                $request->course_id,
-                fn($q) => $inClass($q, fn($sub) => $sub->where('course_id', $request->course_id)),
-            )
+            ->when($request->grade_id, fn($q) => $inClass($q, 'grade_id', $request->grade_id))
+            ->when($request->course_id, fn($q) => $inClass($q, 'course_id', $request->course_id))
             ->get();
     }
 
@@ -119,28 +89,13 @@ class UserManagementController extends Controller
     {
         $this->authorize('manage', $user);
 
-        $userStudent = $user->isStudent()
-            ? UserStudent::where('user_id', $user->id)->first()
-            : null;
+        $userStudent = $user->isStudent() ? $user->student : null;
 
         return view('users.edit', [
             'user' => $user,
             'sides' => Side::all(),
             'userStudent' => $userStudent,
         ]);
-        $etec = auth()->user()->activeEtec();
-
-        $rm = $user->etecs()->where('etecs.id', $etec?->id)->first()?->pivot->rm;
-
-        $classes = SchoolClass::where('etec_id', $etec?->id)
-            ->with(['course', 'grade', 'shift'])
-            ->get()
-            ->sortBy('nome')
-            ->values();
-
-        $currentClassId = $user->studentClasses()->value('school_classes.id');
-
-        return view('users.edit', compact('user', 'rm', 'classes', 'currentClassId'));
     }
 
     public function update(Request $request, User $user)
@@ -152,25 +107,12 @@ class UserManagementController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $user->id],
-            'role' => ['required', 'in:aluno,professor,coordenador'],
+            'role' => ['sometimes', 'in:aluno,professor,coordenador'],
             'id_side' => ['nullable', 'exists:side,id_side'],
         ];
 
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $validated['role'],
-        ]);
-
         if ($user->isStudent()) {
-            $userStudent = UserStudent::where('user_id', $user->id)->first();
-
-            if ($userStudent) {
-                $userStudent->update(['id_side' => $validated['id_side'] ?? null]);
-            }
-        }
-
-        if ($user->isStudent()) {
+            // Aluno cadastrado em lote não tem e-mail: ele é opcional, mas se vier precisa ser válido.
             $rules['email'] = [
                 'nullable',
                 'email',
@@ -192,13 +134,25 @@ class UserManagementController extends Controller
 
         $user->update(
             collect($validated)
-                ->only(['name', 'email'])
+                ->only(['name', 'email', 'role'])
                 ->all(),
         );
 
         if ($user->isStudent()) {
-            $classId = $validated['school_class_id'] ?? null;
-            $user->studentClasses()->sync($classId ? [$classId] : []);
+            $changes = [];
+
+            // Só altera o lado se ele foi enviado, para não apagar o padrão ("Composto").
+            if ($request->filled('id_side')) {
+                $changes['id_side'] = $validated['id_side'];
+            }
+
+            if ($request->has('school_class_id')) {
+                $changes['id_class'] = $validated['school_class_id'] ?? null;
+            }
+
+            if ($changes) {
+                $this->studentRecord($user, $etec?->id)->fill($changes)->save();
+            }
         }
 
         return redirect()->route('users.index')->with('status', 'Usuário atualizado!');
@@ -207,39 +161,24 @@ class UserManagementController extends Controller
     public function addToClass(Request $request, User $user)
     {
         abort_if($user->role === Role::Coordenador, 403);
+
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
-        $etec = auth()->user()->activeEtec();
 
-        $request->validate([
-            'usuarios' => ['required', 'array', 'min:1'],
-            'usuarios.*' => ['exists:users,id'],
-            'school_class_id' => [
-                'required_without:nova_turma.course_id',
-                'nullable',
-                'exists:school_classes,id',
-            ],
-            'nova_turma.course_id' => [
-                'required_without:school_class_id',
-                'nullable',
-                'exists:courses,id',
-            ],
-            'nova_turma.grade_id' => [
-                'required_with:nova_turma.course_id',
-                'nullable',
-                'exists:grades,id',
-            ],
-            'nova_turma.shift_id' => [
-                'required_with:nova_turma.course_id',
-                'nullable',
-                'exists:shifts,id',
-            ],
-        ]);
+        abort_unless($user->etecs()->whereIn('etecs.id', $etecIds)->exists(), 403);
 
-        $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
+        // Professor não entra direto na turma: o vínculo é feito pela disciplina.
+        if (!$user->isStudent()) {
+            return back()->with('status', self::TEACHER_NOTICE);
+        }
 
-        $schoolClass->users()->syncWithoutDetaching([$user->id]);
+        $request->validate($this->classRules());
 
-        return back()->with('status', 'Usuário adicionado à turma!');
+        $this->enrollStudents(
+            collect([$user]),
+            $this->authorizedSchoolClass((int) $request->input('school_class_id')),
+        );
+
+        return back()->with('status', 'Aluno adicionado à turma!');
     }
 
     public function addToClassMultiple(Request $request)
@@ -247,63 +186,37 @@ class UserManagementController extends Controller
         $request->validate([
             'usuarios' => ['required', 'array', 'min:1'],
             'usuarios.*' => ['exists:users,id'],
-            'school_class_id' => ['required', 'exists:school_classes,id'],
+            ...$this->classRules(),
         ]);
 
-        $schoolClass = $this->authorizedSchoolClass($request->school_class_id);
+        $schoolClass = $this->authorizedSchoolClass((int) $request->input('school_class_id'));
 
-        $usuarios = User::whereIn('id', $request->usuarios)->get();
-
-        $professorIds = $usuarios->filter(fn($u) => $u->isTeacher())->pluck('id');
-        $alunoIds = $usuarios->filter(fn($u) => $u->isStudent())->pluck('id');
-
-        if ($professorIds->isNotEmpty()) {
-            $schoolClass->teachers()->syncWithoutDetaching($professorIds);
-        }
-
-        foreach ($alunoIds as $alunoId) {
-            $existing = UserStudent::where('user_id', $alunoId)->first();
-
-            UserStudent::updateOrCreate(
-                ['user_id' => $alunoId],
-                [
-                    'id_class' => $schoolClass->id,
-                    'rm' => $existing->rm ?? 0,
-                    'id_side' => $existing->id_side ?? null,
-                ],
-            );
-        }
-        if ($request->filled('nova_turma.course_id')) {
-            abort_unless($etec, 403);
-
-            $schoolClass = SchoolClass::create([
-                'etec_id' => $etec->id,
-                'course_id' => $request->input('nova_turma.course_id'),
-                'grade_id' => $request->input('nova_turma.grade_id'),
-                'shift_id' => $request->input('nova_turma.shift_id'),
-            ]);
-        } else {
-            $schoolClass = SchoolClass::findOrFail($request->school_class_id);
-            abort_unless($etecIds->contains($schoolClass->etec_id), 403);
-        }
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $users = User::whereIn('id', $request->usuarios)
             ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
             ->get();
 
-        $studentIds = $users->filter(fn($u) => $u->isStudent())->pluck('id')->all();
+        $students = $users->filter(fn($u) => $u->isStudent());
 
-        $schoolClass->students()->syncWithoutDetaching($studentIds);
+        $this->enrollStudents($students, $schoolClass);
 
-        $ignored = $users->count() - count($studentIds);
+        $message = $students->count() . ' aluno(s) adicionado(s) à turma!';
 
-        $message = count($studentIds) . ' aluno(s) adicionado(s) à turma.';
+        $ignored = $users->count() - $students->count();
 
         if ($ignored > 0) {
-            $message .= " {$ignored} professor(es)/coordenador(es) não foram adicionados: o vínculo de professor com a turma exige disciplina.";
+            $message .= " {$ignored} usuário(s) ignorado(s). " . self::TEACHER_NOTICE;
         }
 
         return back()->with('status', $message);
+    }
+
+    private function classRules(): array
+    {
+        return [
+            'school_class_id' => ['required', 'exists:school_classes,id'],
+        ];
     }
 
     private function authorizedSchoolClass(int $schoolClassId): SchoolClass
@@ -311,9 +224,32 @@ class UserManagementController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClass = SchoolClass::findOrFail($schoolClassId);
+
         abort_unless($etecIds->contains($schoolClass->etec_id), 403);
 
         return $schoolClass;
+    }
+
+    private function enrollStudents(Collection $students, SchoolClass $schoolClass): void
+    {
+        foreach ($students as $student) {
+            $this->studentRecord($student, $schoolClass->etec_id)
+                ->fill(['id_class' => $schoolClass->id])
+                ->save();
+        }
+    }
+
+    /**
+     * Matrícula existente do aluno, ou uma nova (ainda não salva) com o RM da Etec.
+     */
+    private function studentRecord(User $user, ?int $etecId): UserStudent
+    {
+        return $user->student ??
+            new UserStudent([
+                'user_id' => $user->id,
+                'rm' =>
+                    (int) ($user->etecs()->where('etecs.id', $etecId)->first()?->pivot->rm ?? 0),
+            ]);
     }
 
     public function destroy(Request $request, User $user)

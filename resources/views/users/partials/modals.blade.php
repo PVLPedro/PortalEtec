@@ -18,6 +18,7 @@
         <select
             name="school_class_id"
             id="school_class_id"
+            required
             class="flex items-center gap-small rounded-small border border-border p-small text-text"
         >
             <option value="">Selecione uma Turma</option>
@@ -73,6 +74,7 @@
         <select
             name="school_class_id"
             id="school_class_id_single"
+            required
             class="flex items-center gap-small rounded-small border border-border p-small text-text"
         >
             <option value="">Selecione uma Turma</option>
@@ -80,6 +82,8 @@
                 <option value="{{ $schoolClass->id }}">{{ $schoolClass->name }}</option>
             @endforeach
         </select>
+
+        <p class="text-sm text-secondary">Apenas alunos são adicionados. Professores entram na turma pelas disciplinas.</p>
 
         <a
             class="flex items-center gap-small rounded-small bg-bg-primary p-small text-text hover:bg-bg-primary-hover"

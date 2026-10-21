@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Models\SchoolClass;
 use App\Models\User;
+use App\Models\Etec;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
@@ -12,6 +14,8 @@ use App\Models\Icon;
 use App\Models\Side;
 use App\Models\UserStudent;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -62,7 +66,9 @@ class SchoolClassController extends Controller
     {
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
+        // Só alunos entram direto na turma; professores são vinculados por disciplina.
         $preselectedUsers = User::whereIn('id', $request->query('usuarios', []))
+            ->where('role', Role::Aluno->value)
             ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
             ->get(['id', 'name', 'role']);
 
@@ -87,7 +93,7 @@ class SchoolClassController extends Controller
             'usuarios.*' => ['exists:users,id'],
         ]);
 
-        $etec = auth()->user()->activeEtec();
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClass = SchoolClass::create([
             'course_id' => $validated['course_id'],
@@ -96,15 +102,18 @@ class SchoolClassController extends Controller
             'color_id' => $validated['color_id'],
             'etec_id' => $etecIds->first(),
         ]);
-        abort_unless($etec, 403);
 
-        SchoolClass::create([...$validated, 'etec_id' => $etec->id]);
+        $message = 'Turma criada!';
 
         if (!empty($validated['usuarios'])) {
-            $schoolClass->users()->syncWithoutDetaching($validated['usuarios']);
+            $ignored = $this->addStudents($schoolClass, $validated['usuarios'], $etecIds);
+
+            if ($ignored > 0) {
+                $message .= " {$ignored} usuário(s) não foram adicionados: professores são vinculados por meio das disciplinas da turma.";
+            }
         }
 
-        return redirect()->route('school-classes.index')->with('status', 'Turma criada!');
+        return redirect()->route('school-classes.index')->with('status', $message);
     }
 
     public function show(SchoolClass $schoolClass)
@@ -118,6 +127,9 @@ class SchoolClassController extends Controller
             'course',
             'grade',
             'shift',
+            'color',
+            'icon',
+            'etec',
         ]);
 
         $sides = Side::all();
@@ -206,6 +218,32 @@ class SchoolClassController extends Controller
         return back()->with('status', 'Turma atualizada!');
     }
 
+    /**
+     * Matricula os alunos na turma. Retorna quantos usuários foram ignorados (não alunos).
+     */
+    private function addStudents(SchoolClass $schoolClass, array $userIds, $etecIds): int
+    {
+        $students = User::whereIn('id', $userIds)
+            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->get()
+            ->filter(fn($u) => $u->isStudent());
+
+        foreach ($students as $student) {
+            $record =
+                $student->student ??
+                new UserStudent([
+                    'user_id' => $student->id,
+                    'rm' =>
+                        (int) ($student->etecs()->where('etecs.id', $schoolClass->etec_id)->first()
+                            ?->pivot->rm ?? 0),
+                ]);
+
+            $record->fill(['id_class' => $schoolClass->id])->save();
+        }
+
+        return count($userIds) - $students->count();
+    }
+
     private function authorizeClass(SchoolClass $schoolClass): void
     {
         $user = auth()->user();
@@ -228,13 +266,13 @@ class SchoolClassController extends Controller
                 'password' => ['required', 'string'],
             ],
             [
-                'password.required' => 'Por favor, confirme sua senha para continuar.',
+                'password.required' => 'Please confirm your password to continue.',
             ],
         );
 
         if (!Hash::check($request->input('password'), Auth::user()->password)) {
             throw ValidationException::withMessages([
-                'password' => 'Senha incorreta.',
+                'password' => 'Incorrect password.',
             ]);
         }
     }

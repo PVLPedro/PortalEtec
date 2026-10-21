@@ -23,7 +23,7 @@ class StudentBulkController extends Controller
         $classes = SchoolClass::where('etec_id', $etec?->id)
             ->with(['course', 'grade', 'shift'])
             ->get()
-            ->sortBy('nome')
+            ->sortBy('name')
             ->values();
 
         $selected = $classes->firstWhere('id', (int) $request->query('turma'));
@@ -175,7 +175,7 @@ class StudentBulkController extends Controller
     private function infoOf(SchoolClass $schoolClass): array
     {
         return [
-            'curso' => (string) $schoolClass->course?->course_name,
+            'curso' => (string) $schoolClass->course?->name,
             'serie' => (string) $schoolClass->grade?->name,
             'turno' => (string) $schoolClass->shift?->name,
         ];
@@ -183,9 +183,10 @@ class StudentBulkController extends Controller
 
     private function studentsOfClass(?Etec $etec, SchoolClass $schoolClass)
     {
-        return $schoolClass
-            ->students()
+        return User::query()
+            ->join('user_students', 'user_students.user_id', '=', 'users.id')
             ->join('etec_worker', 'etec_worker.user_id', '=', 'users.id')
+            ->where('user_students.id_class', $schoolClass->id)
             ->where('etec_worker.id_etec', $etec?->id)
             ->select('users.*', 'etec_worker.rm as rm')
             ->orderBy('users.name')
@@ -220,9 +221,10 @@ class StudentBulkController extends Controller
                     'role' => Role::Aluno->value,
                 ]);
 
-                if ($schoolClassId) {
-                    $user->studentClasses()->attach($schoolClassId);
-                }
+                $user->student()->create([
+                    'rm' => $rm,
+                    'id_class' => $schoolClassId,
+                ]);
             });
 
             return $this->row((string) $rm, $name, $password, 'Cadastrado');

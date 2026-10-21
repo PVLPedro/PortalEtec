@@ -21,7 +21,7 @@
             course_id: '',
             async filtrar() {
                 const params = new URLSearchParams({
-                    role: this.role,
+                    role: this.role_id,
                     rm: this.rm,
                     school_class_id: this.school_class_id,
                     grade_id: this.grade_id,
@@ -74,7 +74,7 @@
                 >
                     <option value="">Turma</option>
                     @foreach ($schoolClasses as $schoolClass)
-                        <option value="{{ $schoolClass->id }}">{{ $schoolClass->nome }}</option>
+                        <option value="{{ $schoolClass->id }}">{{ $schoolClass->name }}</option>
                     @endforeach
                 </select>
 
@@ -92,7 +92,7 @@
                 >
                     <option value="">Curso</option>
                     @foreach ($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                        <option value="{{ $course->id }}">{{ $course->name }}</option>
                     @endforeach
                 </select>
 
@@ -221,7 +221,9 @@
                     Excluir selecionados
                 </x-primary-button>
             </div>
-            @include ('users.partials.table', ['usuarios' => $usuarios])
+            <div id="tabela-usuarios">
+                @include ('users.partials.table', ['usuarios' => $usuarios])
+            </div>
         </div>
     </div>
 </x-app-layout>

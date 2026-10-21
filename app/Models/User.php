@@ -61,14 +61,9 @@ class User extends Authenticatable
         );
     }
 
-    public function studentClasses(): BelongsToMany
+    public function currentSchoolClass(): ?SchoolClass
     {
-        return $this->belongsToMany(
-            SchoolClass::class,
-            'school_class_student',
-            'user_id',
-            'school_class_id',
-        )->withTimestamps();
+        return $this->student?->schoolClass;
     }
 
     public function activeEtec(): ?Etec

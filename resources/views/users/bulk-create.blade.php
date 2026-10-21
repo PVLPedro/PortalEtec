@@ -114,7 +114,7 @@
                 <option value="">Sem turma por enquanto</option>
                 @foreach ($classes as $class)
                     <option value="{{ $class->id }}" @selected ($selected?->id === $class->id)>
-                        {{ $class->nome }}
+                        {{ $class->name }}
                     </option>
                 @endforeach
             </select>
