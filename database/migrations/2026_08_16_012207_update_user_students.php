@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('user_students', function (Blueprint $table) {
-            $table->unsignedInteger('id_side')->nullable()->after('id_class');
+            $table->unsignedBigInteger('id_side')->nullable()->after('school_classes_id');
 
             $table
                 ->foreign('id_side')

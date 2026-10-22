@@ -33,7 +33,7 @@ return new class extends Migration {
             $table
                 ->foreign('id_status')
                 ->references('id_status')
-                ->on('status')
+                ->on('status_activity')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
         });

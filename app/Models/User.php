@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Models;
+<?php namespace App\Models;
 
 use App\Enums\Role;
 use Database\Factories\UserFactory;
@@ -55,6 +53,11 @@ class User extends Authenticatable
         )->withPivot('role');
     }
 
+    public function activeEtec(): ?Etec
+    {
+        return $this->etecs()->first();
+    }
+
     public function isStudent(): bool
     {
         return $this->role === Role::Aluno;
@@ -75,10 +78,5 @@ class User extends Authenticatable
         $domain = substr(strrchr($this->email, '@') ?: '', 1);
 
         return in_array($domain, ['aluno.cps.sp.gov.br', 'cps.sp.gov.br'], true);
-    }
-
-    public function activeEtec(): ?Etec
-    {
-        return $this->etecs()->first();
     }
 }

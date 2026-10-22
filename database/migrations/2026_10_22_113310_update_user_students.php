@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up(): void
     {
+        $colunaTurma = Schema::hasColumn('user_students', 'id_class')
+            ? 'id_class'
+            : 'school_classes_id';
+
         Schema::disableForeignKeyConstraints();
 
         try {
@@ -33,11 +37,13 @@ return new class extends Migration {
                     ->nullOnDelete();
             });
 
-            DB::statement('
-                INSERT INTO user_students_new (id_student, user_id, id_class, rm)
-                SELECT id_student, user_id, id_class, rm
+            DB::statement("
+                INSERT INTO user_students_new
+                    (id_student, user_id, id_class, rm)
+                SELECT
+                    id_student, user_id, {$colunaTurma}, rm
                 FROM user_students
-            ');
+            ");
 
             Schema::drop('user_students');
 
@@ -49,7 +55,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        // Não reverte a chave estrangeira antiga, pois ela apontava
-        // para a tabela incorreta "class".
+        // Não reverte a estrutura anterior automaticamente.
     }
 };
