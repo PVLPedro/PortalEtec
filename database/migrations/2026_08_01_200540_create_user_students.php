@@ -22,16 +22,14 @@ return new class extends Migration {
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->unsignedInteger('id_class')->nullable();
-            $table->integer('rm');
-
-            // FK para class.id_class
             $table
-                ->foreign('id_class')
-                ->references('id_class')
-                ->on('class')
+                ->foreignId('school_classes_id')
+                ->nullable()
+                ->constrained('school_classes')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
+
+            $table->integer('rm');
         });
     }
 

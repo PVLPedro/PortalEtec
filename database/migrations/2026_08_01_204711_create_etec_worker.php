@@ -16,16 +16,14 @@ return new class extends Migration {
             // FK para users.id (padrão do Laravel: BIGINT UNSIGNED)
             $table
                 ->foreignId('user_id')
-                ->constrained(table: 'users', column: 'id')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
             // FK para etecs.id_etec
-            $table->unsignedInteger('id_etec');
             $table
-                ->foreign('id_etec')
-                ->references('id_etec')
-                ->on('etecs')
+                ->foreignId('etec_id')
+                ->constrained('etecs')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
@@ -33,7 +31,7 @@ return new class extends Migration {
             $table->string('role', 20);
 
             // Impede vincular o mesmo usuario duas vezes na mesma etec
-            $table->unique(['id_user', 'id_etec'], 'uq_user_etec');
+            $table->unique(['user_id', 'etec_id'], 'uq_user_etec');
         });
     }
 
@@ -42,11 +40,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('etec_worker', function (Blueprint $table) {
-            $table->dropForeign(['id_user']);
-            $table->dropForeign(['id_etec']);
-        });
-
         Schema::dropIfExists('etec_worker');
     }
 };
