@@ -16,7 +16,13 @@
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
                     auth()->user()->role === \App\Enums\Role::Professor)
                     <div class="flex items-center gap-2">
-                        <button @click="editando = true" class="text-sm underline">{{ __('schoolclasses.show.edit_button') }}</button>
+                        <button @click="editando = true" class="text-sm underline">
+                            {{
+                                __(
+                                    'schoolclasses.show.edit_button',
+                                )
+                            }}
+                        </button>
 
                         <form
                             method="POST"
@@ -35,7 +41,11 @@
 
                             <template x-if="!confirmando">
                                 <button type="submit" class="text-sm text-red-600 underline">
-                                    {{ __('schoolclasses.show.delete.button') }}
+                                    {{
+                                        __(
+                                            'schoolclasses.show.delete.button',
+                                        )
+                                    }}
                                 </button>
                             </template>
 
@@ -51,14 +61,22 @@
                                     type="submit"
                                     class="text-sm font-semibold text-red-600 underline"
                                 >
-                                    {{ __('schoolclasses.show.delete.confirm') }}
+                                    {{
+                                        __(
+                                            'schoolclasses.show.delete.confirm',
+                                        )
+                                    }}
                                 </button>
                                 <button
                                     type="button"
                                     @click="confirmando = false"
                                     class="text-sm underline"
                                 >
-                                    {{ __('schoolclasses.show.delete.cancel') }}
+                                    {{
+                                        __(
+                                            'schoolclasses.show.delete.cancel',
+                                        )
+                                    }}
                                 </button>
                             </div>
                         </form>
@@ -125,8 +143,20 @@
                 <table class="w-full text-left">
                     <thead class="border-b">
                         <tr>
-                            <th class="p-3">{{ __('schoolclasses.show.table.name') }}</th>
-                            <th class="p-3">{{ __('schoolclasses.show.table.role') }}</th>
+                            <th class="p-3">
+                                {{
+                                    __(
+                                        'schoolclasses.show.table.name',
+                                    )
+                                }}
+                            </th>
+                            <th class="p-3">
+                                {{
+                                    __(
+                                        'schoolclasses.show.table.role',
+                                    )
+                                }}
+                            </th>
                             <th class="p-3"></th>
                         </tr>
                     </thead>
@@ -158,7 +188,11 @@
                                                     type="submit"
                                                     class="text-sm text-red-600 underline"
                                                 >
-                                                     {{ __('schoolclasses.show.remove_user.button') }}
+                                                    {{
+                                                        __(
+                                                            'schoolclasses.show.remove_user.button',
+                                                        )
+                                                    }}
                                                 </button>
                                             </template>
 
@@ -178,14 +212,22 @@
                                                     type="submit"
                                                     class="text-sm font-semibold text-red-600 underline"
                                                 >
-                                                     {{ __('schoolclasses.show.remove_user.confirm') }}
+                                                    {{
+                                                        __(
+                                                            'schoolclasses.show.remove_user.confirm',
+                                                        )
+                                                    }}
                                                 </button>
                                                 <button
                                                     type="button"
                                                     @click="confirmando = false"
                                                     class="text-sm underline"
                                                 >
-                                                    {{ __('schoolclasses.show.remove_user.cancel') }}
+                                                    {{
+                                                        __(
+                                                            'schoolclasses.show.remove_user.cancel',
+                                                        )
+                                                    }}
                                                 </button>
                                             </div>
                                         </form>
@@ -195,7 +237,11 @@
                         @empty
                             <tr>
                                 <td class="p-3 text-gray-500" colspan="3">
-                                    {{ __('schoolclasses.show.no_members') }}
+                                    {{
+                                        __(
+                                            'schoolclasses.show.no_members',
+                                        )
+                                    }}
                                 </td>
                             </tr>
                         @endforelse

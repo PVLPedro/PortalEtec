@@ -10,15 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
-            $table->unsignedInteger('id_side')->nullable()->after('id_teacher');
+        Schema::create('school_class_discipline', function (Blueprint $table) {
+            $table->id();
 
-            $table
-                ->foreign('id_side')
-                ->references('id_side')
-                ->on('side')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+            $table->foreignId('school_class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('discipline_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('id_teacher')->nullable();
+
+            $table->timestamps();
         });
     }
 
@@ -27,9 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('school_class_discipline', function (Blueprint $table) {
-            $table->dropForeign(['id_side']);
-            $table->dropColumn('id_side');
-        });
+        Schema::dropIfExists('school_class_discipline');
     }
 };

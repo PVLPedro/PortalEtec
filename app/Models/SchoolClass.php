@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id'])]
 class SchoolClass extends Model
@@ -38,9 +39,9 @@ class SchoolClass extends Model
         return $this->belongsTo(Shift::class);
     }
 
-    public function users(): BelongsToMany
+    public function students(): HasMany
     {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->hasMany(UserStudent::class, 'id_class', 'id');
     }
 
     public function disciplines(): BelongsToMany
