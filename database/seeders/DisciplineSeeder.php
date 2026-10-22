@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Discipline;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DisciplineSeeder extends Seeder
 {
     public function run(): void
     {
-        $disciplines = [
+        $names = [
             'Língua Portuguesa',
             'Matemática',
             'História',
@@ -25,8 +25,11 @@ class DisciplineSeeder extends Seeder
             'Sociologia',
         ];
 
-        foreach ($disciplines as $discipline) {
-            Discipline::updateOrCreate(['name' => $discipline]);
-        }
+        $now = now();
+
+        DB::table('disciplines')->insert(array_map(
+            fn (string $name) => ['name' => $name, 'created_at' => $now, 'updated_at' => $now],
+            $names,
+        ));
     }
 }

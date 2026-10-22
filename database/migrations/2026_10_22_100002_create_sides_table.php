@@ -4,19 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
-        Schema::create('courses', function (Blueprint $table) {
+        Schema::create('sides', function (Blueprint $table) {
             $table->id();
-            $table->string('course_initialism', 6)->nullable();
-            $table->string('course_name', 100);
+            $table->string('name', 40)->unique();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('courses');
+        Schema::dropIfExists('sides');
     }
 };

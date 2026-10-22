@@ -2,28 +2,28 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\EtecSeeder;
-use Database\Seeders\CourseSeeder;
-use Database\Seeders\GradeSeeder;
-use Database\Seeders\ShiftSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // Dados de referência (necessários em qualquer ambiente)
         $this->call([
             EtecSeeder::class,
-            UserSeeder::class,
-            CourseSeeder::class,
-            GradeSeeder::class,
+            SideSeeder::class,
             ShiftSeeder::class,
+            GradeSeeder::class,
+            CourseSeeder::class,
             DisciplineSeeder::class,
         ]);
+
+        // Dados de demonstração (nunca em produção)
+        if (! app()->isProduction()) {
+            $this->call([
+                SchoolClassSeeder::class,
+                UserSeeder::class,
+            ]);
+        }
     }
 }

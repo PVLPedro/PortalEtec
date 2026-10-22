@@ -2,21 +2,24 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ShiftSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $shifts = [['name' => 'Manhã'], ['name' => 'Tarde'], ['name' => 'Noite']];
+        $names = [
+            'Manhã',
+            'Tarde',
+            'Noite',
+        ];
 
-        foreach ($shifts as $shift) {
-            \App\Models\Shift::create($shift);
-            // DB::table('shifts')->insert($shift);
-        }
+        $now = now();
+
+        DB::table('shifts')->insert(array_map(
+            fn (string $name) => ['name' => $name, 'created_at' => $now, 'updated_at' => $now],
+            $names,
+        ));
     }
 }

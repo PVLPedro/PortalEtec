@@ -2,21 +2,24 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class GradeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $grades = [['name' => '1º Ano'], ['name' => '2º Ano'], ['name' => '3º Ano']];
+        $names = [
+            '1º Ano',
+            '2º Ano',
+            '3º Ano',
+        ];
 
-        foreach ($grades as $grade) {
-            \App\Models\Grade::create($grade);
-            // DB::table('grades')->insert($grade);
-        }
+        $now = now();
+
+        DB::table('grades')->insert(array_map(
+            fn (string $name) => ['name' => $name, 'created_at' => $now, 'updated_at' => $now],
+            $names,
+        ));
     }
 }

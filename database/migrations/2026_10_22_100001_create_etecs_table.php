@@ -4,18 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
-        Schema::create('shifts', function (Blueprint $table) {
+        Schema::create('etecs', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 20);
+            $table->unsignedInteger('code')->unique(); // Cód. da Unidade
+            $table->string('name'); // Unidade
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('shifts');
+        Schema::dropIfExists('etecs');
     }
 };
