@@ -1,5 +1,5 @@
-
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('etecs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('code')->unique();
-            $table->string('name');
+            $table->unsignedInteger('code')->unique(); // Cód. da Unidade
+            $table->string('name'); // Unidade
             $table->timestamps();
         });
     }
@@ -20,4 +20,3 @@ return new class extends Migration {
         Schema::dropIfExists('etecs');
     }
 };
-
