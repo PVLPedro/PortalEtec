@@ -1,5 +1,5 @@
-
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('etec_worker', function (Blueprint $table) {
-            $table->unsignedInteger('rm')->nullable()->after('role');
+        Schema::create('colors', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 25);
+            $table->string('code', 25);
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::table('etec_worker', function (Blueprint $table) {
-            $table->dropColumn('rm');
-        });
+        Schema::dropIfExists('colors');
     }
 };
-

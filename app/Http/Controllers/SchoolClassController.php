@@ -192,8 +192,8 @@ class SchoolClassController extends Controller
 
         if ($user->isStudent()) {
             UserStudent::where('user_id', $user->id)
-                ->where('id_class', $schoolClass->id)
-                ->update(['id_class' => null]);
+                ->where('school_class_id', $schoolClass->id)
+                ->update(['school_class_id' => null]);
         } else {
             $schoolClass->teachers()->detach($user->id);
         }
@@ -206,14 +206,14 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
 
         $validated = $request->validate([
-            'id_side' => ['nullable', 'exists:side,id_side'],
+            'side_id' => ['nullable', 'exists:sides,id'],
         ]);
 
         $userStudent = UserStudent::where('user_id', $user->id)
-            ->where('id_class', $schoolClass->id)
+            ->where('school_class_id', $schoolClass->id)
             ->firstOrFail();
 
-        $userStudent->update(['id_side' => $validated['id_side']]);
+        $userStudent->update(['side_id' => $validated['side_id']]);
 
         return back()->with('status', 'Turma atualizada!');
     }
@@ -238,7 +238,7 @@ class SchoolClassController extends Controller
                             ?->pivot->rm ?? 0),
                 ]);
 
-            $record->fill(['id_class' => $schoolClass->id])->save();
+            $record->fill(['school_class_id' => $schoolClass->id])->save();
         }
 
         return count($userIds) - $students->count();
@@ -249,7 +249,7 @@ class SchoolClassController extends Controller
         $user = auth()->user();
 
         if ($user->isStudent()) {
-            abort_unless((int) $user->student?->id_class === (int) $schoolClass->id, 403);
+            abort_unless((int) $user->student?->school_class_id === (int) $schoolClass->id, 403);
 
             return;
         }

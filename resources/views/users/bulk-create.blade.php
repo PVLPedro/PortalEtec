@@ -273,7 +273,7 @@
             <div class="flex flex-col gap-small rounded-small border border-border p-regular">
                 <div class="flex items-center justify-between gap-regular">
                     <p class="font-semibold">
-                        {{ $selected->nome }}: {{ $classStudents->count() }} aluno(s)
+                        {{ $selected->name }}: {{ $classStudents->count() }} aluno(s)
                     </p>
                     @if ($classStudents->isNotEmpty())
                         <a

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Fillable(['user_id'])]
 class UserTeacher extends Model
 {
-    protected $table = 'user_teachers';
-
-    protected $fillable = ['user_id'];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

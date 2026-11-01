@@ -45,20 +45,21 @@ class User extends Authenticatable
 
     public function etecs(): BelongsToMany
     {
-        return $this->belongsToMany(Etec::class, 'etec_worker', 'user_id', 'id_etec')->withPivot(
-            'rm',
-            'role',
-        );
+        return $this->belongsToMany(Etec::class, 'etec_user')
+            ->withPivot('rm', 'role')
+            ->withTimestamps();
     }
 
     public function schoolClasses(): BelongsToMany
     {
         return $this->belongsToMany(
             SchoolClass::class,
-            'school_class_user',
-            'id_teacher',
+            'school_class_teacher',
+            'teacher_id',
             'school_class_id',
-        );
+        )
+            ->withPivot('discipline_id')
+            ->withTimestamps();
     }
 
     public function currentSchoolClass(): ?SchoolClass

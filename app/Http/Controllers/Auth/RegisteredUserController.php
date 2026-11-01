@@ -19,7 +19,7 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         return view('auth.register', [
-            'etecs' => Etec::orderBy('nome')->get(),
+            'etecs' => Etec::orderBy('name')->get(),
         ]);
     }
 

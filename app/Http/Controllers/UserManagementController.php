@@ -52,7 +52,7 @@ class UserManagementController extends Controller
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
         $cargo = Role::tryFrom((string) ($request->cargo ?? $request->role));
 
-        // Aluno: pela matrícula (user_students -> turma). Professor: pela pivot school_class_user.
+        // Aluno: pela matrícula (user_students -> turma). Professor: pela pivot school_class_teacher.
         $inClass = fn($query, string $column, $value) => $query->where(
             fn($sub) => $sub
                 ->whereHas(
@@ -73,7 +73,7 @@ class UserManagementController extends Controller
                     'etecs',
                     fn($sub) => $sub
                         ->whereIn('etecs.id', $etecIds)
-                        ->where('etec_worker.rm', $request->rm),
+                        ->where('etec_user.rm', $request->rm),
                 );
             })
             ->when(
@@ -89,12 +89,20 @@ class UserManagementController extends Controller
     {
         $this->authorize('manage', $user);
 
+        $etec = auth()->user()->activeEtec();
         $userStudent = $user->isStudent() ? $user->student : null;
 
         return view('users.edit', [
             'user' => $user,
             'sides' => Side::all(),
             'userStudent' => $userStudent,
+            'rm' => $user->etecs->firstWhere('id', $etec?->id)?->pivot->rm ?? $userStudent?->rm,
+            'classes' => SchoolClass::where('etec_id', $etec?->id)
+                ->with(['course', 'grade', 'shift'])
+                ->get()
+                ->sortBy('name')
+                ->values(),
+            'currentClassId' => $userStudent?->school_class_id,
         ]);
     }
 
@@ -108,7 +116,7 @@ class UserManagementController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $user->id],
             'role' => ['sometimes', 'in:aluno,professor,coordenador'],
-            'id_side' => ['nullable', 'exists:side,id_side'],
+            'side_id' => ['nullable', 'exists:sides,id'],
         ];
 
         if ($user->isStudent()) {
@@ -142,12 +150,12 @@ class UserManagementController extends Controller
             $changes = [];
 
             // Só altera o lado se ele foi enviado, para não apagar o padrão ("Composto").
-            if ($request->filled('id_side')) {
-                $changes['id_side'] = $validated['id_side'];
+            if ($request->filled('side_id')) {
+                $changes['side_id'] = $validated['side_id'];
             }
 
             if ($request->has('school_class_id')) {
-                $changes['id_class'] = $validated['school_class_id'] ?? null;
+                $changes['school_class_id'] = $validated['school_class_id'] ?? null;
             }
 
             if ($changes) {
@@ -234,7 +242,7 @@ class UserManagementController extends Controller
     {
         foreach ($students as $student) {
             $this->studentRecord($student, $schoolClass->etec_id)
-                ->fill(['id_class' => $schoolClass->id])
+                ->fill(['school_class_id' => $schoolClass->id])
                 ->save();
         }
     }

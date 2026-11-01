@@ -2,44 +2,32 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Fillable(['activity_id', 'student_id', 'activity_status_id', 'posted'])]
 class ActivityStudent extends Model
 {
-    protected $table = 'activity_students';
+    protected function casts(): array
+    {
+        return [
+            'posted' => 'datetime',
+        ];
+    }
 
-    protected $primaryKey = 'id_activity_student';
-
-    public $timestamps = false;
-
-    protected $fillable = ['id_activity', 'id_student', 'id_status', 'posted'];
-
-    protected $casts = [
-        'posted' => 'datetime',
-    ];
-
-    /**
-     * Atividade a que esta entrega se refere.
-     */
     public function activity(): BelongsTo
     {
-        return $this->belongsTo(Activity::class, 'id_activity', 'id_activity');
+        return $this->belongsTo(Activity::class);
     }
 
-    /**
-     * Aluno que fez a entrega.
-     */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(UserStudent::class, 'id_student', 'id_student');
+        return $this->belongsTo(UserStudent::class, 'student_id');
     }
 
-    /**
-     * Status atual da entrega.
-     */
     public function status(): BelongsTo
     {
-        return $this->belongsTo(StatusActivity::class, 'id_status', 'id_status');
+        return $this->belongsTo(ActivityStatus::class, 'activity_status_id');
     }
 }

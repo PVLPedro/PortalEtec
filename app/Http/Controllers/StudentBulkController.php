@@ -185,10 +185,10 @@ class StudentBulkController extends Controller
     {
         return User::query()
             ->join('user_students', 'user_students.user_id', '=', 'users.id')
-            ->join('etec_worker', 'etec_worker.user_id', '=', 'users.id')
-            ->where('user_students.id_class', $schoolClass->id)
-            ->where('etec_worker.id_etec', $etec?->id)
-            ->select('users.*', 'etec_worker.rm as rm')
+            ->join('etec_user', 'etec_user.user_id', '=', 'users.id')
+            ->where('user_students.school_class_id', $schoolClass->id)
+            ->where('etec_user.etec_id', $etec?->id)
+            ->select('users.*', 'etec_user.rm as rm')
             ->orderBy('users.name')
             ->get();
     }
@@ -199,8 +199,8 @@ class StudentBulkController extends Controller
             $password = $this->generatePassword();
 
             DB::transaction(function () use ($etecId, $rm, $name, $password, $schoolClassId) {
-                $exists = DB::table('etec_worker')
-                    ->where('id_etec', $etecId)
+                $exists = DB::table('etec_user')
+                    ->where('etec_id', $etecId)
                     ->where('rm', $rm)
                     ->exists();
 
@@ -223,7 +223,7 @@ class StudentBulkController extends Controller
 
                 $user->student()->create([
                     'rm' => $rm,
-                    'id_class' => $schoolClassId,
+                    'school_class_id' => $schoolClassId,
                 ]);
             });
 

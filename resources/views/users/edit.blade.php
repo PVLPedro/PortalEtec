@@ -50,7 +50,7 @@
                                     value="{{ $class->id }}"
                                     @selected ((string) old('school_class_id', $currentClassId) === (string) $class->id)
                                 >
-                                    {{ $class->nome }}
+                                    {{ $class->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -83,28 +83,28 @@
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
 
                     @if ($user->isStudent())
-                        <x-input-label for="id_side" value="Lado" class="mt-4" />
+                        <x-input-label for="side_id" value="Lado" class="mt-4" />
                         <select
-                            id="id_side"
-                            name="id_side"
+                            id="side_id"
+                            name="side_id"
                             class="mt-1 block w-full rounded-md border-gray-300"
                         >
                             <option
                                 value=""
-                                @selected (old('id_side', optional($userStudent)->id_side) === null)
+                                @selected (old('side_id', optional($userStudent)->side_id) === null)
                             >
                                 Não definido
                             </option>
                             @foreach ($sides as $side)
                                 <option
-                                    value="{{ $side->id_side }}"
-                                    @selected ((int) old('id_side', optional($userStudent)->id_side) === $side->id_side)
+                                    value="{{ $side->id }}"
+                                    @selected ((int) old('side_id', optional($userStudent)->side_id) === $side->id)
                                 >
-                                    {{ $side->side_name }}
+                                    {{ $side->name }}
                                 </option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('id_side')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('side_id')" class="mt-2" />
                     @endif
 
                     <x-primary-button class="mt-6">Salvar</x-primary-button>

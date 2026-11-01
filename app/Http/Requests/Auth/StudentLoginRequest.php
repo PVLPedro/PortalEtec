@@ -49,14 +49,14 @@ class StudentLoginRequest extends FormRequest
 
     private function findStudent(): ?User
     {
-        $etec = Etec::where('codigo', $this->input('etec_code'))->first();
+        $etec = Etec::where('code', $this->input('etec_code'))->first();
 
         if (!$etec) {
             return null;
         }
 
-        $worker = DB::table('etec_worker')
-            ->where('id_etec', $etec->id)
+        $worker = DB::table('etec_user')
+            ->where('etec_id', $etec->id)
             ->where('rm', $this->input('rm'))
             ->where('role', 'aluno')
             ->first();
