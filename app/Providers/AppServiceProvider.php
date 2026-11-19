@@ -25,5 +25,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(Login::class, CheckEmailDomainOnLogin::class);
         View::share('generalTextClass', 'text-text text-base/tight tracking-tight');
+
+        $this->callAfterResolving(Factory::class, function (Factory $factory) {
+            $factory->add('lucide', [
+                'path' => resource_path('svg'),
+                'prefix' => 'lucide',
+            ]);
+        });
     }
 }

@@ -1,0 +1,177 @@
+/*
+ * Estilização global do Choices.js.
+ *
+ * Visual alinhado ao x-text-input: fundo bg-input, borda de 2px, raio small,
+ * shadow-md e borda accent no foco. Sem !important: todos os seletores usam o
+ * prefixo .choices (ou mais) para vencer o CSS padrão da biblioteca por
+ * especificidade, independente da ordem de carregamento.
+ */
+
+.choices {
+    margin-bottom: 0; /* o padrão da lib é 24px; o espaçamento vem do gap do form */
+    font-family: var(--font-poppins);
+    font-size: var(--text-base);
+    color: var(--color-text);
+}
+
+.choices .choices__inner {
+    min-height: 0;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-small);
+    background-color: var(--color-bg-input);
+    padding: var(--spacing-small);
+    box-shadow: var(--shadow-md);
+    font-size: inherit;
+}
+
+.choices[data-type*='select-one'] .choices__inner {
+    padding-bottom: var(--spacing-small);
+}
+
+/* Foco: igual ao focus:border-accent do input */
+.choices.is-focused .choices__inner,
+.choices.is-open .choices__inner {
+    border-color: var(--color-accent);
+    border-radius: var(--radius-small);
+}
+
+.choices .choices__list--single {
+    padding: 0 1.5rem 0 0; /* espaço à direita para a seta */
+}
+
+/* Item selecionado (modo single-select) */
+.choices .choices__list--single .choices__item {
+    color: var(--color-text);
+}
+
+.choices .choices__input {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    color: var(--color-text);
+    font-size: inherit;
+}
+
+.choices .choices__input::placeholder,
+.choices .choices__placeholder {
+    color: var(--color-secondary);
+    opacity: 1;
+}
+
+/* Seta do select simples (o padrão é #333 fixo e some no tema escuro) */
+.choices[data-type*='select-one']::after {
+    border-color: var(--color-text) transparent transparent;
+}
+
+.choices[data-type*='select-one'].is-open::after {
+    border-color: transparent transparent var(--color-text);
+}
+
+/* Dropdown */
+.choices .choices__list--dropdown,
+.choices .choices__list[aria-expanded],
+.choices.is-open .choices__list--dropdown,
+.choices.is-open .choices__list[aria-expanded] {
+    margin-top: 0.25rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-small);
+    background-color: var(--color-bg-input);
+    box-shadow: var(--shadow-md);
+}
+
+.choices .choices__list--dropdown .choices__item,
+.choices .choices__list[aria-expanded] .choices__item {
+    padding: var(--spacing-small);
+    font-size: inherit;
+}
+
+/* Remove o padding-right: 100px que a lib reserva para o "Press to select" */
+.choices .choices__list--dropdown .choices__item--selectable,
+.choices .choices__list[aria-expanded] .choices__item--selectable {
+    padding-right: var(--spacing-small);
+}
+
+/* Opção com destaque (hover / navegação por teclado) */
+.choices .choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    background-color: var(--color-bg-secondary-hover);
+    color: var(--color-text);
+}
+
+/* Select desabilitado */
+.choices.is-disabled .choices__inner {
+    background-color: var(--color-bg-secondary-disabled);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+}
+
+.choices.is-disabled .choices__input {
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
+.choices__color-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 6px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--color-border);
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.choices__icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 6px;
+    vertical-align: middle;
+    color: var(--color-text);
+}
+
+.choices__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Tags do select múltiplo */
+.choices .choices__list--multiple .choices__item,
+.choices .choices__list--multiple .choices__item.is-highlighted {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-small);
+    margin-right: 0;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-small);
+    background-color: var(--color-accent-bg);
+    padding: var(--spacing-small);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    word-break: normal;
+}
+
+.choices .choices__list--multiple .choices__item * {
+    flex-shrink: 0;
+}
+
+/*
+ * Botão de remover da tag. O ícone é uma máscara pintada com currentColor:
+ * um SVG com stroke="currentColor" em background-image NÃO herda a cor do
+ * texto (fica preto), então some no tema escuro.
+ */
+.choices .choices__list--multiple .choices__item .choices__button {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background-color: currentColor;
+    background-image: none;
+    color: var(--color-text);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>")
+        center / contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>")
+        center / contain no-repeat;
+}

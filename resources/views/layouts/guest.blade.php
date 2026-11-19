@@ -8,7 +8,7 @@
     <title>Portal Etec</title>
 
     <!-- Scripts -->
-    @vite (['resources/css/app.css', 'resources/js/app.js'])
+    @vite ([ 'resources/css/app.css', 'resources/css/choices.css', 'resources/js/app.js' ])
 
     <link
         rel="stylesheet"

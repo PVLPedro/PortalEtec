@@ -7,5 +7,4 @@
     }}
 >
     {{ $slot }}
-    <span class="text-secondary"> {{ $icon }} </span>
 </a>

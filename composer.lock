@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28ffc883de7d5028ed8b26914d68b448",
+    "content-hash": "74bf1bd36fc7b3281b97e14cd594f303",
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
@@ -2112,16 +2112,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "1.26.27",
+            "version": "1.26.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "6ecd3400a11b55ad54e1943b3824cc126c7b8935"
+                "reference": "73f340c115fc1de71474d1413505ac931ed7af0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/6ecd3400a11b55ad54e1943b3824cc126c7b8935",
-                "reference": "6ecd3400a11b55ad54e1943b3824cc126c7b8935",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/73f340c115fc1de71474d1413505ac931ed7af0a",
+                "reference": "73f340c115fc1de71474d1413505ac931ed7af0a",
                 "shasum": ""
             },
             "require": {
@@ -2166,9 +2166,10 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/1.26.27"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/1.26.32"
             },
-            "time": "2026-07-02T00:44:00+00:00"
+            "time": "2026-07-31T02:26:33+00:00",
+            "published-time": "2026-07-31T02:26:37+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10451,5 +10452,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
