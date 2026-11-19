@@ -1,6 +1,6 @@
 <x-guest-layout>
     <!-- Session Status -->
-    <x-auth-session-status class="" :status="session('status')" />
+    <x-auth-session-status :status="session('status')" />
 
     <section
         class="relative flex max-h-[90dvh] w-full max-w-120 flex-col items-center gap-large overflow-auto rounded-regular bg-bg-secondary p-large shadow-md"
@@ -11,21 +11,24 @@
             <x-application-logo class="h-32 w-full fill-current" />
         </a>
 
-        <p class="text-center font-medium {{ $generalTextClass }}">Bem-vindo(a) ao Portal Etec!</p>
+        <div class="flex w-full flex-col gap-regular *:flex-1">
+            <x-form-link href="{{ url('/') }}">
+                <x-lucide-chevron-left />
+                Voltar para a seleção
+            </x-form-link>
+            <x-form-link href="{{ route('register') }}">
+                Não possui uma conta? Crie uma
+                <x-lucide-square-arrow-out-up-right class="size-4 stroke-3" />
+            </x-form-link>
+            <x-form-text>
+                Entrando como Professor ou Coordenador
+                <x-lucide-id-card />
+            </x-form-text>
+        </div>
 
-        <x-form-link href="{{ route('register') }}">
-            {{ __('auth.login.no_account') }}
-            <x-slot name="icon">
-                <x-lucide-square-arrow-out-up-right
-                    class="size-4 stroke-3"
-                ></x-lucide-square-arrow-out-up-right>
-            </x-slot>
-        </x-form-link>
-
-        <form method="POST" action="{{ route('login') }}" class="flex w-full flex-col gap-regular">
+        <form method="POST" action="{{ route('login') }}" class="flex w-full flex-col gap-large">
             @csrf
 
-            <!-- Email Address -->
             <div>
                 <x-input-label for="email" :value="__('auth.login.label.email')" />
                 <x-text-input
@@ -37,57 +40,36 @@
                     required
                     autofocus
                     autocomplete="username"
-                />
-                <x-input-error :messages="$errors->get('email')" class="" />
+                >
+                    <x-slot name="icon">
+                        <x-lucide-mail class="shrink-0" />
+                    </x-slot>
+                </x-text-input>
+                <x-input-error :messages="$errors->get('email')" />
             </div>
 
-            <!-- Password -->
-            <div class="">
-                <x-input-label for=" password" :value="__('auth.login.label.password')" />
-
-                <x-text-input
-                    id="password"
-                    type="password"
-                    name="password"
-                    :placeholder="__('auth.placeholder.password')"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <x-input-error :messages="$errors->get('incorrect_password')" class="" />
+            <div>
+                <x-input-label for="password" :value="__('auth.login.label.password')" />
+                <x-password-input :placeholder="__('auth.placeholder.password')" required />
+                <x-input-error :messages="$errors->get('incorrect_password')" />
             </div>
 
-            <!-- Forgot Your Password? -->
             @if (Route::has('password.request'))
                 <a
-                    class="rounded-md text-sm font-medium text-gray underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+                    class="rounded-small text-sm font-medium text-secondary underline hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     href="{{ route('password.request') }}"
                 >
                     {{ __('auth.login.forgot_password') }}
                 </a>
             @endif
 
-            <!-- Remember Me -->
-            <div
-                class="relative flex items-center justify-between gap-small *:flex *:items-center *:gap-small"
-            >
-                <div>
-                    <input
-                        id="remember_me"
-                        type="checkbox"
-                        class="peer size-5 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
-                        name="remember"
-                    />
-                    <x-lucide-check
-                        class="pointer-events-none absolute top-1/2 left-0 hidden size-5 -translate-y-1/2 stroke-3 text-white peer-checked:block"
-                    ></x-lucide-check>
-                    <label for="remember_me" class="flex-1 text-sm">
-                        {{ __('auth.login.remember_me') }}
-                    </label>
-                </div>
-                <div class="">
-                    <x-primary-button class=""> {{ __('auth.login.log_in') }} </x-primary-button>
-                </div>
+            <x-remember-me />
+
+            <div class="w-full *:w-full">
+                <x-primary-button class="bg-accent text-white hover:bg-accent-hover">
+                    <x-lucide-log-in />
+                    Entrar
+                </x-primary-button>
             </div>
         </form>
     </section>

@@ -25,6 +25,8 @@
     --color-bg-tertiary-hover: hsl(240, 20%, 95%);
     --color-bg-tertiary-disabled: hsl(240, 0%, 97%);
 
+    --color-bg-input: hsl(0, 100%, 100%);
+
     --color-bg-transparent: hsl(0, 0%, 30%);
 
     --color-text: hsl(0, 0%, 15%);
@@ -56,6 +58,8 @@
     --color-bg-tertiary: hsl(230, 20%, 16%);
     --color-bg-tertiary-hover: hsl(230, 20%, 21%);
 
+    --color-bg-input: hsl(230, 20%, 20%);
+
     --color-bg-transparent: hsl(0, 0%, 30%);
 
     --color-text: hsl(0, 0%, 95%);
@@ -86,6 +90,8 @@
 
     --color-bg-tertiary: var(--color-bg-tertiary);
     --color-bg-tertiary-hover: var(--color-bg-tertiary-hover);
+
+    --color-bg-input: var(--color-bg-input);
 
     --color-bg-transparent: var(--color-bg-transparent);
 
@@ -279,120 +285,4 @@
     height: 12px;
     width: 12px;
     background-color: transparent;
-}
-
-/*
- * Estilização global do Choices.js usando as variáveis do tema Tailwind.
- */
-
-.choices {
-    box-shadow: var(--shadow-md) !important;
-}
-
-.choices * {
-    font-size: var(--text-base) !important;
-}
-
-.choices__inner,
-.choices__list--dropdown {
-    border-radius: var(--radius-regular) !important;
-    border: 1px solid var(--color-border) !important;
-    background-color: var(--color-bg-secondary) !important;
-    padding: var(--spacing-small) !important;
-    font-family: var(--font-poppins) !important;
-    color: var(--color-text) !important;
-    font-size: var(--text-base) !important;
-    box-shadow: var(--shadow-md) !important;
-}
-
-.choices__input {
-    background-color: transparent !important;
-    color: var(--color-text) !important;
-    font-size: var(--text-base) !important;
-}
-
-.choices__placeholder {
-    color: var(--color-secondary) !important;
-    opacity: 1 !important;
-    font-size: var(--text-base) !important;
-}
-
-/* Estado de foco — replica o anel de foco que o restante dos inputs/selects usa */
-.choices.is-focused .choices__inner {
-    border-color: var(--color-accent) !important;
-}
-
-/* .choices.is-focused .choices__list--dropdown {
-
-} */
-
-/* Item selecionado (modo single-select) */
-.choices__list--single .choices__item {
-    color: var(--color-text) !important;
-}
-
-/* Opção da dropdown com destaque (hover / navegação por teclado) */
-.choices__list--dropdown .choices__item--selectable.is-highlighted {
-    background-color: var(--color-bg-secondary-hover) !important;
-    color: var(--color-text) !important;
-}
-
-/* Select desabilitado */
-.choices.is-disabled .choices__inner {
-    background-color: var(--color-bg-secondary-disabled);
-    color: var(--color-text-disabled);
-    cursor: not-allowed !important;
-}
-
-.choices__color-swatch {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-right: 6px;
-    border-radius: var(--radius-small);
-    border: 1px solid var(--color-border);
-    vertical-align: middle;
-    flex-shrink: 0;
-}
-
-.choices__icon {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 6px;
-    vertical-align: middle;
-    color: var(--color-text);
-}
-
-.choices__icon svg {
-    width: 24px;
-    height: 24px;
-}
-
-.choices__list--multiple .choices__item {
-    background-color: var(--color-accent-bg) !important;
-    border-color: var(--color-accent) !important;
-    color: var(--color-text) !important;
-    border-radius: var(--radius-regular) !important;
-    font-size: var(--text-sm) !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: var(--radius-small) !important;
-    padding: var(--spacing-small) !important;
-    margin-right: 0 !important;
-    word-break: normal !important;
-    & * {
-        flex-shrink: 0 !important;
-    }
-}
-
-.choices__button {
-    height: 100% !important;
-    width: 20px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    margin: 0 !important;
-    color: var(--color-text) !important;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-x-icon lucide-x'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>") !important;
-    background-size: 100% !important;
 }

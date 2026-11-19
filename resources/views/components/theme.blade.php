@@ -3,7 +3,7 @@
     {{
         $attributes->merge([
             'class' =>
-                'flex items-center justify-center rounded-regular p-regular *:size-8 hover:bg-bg-primary-hover',
+                'flex items-center justify-center rounded-regular p-regular text-text *:size-8 hover:bg-bg-primary-hover',
         ])
     }}
 >
