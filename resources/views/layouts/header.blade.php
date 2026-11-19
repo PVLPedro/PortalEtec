@@ -47,3 +47,6 @@
             </x-slot>
             @push ('scripts')
             <script></script>
+        </x-dropdown>
+    </ul>
+</header>

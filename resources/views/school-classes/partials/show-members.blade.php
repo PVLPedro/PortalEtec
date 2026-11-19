@@ -43,7 +43,7 @@
                 <x-lucide-user-search />
             </label>
             <input
-                placeholder="Pesquisar Membro (Nome, Cargo ou Email)"
+                placeholder="Pesquisar Membro (Por Nome ou RM)"
                 type="text"
                 class="flex-1 border-b-2 border-b-transparent text-text outline-0 placeholder:text-secondary focus:border-b-(--color-school-class)"
                 id="member-search"
@@ -220,7 +220,7 @@
                         Cargo
                     </x-slot>
                     <x-slot name="secondary">
-                        Email
+                        RM
                     </x-slot>
                 </x-card-text>
             </span>
