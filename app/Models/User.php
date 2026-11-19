@@ -1,4 +1,6 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use App\Enums\Role;
 use Database\Factories\UserFactory;
@@ -28,34 +30,17 @@ class User extends Authenticatable
 
     public function student(): HasOne
     {
-        return $this->hasOne(UserStudent::class, 'user_id', 'id');
+        return $this->hasOne(UserStudent::class);
     }
 
     public function teacher(): HasOne
     {
-        return $this->hasOne(UserTeacher::class, 'user_id', 'id');
+        return $this->hasOne(UserTeacher::class);
     }
 
     public function coordinator(): HasOne
     {
-        return $this->hasOne(UserCoordinator::class, 'user_id', 'id');
-    }
-
-    public function etecs(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Etec::class,
-            'etec_worker',
-            'id_user',
-            'id_etec',
-            'id',
-            'codigo',
-        )->withPivot('role');
-    }
-
-    public function activeEtec(): ?Etec
-    {
-        return $this->etecs()->first();
+        return $this->hasOne(UserCoordinator::class);
     }
 
     public function etecs(): BelongsToMany
@@ -120,12 +105,5 @@ class User extends Authenticatable
     public function isCoordinator(): bool
     {
         return $this->role === Role::Coordenador;
-    }
-
-    public function hasValidEmailDomain(): bool
-    {
-        $domain = substr(strrchr($this->email, '@') ?: '', 1);
-
-        return in_array($domain, ['aluno.cps.sp.gov.br', 'cps.sp.gov.br'], true);
     }
 }
