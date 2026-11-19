@@ -1,40 +1,59 @@
 <x-app-layout>
-    <div class="">
-        <div class="mx-auto max-w-5xl">
-            <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-xl font-semibold">{{ __ ('schoolclasses.index.title') }}</h2>
-                @if (auth()->user()->role === \App\Enums\Role::Coordenador ||
-                    auth()->user()->role === \App\Enums\Role::Professor)
-                    <a
-                        href="{{ route('school-classes.create') }}"
-                        class="inline-block rounded-md bg-indigo-600 px-4 py-2 text-white"
+    <div class="space-y-larger">
+        <div class="flex items-center gap-regular">
+            <h2 class="flex-1 text-xl font-semibold">Turmas</h2>
+            @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                <x-primary-link
+                    href="{{ route('school-classes.create') }}"
+                    class="bg-accent text-text-white hover:bg-accent-hover"
+                >
+                    <x-lucide-plus />
+                    <span>Criar Turma</span>
+                </x-primary-link>
+            @endif
+        </div>
+        <div class="grid grid-cols-2 gap-large">
+            @forelse ($schoolClasses as $schoolClass)
+                <a href="{{ route('school-class.show', $schoolClass) }}" class="">
+                    <x-card
+                        class="grid grid-cols-[auto_1fr] gap-regular hover:bg-bg-tertiary-hover"
                     >
-                        {{ __('schoolclasses.index.create_button') }}
-                    </a>
-                    </button>
-                @endif
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 sm:grid-cols-2">
-                @forelse ($schoolClasses as $schoolClass)
-                    <a
-                        href="{{ route('school-classes.show', $schoolClass) }}"
-                        class="block rounded-lg bg-white p-4 shadow transition hover:shadow-md"
-                    >
-                        <div class="font-semibold">{{ $schoolClass->nome }}</div>
-                        <div class="mt-1 text-sm text-gray-500">
-                            {{ $schoolClass->users_count }} {{
-                                Str::plural(
-                                    'membro',
-                                    $schoolClass->users_count,
-                                )
-                            }}
-                        </div>
-                    </a>
-                @empty
-                    <p class="text-gray-500">{{ __('schoolclasses.index.empty') }}</p>
-                @endforelse
-            </div>
+                        <span
+                            class="flex size-16 items-center justify-center rounded-small p-regular"
+                            style="background-color: var(--color-{{ $schoolClass->color->code }}-bg); color: var(--color-{{ $schoolClass->color->code }})"
+                        >
+                            <x-dynamic-component
+                                :component="'lucide-' . $schoolClass->icon->code"
+                                class="size-8"
+                            />
+                        </span>
+                        <span class="flex flex-col items-start gap-small">
+                            <x-card-text>
+                                <x-slot name="primary">
+                                    {{ $schoolClass->name }}
+                                </x-slot>
+                                <x-slot name="secondary">
+                                    {{ $schoolClass->etec->name }}
+                                </x-slot>
+                            </x-card-text>
+                        </span>
+                    </x-card>
+                </a>
+            @empty
+                <div class="flex items-center gap-regular">
+                    <p class="text-secondary">Nenhuma turma criada ainda.</p>
+                    @if (auth()->user()->role === \App\Enums\Role::Coordenador)
+                        <x-form-link href="{{ route('school-classes.create') }}">
+                            Criar Turma
+                            <x-slot name="icon">
+                                <x-lucide-square-arrow-out-up-right
+                                    class="size-4 stroke-3"
+                                ></x-lucide-square-arrow-out-up-right>
+                            </x-slot>
+                        </x-form-link>
+                    @endif
+                </div>
+            @endforelse
         </div>
     </div>
 </x-app-layout>

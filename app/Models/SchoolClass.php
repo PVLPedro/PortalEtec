@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-#[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id'])]
+#[Fillable(['etec_id', 'course_id', 'grade_id', 'shift_id', 'color_id'])]
 class SchoolClass extends Model
 {
-    protected function nome(): Attribute
+    protected function name(): Attribute
     {
         return Attribute::get(
-            fn() => "{$this->grade->name} {$this->course->course_name} - {$this->shift->name}",
+            fn() => "{$this->grade->name} {$this->course->name} - {$this->shift->name}",
         );
     }
 
@@ -39,15 +40,42 @@ class SchoolClass extends Model
         return $this->belongsTo(Shift::class);
     }
 
+    public function color(): BelongsTo
+    {
+        return $this->belongsTo(Color::class);
+    }
+
+    public function icon(): HasOneThrough
+    {
+        return $this->hasOneThrough(Icon::class, Course::class, 'id', 'id', 'course_id', 'icon_id');
+    }
+
     public function students(): HasMany
     {
-        return $this->hasMany(UserStudent::class, 'id_class', 'id');
+        return $this->hasMany(UserStudent::class);
+    }
+
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'school_class_teacher',
+            'school_class_id',
+            'teacher_id',
+        )
+            ->withPivot('discipline_id')
+            ->withTimestamps();
+    }
+
+    public function teacherAssignments(): HasMany
+    {
+        return $this->hasMany(SchoolClassTeacher::class);
     }
 
     public function disciplines(): BelongsToMany
     {
         return $this->belongsToMany(Discipline::class, 'school_class_discipline')
-            ->withPivot('user_id')
+            ->withPivot('teacher_id', 'side_id')
             ->withTimestamps();
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\StudentAuthenticatedSessionController;
 
 Route::middleware('guest')->group(function () {
     Route::get('cadastrar', [RegisteredUserController::class, 'create'])->name('register');
@@ -20,6 +21,12 @@ Route::middleware('guest')->group(function () {
     Route::get('entrar', [AuthenticatedSessionController::class, 'create'])->name('login');
 
     Route::post('entrar', [AuthenticatedSessionController::class, 'store']);
+
+    Route::get('entrar/aluno', [StudentAuthenticatedSessionController::class, 'create'])->name(
+        'login.student',
+    );
+
+    Route::post('entrar/aluno', [StudentAuthenticatedSessionController::class, 'store']);
 
     Route::get('esqueci-senha', [PasswordResetLinkController::class, 'create'])->name(
         'password.request',

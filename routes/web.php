@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\StudentBulkController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\EtecContextController;
@@ -10,11 +11,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (!Auth::check()) {
-        return redirect()->route('login');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
     }
 
-    return redirect()->route('dashboard');
+    return view('auth.select-role');
 });
 
 Route::middleware('auth')->group(function () {
@@ -24,10 +25,17 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/visao-geral', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/manter-sessao', fn() => response()->json(['token' => csrf_token()]))->name(
+        'session.keep-alive',
+    );
+
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/senha', [PasswordController::class, 'update'])->name('password.update');
 
     Route::get('/turmas', [SchoolClassController::class, 'index'])->name('school-classes.index');
+    Route::get('/minha-turma', [SchoolClassController::class, 'mine'])
+        ->middleware('role:aluno')
+        ->name('school-class.mine');
 
     Route::middleware('role:coordenador,professor')->group(function () {
         Route::get('/turmas/criar', [SchoolClassController::class, 'create'])->name(
@@ -36,13 +44,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/turmas', [SchoolClassController::class, 'store'])->name(
             'school-classes.store',
         );
-    });
 
-    Route::get('/turmas/{schoolClass}', [SchoolClassController::class, 'show'])->name(
-        'school-classes.show',
-    );
-
-    Route::middleware('role:coordenador,professor')->group(function () {
         Route::get('/turmas/{schoolClass}/editar', [SchoolClassController::class, 'edit'])->name(
             'school-classes.edit',
         );
@@ -56,18 +58,37 @@ Route::middleware('auth')->group(function () {
             SchoolClassController::class,
             'removeUser',
         ])->name('school-classes.remove-user');
+        Route::patch('/turmas/{schoolClass}/usuarios/{user}/lado', [
+            SchoolClassController::class,
+            'updateSide',
+        ])->name('school-classes.update-side');
     });
+
+    Route::get('/turma/{schoolClass}', [SchoolClassController::class, 'show'])->name(
+        'school-class.show',
+    );
 
     Route::middleware('role:coordenador')->group(function () {
         Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::get('/usuarios', [UserManagementController::class, 'index'])->name('users.index');
-        Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name(
-            'users.edit',
-        );
         Route::get('/usuarios/filtrar', [UserManagementController::class, 'filtrar'])->name(
             'users.filtrar',
+        );
+
+        Route::get('/usuarios/alunos/criar', [StudentBulkController::class, 'create'])->name(
+            'students.bulk.create',
+        );
+        Route::post('/usuarios/alunos', [StudentBulkController::class, 'store'])->name(
+            'students.bulk.store',
+        );
+        Route::get('/usuarios/alunos/resultado/csv', [StudentBulkController::class, 'csv'])->name(
+            'students.bulk.csv',
+        );
+
+        Route::get('/usuarios/{user}/editar', [UserManagementController::class, 'edit'])->name(
+            'users.edit',
         );
         Route::put('/usuarios/{user}', [UserManagementController::class, 'update'])->name(
             'users.update',
@@ -78,11 +99,20 @@ Route::middleware('auth')->group(function () {
         Route::delete('/usuarios', [UserManagementController::class, 'destroyMultiple'])->name(
             'users.destroyMultiple',
         );
-        Route::post('/usuarios/adicionar-turma', [
+        Route::post('/usuarios/{user}/adicionar-turma', [
             UserManagementController::class,
             'addToClass',
         ])->name('users.add-to-class');
+
+        Route::post('/usuarios/adicionar-turma', [
+            UserManagementController::class,
+            'addToClassMultiple',
+        ])->name('users.add-to-classMultiple');
     });
+
+    Route::get('turma/atividades', function () {
+        return view('activities.index');
+    })->name('activities.index');
 });
 
 require __DIR__ . '/auth.php';

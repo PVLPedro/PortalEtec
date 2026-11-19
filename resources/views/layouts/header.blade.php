@@ -1,15 +1,15 @@
-<header class="t-0 sticky col-span-2 flex items-center justify-between text-text">
+<header class="t-0 sticky z-10 col-span-2 flex items-center justify-between text-text">
     <figure class="relative h-18 px-regular">
         <a href="{{ route('dashboard') }}">
             <x-application-logo class="h-full" />
         </a>
     </figure>
     <ul class="flex items-center justify-center gap-smaller p-regular">
-        <x-etec-switcher />
-        <x-theme></x-theme>
+        {{-- <x-etec-switcher /> --}}
+        <x-theme />
         <x-dropdown>
-            <x-lucide-user />
             <x-slot name="trigger">
+                <x-lucide-user class="size-8" />
                 <button class="">
                     <div>{{ Auth::user()->name }}</div>
                 </button>
@@ -21,13 +21,13 @@
 
             <x-slot name="content">
                 <x-dropdown-link :href="route('profile.edit')">
-                    <x-lucide-user></x-lucide-user>
-                    {{ __('layout.header.profile') }}
+                    <x-lucide-user />
+                    Perfil
                 </x-dropdown-link>
 
                 <x-dropdown-link :href="route('profile.edit')">
-                    <x-lucide-bolt></x-lucide-bolt>
-                    {{ __('layout.header.settings') }}
+                    <x-lucide-settings />
+                    Configurações
                 </x-dropdown-link>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -38,17 +38,12 @@
                             event.preventDefault();
                             this.closest('form').submit();
                         "
-                        class="text-red"
+                        class="text-danger"
                     >
-                        <x-lucide-log-out></x-lucide-log-out>
-                        <span>{{ __('layout.header.logout') }}</span>
+                        <x-lucide-log-out />
+                        <span>Desconectar-se</span>
                     </x-dropdown-link>
                 </form>
             </x-slot>
-        </x-dropdown>
-    </ul>
-</header>
-
-@push ('scripts')
-    <script></script>
-@endpush
+            @push ('scripts')
+            <script></script>

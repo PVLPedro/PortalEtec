@@ -25,8 +25,8 @@ class DisciplineSeeder extends Seeder
             'Sociologia',
         ];
 
-        foreach ($disciplines as $discipline) {
-            Discipline::updateOrCreate(['discipline_name' => $discipline]);
+        foreach ($disciplines as $name) {
+            Discipline::firstOrCreate(['name' => $name]);
         }
     }
 }

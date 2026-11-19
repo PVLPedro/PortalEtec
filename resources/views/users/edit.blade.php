@@ -5,6 +5,11 @@
                 <form method="POST" action="{{ route('users.update', $user) }}">
                     @csrf
                     @method ('PUT')
+                    <input
+                        type="hidden"
+                        name="role"
+                        value="{{ old('role', $user->role->value) }}"
+                    />
 
                     <x-input-label for="name" value="__('users.edit.label.name')" />
                     <x-text-input
@@ -17,18 +22,92 @@
                     />
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
 
-                    <x-input-label for="email" value="E-mail" class="mt-4" />
-                    <x-text-input
-                        id="email"
-                        name="email"
-                        type="email"
-                        class="mt-1 block w-full"
-                        :value="old('email', $user->email)"
-                        required
-                    />
+                    @if ($user->isStudent())
+                        <x-input-label for="rm" value="RM" class="mt-4" />
+                        <x-text-input
+                            id="rm"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :value="$rm"
+                            disabled
+                        />
+
+                        <div class="mt-4 rounded border p-4">
+                            <p class="text-sm font-semibold">Senha inicial (gerada no cadastro)</p>
+                            <p class="mt-1 font-mono text-lg">{{ $user->initial_password ?? '—' }}</p>
+                            <p class="mt-1 text-xs">Entregue esta senha ao aluno para o primeiro acesso. Ela não muda, e deixa de valer para login se o aluno trocar a própria senha.</p>
+                        </div>
+
+                        <x-input-label for="school_class_id" value="Turma" class="mt-4" />
+                        <select
+                            id="school_class_id"
+                            name="school_class_id"
+                            class="mt-1 block w-full rounded border-gray-300"
+                        >
+                            <option value="">Sem turma</option>
+                            @foreach ($classes as $class)
+                                <option
+                                    value="{{ $class->id }}"
+                                    @selected ((string) old('school_class_id', $currentClassId) === (string) $class->id)
+                                >
+                                    {{ $class->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('school_class_id')" class="mt-2" />
+
+                        <x-input-label
+                            for="email"
+                            value="E-mail institucional (opcional)"
+                            class="mt-4"
+                        />
+                        <x-text-input
+                            id="email"
+                            name="email"
+                            type="email"
+                            class="mt-1 block w-full"
+                            :value="old('email', $user->email)"
+                            placeholder="nome@aluno.cps.sp.gov.br"
+                        />
+                    @else
+                        <x-input-label for="email" value="E-mail" class="mt-4" />
+                        <x-text-input
+                            id="email"
+                            name="email"
+                            type="email"
+                            class="mt-1 block w-full"
+                            :value="old('email', $user->email)"
+                            required
+                        />
+                    @endif
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
 
-                    <x-primary-button class="mt-6">{{ __('users.edit.submit') }}</x-primary-button>
+                    @if ($user->isStudent())
+                        <x-input-label for="side_id" value="Lado" class="mt-4" />
+                        <select
+                            id="side_id"
+                            name="side_id"
+                            class="mt-1 block w-full rounded-md border-gray-300"
+                        >
+                            <option
+                                value=""
+                                @selected (old('side_id', optional($userStudent)->side_id) === null)
+                            >
+                                Não definido
+                            </option>
+                            @foreach ($sides as $side)
+                                <option
+                                    value="{{ $side->id }}"
+                                    @selected ((int) old('side_id', optional($userStudent)->side_id) === $side->id)
+                                >
+                                    {{ $side->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('side_id')" class="mt-2" />
+                    @endif
+
+                    <x-primary-button class="mt-6">Salvar</x-primary-button>
                 </form>
 
                 @if ($user->role !== \App\Enums\Role::Coordenador)

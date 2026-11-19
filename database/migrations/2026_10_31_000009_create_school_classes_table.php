@@ -9,10 +9,11 @@ return new class extends Migration {
     {
         Schema::create('school_classes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('etec_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
-            $table->foreignId('grade_id')->constrained('grades')->cascadeOnDelete();
-            $table->foreignId('shift_id')->constrained('shifts')->cascadeOnDelete();
+            $table->foreignId('etec_id')->constrained('etecs')->cascadeOnDelete();
+            $table->foreignId('course_id')->constrained('courses')->restrictOnDelete();
+            $table->foreignId('grade_id')->constrained('grades')->restrictOnDelete();
+            $table->foreignId('shift_id')->constrained('shifts')->restrictOnDelete();
+            $table->foreignId('color_id')->constrained('colors')->restrictOnDelete();
             $table->timestamps();
         });
     }

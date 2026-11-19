@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Models\SchoolClass;
 use App\Models\User;
 use App\Models\Etec;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Shift;
+use App\Models\Color;
+use App\Models\Icon;
+use App\Models\Side;
+use App\Models\UserStudent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,13 +21,33 @@ use Illuminate\Validation\ValidationException;
 
 class SchoolClassController extends Controller
 {
+    public function mine(Request $request)
+    {
+        $schoolClass = auth()->user()->currentSchoolClass();
+
+        if (!$schoolClass) {
+            return redirect()
+                ->route('dashboard')
+                ->with('status', 'Você ainda não foi adicionado a nenhuma turma.');
+        }
+
+        return redirect()->route(
+            'school-class.show',
+            ['schoolClass' => $schoolClass] + $request->only('secao'),
+        );
+    }
+
     public function index()
     {
+        if (auth()->user()->isStudent()) {
+            return redirect()->route('school-class.mine');
+        }
+
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         $schoolClasses = SchoolClass::whereIn('etec_id', $etecIds)
-            ->with(['course', 'grade', 'shift'])
-            ->withCount('users')
+            ->with(['course', 'grade', 'shift', 'color'])
+            ->withCount('students')
             ->join('grades', 'school_classes.grade_id', '=', 'grades.id')
             ->orderBy('grades.name')
             ->addSelect('school_classes.*')
@@ -33,43 +58,90 @@ class SchoolClassController extends Controller
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $etecIds = auth()->user()->etecs()->pluck('etecs.id');
+
+        // Só alunos entram direto na turma; professores são vinculados por disciplina.
+        $preselectedUsers = User::whereIn('id', $request->query('usuarios', []))
+            ->where('role', Role::Aluno->value)
+            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->get(['id', 'name', 'role']);
+
         return view('school-classes.create', [
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
+            'preselectedUsers' => $preselectedUsers,
         ]);
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
+            'color_id' => ['required', 'exists:colors,id'],
+            'usuarios' => ['sometimes', 'array'],
+            'usuarios.*' => ['exists:users,id'],
         ]);
 
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
-        SchoolClass::create([...$validated, 'etec_id' => $etecIds->first()]);
+        $schoolClass = SchoolClass::create([
+            'course_id' => $validated['course_id'],
+            'grade_id' => $validated['grade_id'],
+            'shift_id' => $validated['shift_id'],
+            'color_id' => $validated['color_id'],
+            'etec_id' => $etecIds->first(),
+        ]);
 
-        return back()->with('status', 'Turma criada!');
+        $message = 'Turma criada!';
+
+        if (!empty($validated['usuarios'])) {
+            $ignored = $this->addStudents($schoolClass, $validated['usuarios'], $etecIds);
+
+            if ($ignored > 0) {
+                $message .= " {$ignored} usuário(s) não foram adicionados: professores são vinculados por meio das disciplinas da turma.";
+            }
+        }
+
+        return redirect()->route('school-classes.index')->with('status', $message);
     }
 
     public function show(SchoolClass $schoolClass)
     {
         $this->authorizeClass($schoolClass);
 
-        $schoolClass->load('users', 'course', 'grade', 'shift');
+        $schoolClass->load([
+            'students.user',
+            'students.side',
+            'teachers',
+            'course',
+            'grade',
+            'shift',
+            'color',
+            'icon',
+            'etec',
+        ]);
+
+        $sides = Side::all();
 
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
+            'sides' => $sides,
         ]);
     }
 
@@ -82,6 +154,8 @@ class SchoolClassController extends Controller
             'courses' => Course::all(),
             'grades' => Grade::all(),
             'shifts' => Shift::all(),
+            'colors' => Color::all(),
+            'icons' => Icon::all(),
         ]);
     }
 
@@ -93,6 +167,7 @@ class SchoolClassController extends Controller
             'course_id' => ['required', 'exists:courses,id'],
             'grade_id' => ['required', 'exists:grades,id'],
             'shift_id' => ['required', 'exists:shifts,id'],
+            'color_id' => ['required', 'exists:colors,id'],
         ]);
 
         $schoolClass->update($validated);
@@ -115,21 +190,75 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
         $this->requirePassword($request);
 
-        $schoolClass->users()->detach($user->id);
+        if ($user->isStudent()) {
+            UserStudent::where('user_id', $user->id)
+                ->where('school_class_id', $schoolClass->id)
+                ->update(['school_class_id' => null]);
+        } else {
+            $schoolClass->teachers()->detach($user->id);
+        }
 
         return back()->with('status', 'Usuário removido da turma!');
     }
 
+    public function updateSide(Request $request, SchoolClass $schoolClass, User $user)
+    {
+        $this->authorizeClass($schoolClass);
+
+        $validated = $request->validate([
+            'side_id' => ['nullable', 'exists:sides,id'],
+        ]);
+
+        $userStudent = UserStudent::where('user_id', $user->id)
+            ->where('school_class_id', $schoolClass->id)
+            ->firstOrFail();
+
+        $userStudent->update(['side_id' => $validated['side_id']]);
+
+        return back()->with('status', 'Turma atualizada!');
+    }
+
+    /**
+     * Matricula os alunos na turma. Retorna quantos usuários foram ignorados (não alunos).
+     */
+    private function addStudents(SchoolClass $schoolClass, array $userIds, $etecIds): int
+    {
+        $students = User::whereIn('id', $userIds)
+            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->get()
+            ->filter(fn($u) => $u->isStudent());
+
+        foreach ($students as $student) {
+            $record =
+                $student->student ??
+                new UserStudent([
+                    'user_id' => $student->id,
+                    'rm' =>
+                        (int) ($student->etecs()->where('etecs.id', $schoolClass->etec_id)->first()
+                            ?->pivot->rm ?? 0),
+                ]);
+
+            $record->fill(['school_class_id' => $schoolClass->id])->save();
+        }
+
+        return count($userIds) - $students->count();
+    }
+
     private function authorizeClass(SchoolClass $schoolClass): void
     {
+        $user = auth()->user();
+
+        if ($user->isStudent()) {
+            abort_unless((int) $user->student?->school_class_id === (int) $schoolClass->id, 403);
+
+            return;
+        }
+
         $etecIds = auth()->user()->etecs()->pluck('etecs.id');
 
         abort_unless($etecIds->contains($schoolClass->etec_id), 403);
     }
 
-    /**
-     * Confirms the logged-in user's own password before a destructive action.
-     */
     private function requirePassword(Request $request): void
     {
         $request->validate(

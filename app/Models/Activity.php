@@ -2,83 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\SchoolClassUser;
 
+#[Fillable(['school_class_teacher_id', 'description', 'deadline'])]
 class Activity extends Model
 {
-    protected $table = 'activity';
-
-    protected $primaryKey = 'id_activity';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'school_class_user_id',
-        'descriptive',
-        'deadline',
-    ];
-
-    protected $casts = [
-        'deadline' => 'datetime',
-    ];
-
-    /**
-     * Turma/disciplina/professor à qual esta atividade pertence.
-     */
-    public function schoolClassUser(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(SchoolClassUser::class, 'school_class_user_id');
+        return [
+            'deadline' => 'datetime',
+        ];
     }
 
-    /**
-     * Entregas dos alunos para esta atividade.
-     */
+    public function schoolClassTeacher(): BelongsTo
+    {
+        return $this->belongsTo(SchoolClassTeacher::class);
+    }
+
     public function activityStudents(): HasMany
     {
-        return $this->hasMany(ActivityStudent::class, 'id_activity', 'id_activity');
-    }
-}<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-class Activity extends Model
-{
-    protected $table = 'activity';
-
-    protected $primaryKey = 'id_activity';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'school_class_user_id',
-        'descriptive',
-        'deadline',
-    ];
-
-    protected $casts = [
-        'deadline' => 'datetime',
-    ];
-
-    /**
-     * Turma/disciplina/professor à qual esta atividade pertence.
-     */
-    public function schoolClassUser(): BelongsTo
-    {
-        return $this->belongsTo(SchoolClassUser::class, 'school_class_user_id');
-    }
-
-    /**
-     * Entregas dos alunos para esta atividade.
-     */
-    public function activityStudents(): HasMany
-    {
-        return $this->hasMany(ActivityStudent::class, 'id_activity', 'id_activity');
+        return $this->hasMany(ActivityStudent::class);
     }
 }

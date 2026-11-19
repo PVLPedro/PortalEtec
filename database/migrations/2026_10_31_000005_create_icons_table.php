@@ -7,15 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['aluno', 'professor', 'coordenador'])->default('aluno');
+        Schema::create('icons', function (Blueprint $table) {
+            $table->unsignedBigInteger('id')->primary();
+            $table->string('name', 25);
+            $table->string('code', 25);
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('icons');
     }
 };

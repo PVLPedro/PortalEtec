@@ -7,14 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('status_activity', function (Blueprint $table) {
-            $table->unsignedInteger('id_status')->primary();
-            $table->string('descriptive', 80);
+        Schema::create('etecs', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('code')->unique();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('status_activity');
+        Schema::dropIfExists('etecs');
     }
 };

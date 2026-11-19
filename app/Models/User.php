@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'role', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['name', 'email', 'role', 'password', 'initial_password'])]
+#[Hidden(['password', 'remember_token', 'initial_password'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -56,6 +56,55 @@ class User extends Authenticatable
     public function activeEtec(): ?Etec
     {
         return $this->etecs()->first();
+    }
+
+    public function etecs(): BelongsToMany
+    {
+        return $this->belongsToMany(Etec::class, 'etec_user')
+            ->withPivot('rm', 'role')
+            ->withTimestamps();
+    }
+
+    public function schoolClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            SchoolClass::class,
+            'school_class_teacher',
+            'teacher_id',
+            'school_class_id',
+        )
+            ->withPivot('discipline_id')
+            ->withTimestamps();
+    }
+
+    public function currentSchoolClass(): ?SchoolClass
+    {
+        return $this->student?->schoolClass;
+    }
+
+    public function activeEtec(): ?Etec
+    {
+        $activeId = session('etec_ativa');
+
+        if ($activeId && $this->etecs->contains($activeId)) {
+            return $this->etecs->find($activeId);
+        }
+
+        return $this->etecs->first();
+    }
+
+    public function hasValidEmailDomain(): bool
+    {
+        if ($this->role === Role::Aluno) {
+            return true;
+        }
+
+        $email = strtolower((string) $this->email);
+
+        return match ($this->role) {
+            Role::Professor, Role::Coordenador => str_ends_with($email, '@cps.sp.gov.br'),
+            default => false,
+        };
     }
 
     public function isStudent(): bool

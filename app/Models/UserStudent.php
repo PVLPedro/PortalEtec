@@ -2,32 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Fillable(['user_id', 'school_class_id', 'side_id', 'rm'])]
 class UserStudent extends Model
 {
-    use HasFactory;
-
-    protected $table = 'user_students';
-
-    protected $primaryKey = 'id_student';
-
-    public $incrementing = true;
-
-    // A tabela não possui created_at nem updated_at.
-    public $timestamps = false;
-
-    protected $fillable = ['user_id', 'id_class', 'rm'];
-
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function schoolClass(): BelongsTo
     {
-        return $this->belongsTo(SchoolClass::class, 'id_class', 'id_class');
+        return $this->belongsTo(SchoolClass::class);
+    }
+
+    public function side(): BelongsTo
+    {
+        return $this->belongsTo(Side::class);
+    }
+
+    public function activityStudents(): HasMany
+    {
+        return $this->hasMany(ActivityStudent::class, 'student_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (UserStudent $student) {
+            $student->side_id ??= Side::where('name', 'Composto')->value('id');
+        });
     }
 }

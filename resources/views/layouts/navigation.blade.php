@@ -1,6 +1,23 @@
+@php
+    $classSections = [
+        'disciplinas' => ['label' => 'Disciplinas', 'icon' => 'book-marked'],
+        'atividades' => ['label' => 'Atividades', 'icon' => 'notebook'],
+        'comunicados' => ['label' => 'Comunicados', 'icon' => 'message-square-text'],
+        'membros' => ['label' => 'Membros', 'icon' => 'users'],
+    ];
+    $onClassPage = request()->routeIs('school-class.show');
+    $currentSection = $onClassPage
+        ? (array_key_exists(request('secao'), $classSections)
+            ? request('secao')
+            : 'disciplinas')
+        : null;
+@endphp
+
 <aside
     id="sidebar"
-    class="sticky flex h-full w-54 flex-col gap-large self-start overflow-auto rounded-large border border-border bg-bg-secondary p-regular text-nowrap text-text transition-[width] duration-300"
+    x-data="{ current: @js($currentSection) }"
+    x-on:section-changed.window="current = $event.detail"
+    class="sticky flex h-full w-54 flex-col gap-larger self-start overflow-auto rounded-large border border-border bg-bg-secondary p-regular text-nowrap text-text transition-[width] duration-300"
 >
     <button
         id="toggle-sidebar"
@@ -13,27 +30,67 @@
     <div class="flex w-full flex-col items-start gap-smaller">
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <x-slot name="icon">
-                <x-lucide-layout-dashboard class="shrink-0"></x-lucide-layout-dashboard>
+                <x-lucide-layout-dashboard class="mr-0.5 shrink-0" />
             </x-slot>
             <span class="grow"> {{ __('layout.sidebar.overview') }} </span>
         </x-nav-link>
 
-        <x-nav-link
-            :href="route('school-classes.index')"
-            :active="request()->routeIs('school-classes.index')"
-        >
-            <x-slot name="icon">
-                <x-lucide-book-marked class="shrink-0"></x-lucide-book-marked>
-            </x-slot>
-            <span class="grow"> {{ __('layout.sidebar.classes') }} </span>
-        </x-nav-link>
+        @if (auth()->user()->isStudent())
+            <x-nav-link
+                :href="route('school-class.mine')"
+                :active="request()->routeIs('school-class.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
+                </x-slot>
+                <span class="grow"> Turma </span>
+            </x-nav-link>
+        @else
+            <x-nav-link
+                :href="route('school-classes.index')"
+                :active="request()->routeIs('school-classes.*', 'school-class.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-graduation-cap class="mr-0.5 shrink-0" />
+                </x-slot>
+                <span class="grow"> Turmas </span>
+            </x-nav-link>
+        @endif
+
+        @if ($onClassPage)
+            @foreach ($classSections as $slug => $item)
+                <x-nav-link
+                    :href="route('school-class.show', [request()->route('schoolClass'), 'secao' => $slug])"
+                    x-bind:class="current === '{{ $slug }}' ? 'bg-bg-secondary-hover text-accent' : ''"
+                    x-on:click.prevent="$dispatch('set-section', '{{ $slug }}')"
+                >
+                    <x-slot name="icon">
+                        <x-dynamic-component
+                            :component="'lucide-' . $item['icon']"
+                            class="mr-0.5 shrink-0"
+                        />
+                    </x-slot>
+                    <span class="grow"> {{ $item['label'] }} </span>
+                </x-nav-link>
+            @endforeach
+        @endif
 
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 <x-slot name="icon">
-                    <x-lucide-file-text class="shrink-0"></x-lucide-file-text>
+                    <x-lucide-file-text class="mr-0.5 shrink-0" />
                 </x-slot>
                 <span class="grow"> {{ __('layout.sidebar.users') }} </span>
+            </x-nav-link>
+
+            <x-nav-link
+                :href="route('students.bulk.create')"
+                :active="request()->routeIs('students.bulk.*')"
+            >
+                <x-slot name="icon">
+                    <x-lucide-user-plus class="shrink-0"></x-lucide-user-plus>
+                </x-slot>
+                <span class="grow"> Cadastrar Alunos </span>
             </x-nav-link>
         @endif
     </div>
