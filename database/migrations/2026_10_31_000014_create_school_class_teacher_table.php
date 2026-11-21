@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('school_class_id')->constrained('school_classes')->cascadeOnDelete();
             $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('discipline_id')->constrained('disciplines')->cascadeOnDelete();
+            $table->foreignId('side_id')->nullable()->constrained('sides')->nullOnDelete();
             $table->timestamps();
 
             $table->unique(['school_class_id', 'teacher_id', 'discipline_id']);

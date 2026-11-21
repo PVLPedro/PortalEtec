@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('initial_password')->nullable();
             $table->enum('role', ['aluno', 'professor', 'coordenador'])->default('aluno');
+            $table->string('first_access_status', 20)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

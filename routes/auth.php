@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\FirstAccessController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\VerificationCancelController;
+use App\Http\Controllers\Auth\VerificationCodeController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\StudentAuthenticatedSessionController;
@@ -44,20 +44,61 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verificar-email', EmailVerificationPromptController::class)->name(
-        'verification.notice',
-    );
+    Route::get('verificar-email', [VerificationCodeController::class, 'show'])
+        ->defaults('purpose', 'register')
+        ->name('verification.notice');
 
-    Route::get('verificar-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
-
-    Route::post('email/verificacao-notificacao', [
-        EmailVerificationNotificationController::class,
-        'store',
-    ])
+    Route::post('verificar-email/enviar', [VerificationCodeController::class, 'send'])
+        ->defaults('purpose', 'register')
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    Route::post('verificar-email', [VerificationCodeController::class, 'verify'])
+        ->defaults('purpose', 'register')
+        ->middleware('throttle:10,1')
+        ->name('verification.verify');
+
+    Route::get('verificar-dispositivo', [VerificationCodeController::class, 'show'])
+        ->defaults('purpose', 'new_device')
+        ->name('device.verify');
+
+    Route::post('verificar-dispositivo/enviar', [VerificationCodeController::class, 'send'])
+        ->defaults('purpose', 'new_device')
+        ->middleware('throttle:6,1')
+        ->name('device.send');
+
+    Route::post('verificar-dispositivo', [VerificationCodeController::class, 'verify'])
+        ->defaults('purpose', 'new_device')
+        ->middleware('throttle:10,1')
+        ->name('device.confirm');
+
+    Route::get('primeiro-acesso/email', [FirstAccessController::class, 'email'])->name(
+        'first-access.email',
+    );
+
+    Route::post('primeiro-acesso/email', [FirstAccessController::class, 'storeEmail'])
+        ->middleware('throttle:6,1')
+        ->name('first-access.email.store');
+
+    Route::post('primeiro-acesso/email/codigo', [FirstAccessController::class, 'verifyEmail'])
+        ->middleware('throttle:10,1')
+        ->name('first-access.email.verify');
+
+    Route::post('primeiro-acesso/email/reenviar', [FirstAccessController::class, 'resendEmail'])
+        ->middleware('throttle:6,1')
+        ->name('first-access.email.resend');
+
+    Route::post('primeiro-acesso/email/trocar', [FirstAccessController::class, 'changeEmail'])->name(
+        'first-access.email.change',
+    );
+
+    Route::get('primeiro-acesso/senha', [FirstAccessController::class, 'password'])
+        ->middleware('account.ready:device')
+        ->name('first-access.password');
+
+    Route::post('primeiro-acesso/senha', [FirstAccessController::class, 'storePassword'])
+        ->middleware('account.ready:device')
+        ->name('first-access.password.store');
 
     Route::get('confirmar-senha', [ConfirmablePasswordController::class, 'show'])->name(
         'password.confirm',
@@ -69,3 +110,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+
+Route::get('verificacao/{verification}/cancelar', VerificationCancelController::class)
+    ->middleware(['signed', 'throttle:20,1'])
+    ->name('verification.cancel');

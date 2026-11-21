@@ -214,6 +214,7 @@ class StudentBulkController extends Controller
                     'role' => Role::Aluno,
                     'password' => $password,
                     'initial_password' => $password,
+                    'first_access_status' => 'email_pendente',
                 ]);
 
                 $user->etecs()->attach($etecId, [

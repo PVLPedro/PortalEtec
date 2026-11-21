@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityFile;
+use App\Support\ClassContentData;
+use Illuminate\Support\Facades\Storage;
 use App\Enums\Role;
 use App\Models\SchoolClass;
 use App\Models\User;
@@ -116,7 +119,7 @@ class SchoolClassController extends Controller
         return redirect()->route('school-classes.index')->with('status', $message);
     }
 
-    public function show(SchoolClass $schoolClass)
+    public function show(Request $request, SchoolClass $schoolClass)
     {
         $this->authorizeClass($schoolClass);
 
@@ -134,6 +137,17 @@ class SchoolClassController extends Controller
 
         $sides = Side::all();
 
+        $availableStudents = User::query()
+            ->where('role', Role::Aluno)
+            ->whereHas('etecs', fn($q) => $q->where('etecs.id', $schoolClass->etec_id))
+            ->with([
+                'student.schoolClass.grade',
+                'student.schoolClass.course',
+                'etecs' => fn($q) => $q->where('etecs.id', $schoolClass->etec_id),
+            ])
+            ->orderBy('name')
+            ->get();
+
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
             'courses' => Course::all(),
@@ -142,6 +156,8 @@ class SchoolClassController extends Controller
             'colors' => Color::all(),
             'icons' => Icon::all(),
             'sides' => $sides,
+            'availableStudents' => $availableStudents,
+            'classContent' => ClassContentData::for($request->user(), $schoolClass, $request),
         ]);
     }
 
@@ -180,7 +196,16 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
         $this->requirePassword($request);
 
+        $paths = ActivityFile::pathsWhereActivity(
+            fn($query) => $query->whereHas(
+                'schoolClassDiscipline',
+                fn($discipline) => $discipline->where('school_class_id', $schoolClass->id),
+            ),
+        );
+
         $schoolClass->delete();
+
+        Storage::disk(ActivityFile::DISK)->delete($paths);
 
         return redirect()->route('school-classes.index')->with('status', 'Turma removida!');
     }

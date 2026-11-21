@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('school_class_id')->constrained('school_classes')->cascadeOnDelete();
             $table->foreignId('discipline_id')->constrained('disciplines')->cascadeOnDelete();
+            $table->foreignId('color_id')->constrained('colors')->restrictOnDelete();
             $table->foreignId('teacher_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('side_id')->nullable()->constrained('sides')->nullOnDelete();
             $table->timestamps();

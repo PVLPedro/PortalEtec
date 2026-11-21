@@ -14,6 +14,19 @@
         ];
         $initialSection = $sections[request('secao')] ?? 'disciplinesSection';
         $sectionSlugs = array_flip($sections);
+
+        $availableStudentsData = ($availableStudents ?? collect())->map(function ($student) use ($schoolClass) {
+            $studentClass = $student->student?->schoolClass;
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'rm' => $student->etecs->first()?->pivot->rm ?? $student->student?->rm ?? '—',
+                'grade_id' => $studentClass?->grade_id,
+                'grade_name' => $studentClass?->grade?->name ?? 'Sem turma',
+                'class_name' => $studentClass?->name ?? 'Sem turma',
+                'already_in_class' => $student->student?->school_class_id === $schoolClass->id,
+            ];
+        })->values()->all();
     @endphp
     <div
         x-data="{
@@ -31,6 +44,39 @@
             section: '{{ $initialSection }}',
             slugToId: @js($sections),
             idToSlug: @js($sectionSlugs),
+            addMembersModal: false,
+            availableStudents: @js($availableStudentsData),
+            addSelected: [],
+            modalSearch: '',
+            modalGradeFilter: '',
+            modalOnlyWithoutClass: false,
+            get filteredAvailableStudents() {
+                let list = this.availableStudents.filter(s => !s.already_in_class);
+                if (this.modalOnlyWithoutClass) {
+                    list = list.filter(s => s.class_name === 'Sem turma');
+                }
+                if (this.modalGradeFilter) {
+                    list = list.filter(s => String(s.grade_id) === String(this.modalGradeFilter));
+                }
+                if (this.modalSearch.trim()) {
+                    const q = this.modalSearch.toLowerCase().trim();
+                    list = list.filter(s => 
+                        s.name.toLowerCase().includes(q) ||
+                        String(s.rm).toLowerCase().includes(q) ||
+                        s.class_name.toLowerCase().includes(q)
+                    );
+                }
+                return list;
+            },
+            toggleSelectAllAvailable() {
+                const visibleIds = this.filteredAvailableStudents.map(s => s.id);
+                const allSelected = visibleIds.length > 0 && visibleIds.every(id => this.addSelected.includes(id));
+                if (allSelected) {
+                    this.addSelected = this.addSelected.filter(id => !visibleIds.includes(id));
+                } else {
+                    this.addSelected = Array.from(new Set([...this.addSelected, ...visibleIds]));
+                }
+            },
         }"
         x-init="
             $watch('section', (id) => {
@@ -337,6 +383,155 @@
                         </div>
                     </x-form-modal>
                 </x-backdrop>
+
+                <x-backdrop
+                    x-show="addMembersModal"
+                    x-cloak
+                    @keydown.escape.window="addMembersModal = false"
+                >
+                    <div
+                        class="relative flex w-full max-w-2xl max-h-[90vh] flex-col gap-regular rounded-large bg-bg-secondary p-large shadow-xl border border-border overflow-hidden"
+                        @click.outside="addMembersModal = false"
+                    >
+                        <x-close-button @click="addMembersModal = false" />
+
+                        <div class="flex flex-col gap-smaller">
+                            <h3 class="text-lg font-semibold flex items-center gap-small">
+                                <x-lucide-user-plus class="size-5 text-accent" />
+                                Adicionar Alunos à Turma
+                            </h3>
+                            <p class="text-xs text-secondary">
+                                Selecione os alunos da Etec que você deseja vincular à turma <strong>{{ $schoolClass->name }}</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Filtros do Modal -->
+                        <div class="flex flex-col sm:flex-row gap-small">
+                            <div class="flex-1 flex items-center gap-small rounded-small border border-border bg-bg-primary px-small py-smaller text-sm">
+                                <x-lucide-user-search class="size-4 text-secondary shrink-0" />
+                                <input
+                                    type="text"
+                                    x-model="modalSearch"
+                                    placeholder="Pesquisar por nome ou RM..."
+                                    class="w-full bg-transparent text-text outline-none text-sm placeholder:text-secondary"
+                                />
+                                <button
+                                    type="button"
+                                    x-show="modalSearch"
+                                    @click="modalSearch = ''"
+                                    class="text-secondary hover:text-text"
+                                >
+                                    <x-lucide-x class="size-4" />
+                                </button>
+                            </div>
+
+                            <select
+                                x-model="modalGradeFilter"
+                                class="rounded-small border border-border bg-bg-primary p-smaller text-sm text-text"
+                            >
+                                <option value="">Todas as séries / anos</option>
+                                @foreach ($grades as $grade)
+                                    <option value="{{ $grade->id }}">{{ $grade->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-secondary px-1">
+                            <label class="flex items-center gap-smaller cursor-pointer hover:text-text">
+                                <input
+                                    type="checkbox"
+                                    x-model="modalOnlyWithoutClass"
+                                    class="size-4 rounded border-border"
+                                />
+                                <span>Apenas alunos sem turma</span>
+                            </label>
+
+                            <button
+                                type="button"
+                                @click="toggleSelectAllAvailable()"
+                                class="text-accent hover:underline font-medium"
+                            >
+                                <span x-text="filteredAvailableStudents.length > 0 && filteredAvailableStudents.every(s => addSelected.includes(s.id)) ? 'Desmarcar visíveis' : 'Selecionar visíveis'"></span>
+                            </button>
+                        </div>
+
+                        <!-- Lista de Alunos Disponíveis -->
+                        <form
+                            method="POST"
+                            action="{{ route('users.add-to-classMultiple') }}"
+                            class="flex flex-1 flex-col gap-regular overflow-hidden min-h-0"
+                        >
+                            @csrf
+                            <input type="hidden" name="school_class_id" value="{{ $schoolClass->id }}" />
+
+                            <div class="flex-1 overflow-y-auto divide-y divide-border rounded-small border border-border bg-bg-primary max-h-80">
+                                <template x-for="student in filteredAvailableStudents" :key="student.id">
+                                    <label class="flex items-center gap-small p-small hover:bg-bg-secondary-hover cursor-pointer transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="usuarios[]"
+                                            :value="student.id"
+                                            x-model="addSelected"
+                                            class="size-5 rounded border-border checked:bg-accent hover:bg-accent-bg"
+                                        />
+                                        <div class="flex flex-1 flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                            <div>
+                                                <span class="font-medium text-sm text-text block" x-text="student.name"></span>
+                                                <span class="text-xs text-secondary" x-text="'RM: ' + student.rm"></span>
+                                            </div>
+                                            <div class="text-right">
+                                                <span
+                                                    class="text-xs px-2 py-0.5 rounded-full font-medium"
+                                                    :class="student.class_name === 'Sem turma' ? 'bg-secondary/15 text-secondary' : 'bg-accent/15 text-accent'"
+                                                    x-text="student.class_name"
+                                                ></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </template>
+
+                                <div x-show="filteredAvailableStudents.length === 0" class="p-regular text-center text-sm text-secondary">
+                                    Nenhum aluno disponível encontrado com os filtros aplicados.
+                                </div>
+                            </div>
+
+                            <!-- Rodapé do Modal -->
+                            <div class="flex items-center justify-between pt-small border-t border-border">
+                                <div class="flex items-center gap-small">
+                                    <span class="text-xs font-medium text-secondary">
+                                        <strong class="text-text" x-text="addSelected.length"></strong> selecionado(s)
+                                    </span>
+                                    <a
+                                        href="{{ route('users.index') }}"
+                                        class="text-xs text-secondary hover:text-accent hover:underline flex items-center gap-1 ml-2"
+                                    >
+                                        <span>Ir para Usuários</span>
+                                        <x-lucide-square-arrow-out-up-right class="size-3" />
+                                    </a>
+                                </div>
+
+                                <div class="flex items-center gap-small">
+                                    <x-primary-button
+                                        type="button"
+                                        @click="addMembersModal = false"
+                                        class="bg-bg-primary text-text hover:bg-bg-primary-hover"
+                                    >
+                                        Cancelar
+                                    </x-primary-button>
+
+                                    <x-primary-button
+                                        type="submit"
+                                        x-bind:disabled="addSelected.length === 0"
+                                        class="bg-accent text-text-white hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <x-lucide-user-plus class="size-4" />
+                                        <span>Adicionar</span>
+                                    </x-primary-button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </x-backdrop>
             </div>
         @endif
         <x-card class="flex flex-col gap-regular">
@@ -460,9 +655,9 @@
                 </button>
             </div>
 
-            @include ('school-classes.partials.show-disciplines')
-            @include ('school-classes.partials.show-activities')
-            @include ('school-classes.partials.show-announcements')
+            @include ('class-content.sections.disciplines')
+            @include ('class-content.sections.activities')
+            @include ('class-content.sections.announcements')
             @include ('school-classes.partials.show-members')
         </x-card>
     </div>

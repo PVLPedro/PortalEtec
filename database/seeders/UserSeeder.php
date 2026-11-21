@@ -14,18 +14,34 @@ class UserSeeder extends Seeder
         $etec = Etec::where('code', 6)->firstOrFail();
 
         $students = [
-            ['name' => 'Yuji', 'rm' => 1234567],
-            ['name' => 'samuelgato', 'rm' => 1234568],
+            [
+                'name' => 'Yuji',
+                'rm' => 1234567,
+                'email' => null,
+                'email_verified_at' => null,
+                'first_access_status' => 'email_pendente',
+            ],
+            [
+                'name' => 'samuelgato',
+                'rm' => 1234568,
+                'email' => 'samuelgato@aluno.cps.sp.gov.br',
+                'email_verified_at' => now(),
+                'first_access_status' => 'concluido',
+            ],
         ];
 
         foreach ($students as $data) {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => null,
-                'password' => 'password',
-                'initial_password' => 'password',
-                'role' => Role::Aluno,
-            ]);
+            $user = User::unguarded(
+                fn() => User::create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'email_verified_at' => $data['email_verified_at'],
+                    'password' => 'password',
+                    'initial_password' => 'password',
+                    'role' => Role::Aluno,
+                    'first_access_status' => $data['first_access_status'],
+                ]),
+            );
 
             $user->etecs()->attach($etec->id, [
                 'rm' => $data['rm'],
@@ -35,12 +51,7 @@ class UserSeeder extends Seeder
             $user->student()->create(['rm' => $data['rm']]);
         }
 
-        $siles = User::create([
-            'name' => 'Siles',
-            'email' => 'siles@cps.sp.gov.br',
-            'password' => 'password4',
-            'role' => Role::Professor,
-        ]);
+        $siles = $this->verifiedUser('Siles', 'siles@cps.sp.gov.br', 'password4', Role::Professor);
         $siles->etecs()->attach($etec->id, ['role' => Role::Professor->value]);
         $siles->teacher()->create();
 
@@ -51,9 +62,27 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($coordinators as $data) {
-            $user = User::create([...$data, 'role' => Role::Coordenador]);
+            $user = $this->verifiedUser(
+                $data['name'],
+                $data['email'],
+                $data['password'],
+                Role::Coordenador,
+            );
             $user->etecs()->attach($etec->id, ['role' => Role::Coordenador->value]);
             $user->coordinator()->create();
         }
+    }
+
+    private function verifiedUser(string $name, string $email, string $password, Role $role): User
+    {
+        return User::unguarded(
+            fn() => User::create([
+                'name' => $name,
+                'email' => $email,
+                'email_verified_at' => now(),
+                'password' => $password,
+                'role' => $role,
+            ]),
+        );
     }
 }

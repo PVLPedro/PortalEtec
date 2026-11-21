@@ -18,7 +18,7 @@ Route::get('/', function () {
     return view('auth.select-role');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'account.ready'])->group(function () {
     Route::post('/trocar-etec', [EtecContextController::class, 'switch'])->name(
         'etec-context.switch',
     );
@@ -110,9 +110,7 @@ Route::middleware('auth')->group(function () {
         ])->name('users.add-to-classMultiple');
     });
 
-    Route::get('turma/atividades', function () {
-        return view('activities.index');
-    })->name('activities.index');
+    require __DIR__ . '/class-content.php';
 });
 
 require __DIR__ . '/auth.php';

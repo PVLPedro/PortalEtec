@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'role', 'password', 'initial_password'])]
+#[Fillable(['name', 'email', 'role', 'password', 'initial_password', 'first_access_status'])]
 #[Hidden(['password', 'remember_token', 'initial_password'])]
 class User extends Authenticatable
 {
@@ -41,6 +42,11 @@ class User extends Authenticatable
     public function coordinator(): HasOne
     {
         return $this->hasOne(UserCoordinator::class);
+    }
+
+    public function trustedDevices(): HasMany
+    {
+        return $this->hasMany(TrustedDevice::class);
     }
 
     public function etecs(): BelongsToMany

@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Etec;
 use App\Enums\Role;
+use App\Services\EmailVerificationService;
 use App\Support\EmailDomainValidator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -23,9 +25,15 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, EmailVerificationService $verifications): RedirectResponse
     {
+        // Monta o e-mail completo a partir do prefixo digitado
+        $request->merge([
+            'email' => strtolower(trim((string) $request->input('email_prefix'))) . '@cps.sp.gov.br',
+        ]);
+
         $validated = $request->validate([
+            'email_prefix' => ['required', 'string', 'max:200'],
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -43,7 +51,11 @@ class RegisteredUserController extends Controller
                 },
             ],
             'role' => ['required', 'in:professor,coordenador'],
-            'etecs' => ['required', 'array', 'min:1'],
+            'etecs' => array_filter([
+                'nullable',
+                'array',
+                $request->input('role') === 'coordenador' ? 'min:1' : null,
+            ]),
             'etecs.*' => ['exists:etecs,id'],
             'password' => ['required', Rules\Password::defaults()],
         ]);
@@ -60,7 +72,7 @@ class RegisteredUserController extends Controller
         $user
             ->etecs()
             ->sync(
-                collect($validated['etecs'])->mapWithKeys(
+                collect($validated['etecs'] ?? [])->mapWithKeys(
                     fn($etecId) => [$etecId => ['role' => $role->value]],
                 ),
             );
@@ -69,6 +81,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        try {
+            $verifications->send($user, $user->email, 'register');
+        } catch (ValidationException) {
+        }
+
+        return redirect()->route('verification.notice');
     }
 }

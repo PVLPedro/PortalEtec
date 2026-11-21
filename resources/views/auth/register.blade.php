@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="">
-                    <div x-show="role !== ''" x-cloak>
+                    <div x-show="role === 'coordenador'" x-cloak>
                         <x-input-label
                             for="etec-worker"
                             value="{{ __('auth.register.label.etec-worker') }}"
@@ -97,10 +97,10 @@
                         <x-text-input
                             id="email"
                             class="block w-full"
-                            type="email"
-                            name="email"
-                            :value="old('email')"
-                            :placeholder="__('auth.placeholder.email')"
+                            type="text"
+                            name="email_prefix"
+                            :value="old('email_prefix', old('email') ? str_replace('@cps.sp.gov.br', '', old('email')) : '')"
+                            placeholder="seunome"
                             required
                             autocomplete="username"
                         />
@@ -110,6 +110,7 @@
                             :value="__('auth.domain.worker')"
                         />
                     </div>
+                    <x-input-error :messages="$errors->get('email_prefix')" class="" />
                     <x-input-error :messages="$errors->get('email')" class="" />
                 </div>
             </div>
@@ -248,7 +249,7 @@
             }
 
             function isValidEmail(email) {
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                return /^[^\s@]+$/.test(email.trim()) && email.trim().length > 0;
             }
         </script>
     @endpush

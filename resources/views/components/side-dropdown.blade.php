@@ -12,7 +12,7 @@
             class="z-50 flex h-full flex-col items-center justify-center gap-regular rounded-regular p-regular text-base font-medium text-border group-hover:text-text hover:bg-bg-secondary-hover"
             @click="openDropdown = !openDropdown"
         >
-            {{ $matricula->side->side_name }}
+            {{ $matricula->side?->name ?? 'Sem Lado' }}
         </div>
 
         <div
@@ -37,15 +37,15 @@
                 >
                     @csrf
                     @method ('PATCH')
-                    <input class="hidden" name="id_side" value="{{ $side->id_side }}" />
+                    <input class="hidden" name="side_id" value="{{ $side->id }}" />
 
                     <button
                         type="submit"
-                        class="flex cursor-pointer w-full min-w-40 items-center justify-between gap-small p-regular font-medium text-nowrap hover:bg-bg-secondary-hover {{ $side->id_side === $matricula->id_side ? 'bg-bg-secondary-hover' : '' }}"
+                        class="flex cursor-pointer w-full min-w-40 items-center justify-between gap-small p-regular font-medium text-nowrap hover:bg-bg-secondary-hover {{ $side->id === $matricula->side_id ? 'bg-bg-secondary-hover' : '' }}"
                     >
-                        {{ $side->side_name }}
+                        {{ $side->name }}
                         <x-lucide-check
-                            class="{{ $side->id_side === $matricula->id_side ? 'block' : 'hidden' }}"
+                            class="{{ $side->id === $matricula->side_id ? 'block' : 'hidden' }}"
                         />
                     </button>
                 </form>
