@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Etec;
 use App\Enums\Role;
+use App\Http\Controllers\Controller;
+use App\Models\Etec;
+use App\Models\User;
 use App\Services\EmailVerificationService;
+use App\Services\UserIdentifierService;
 use App\Support\EmailDomainValidator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -25,27 +27,29 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    public function store(Request $request, EmailVerificationService $verifications): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        EmailVerificationService $verifications,
+        UserIdentifierService $identifierService,
+    ): RedirectResponse {
         // Monta o e-mail completo a partir do prefixo digitado
         $request->merge([
-            'email' => strtolower(trim((string) $request->input('email_prefix'))) . '@cps.sp.gov.br',
+            'email' => strtolower(trim((string) $request->input('email_prefix'))).'@cps.sp.gov.br',
         ]);
 
         $validated = $request->validate([
             'email_prefix' => ['required', 'string', 'max:200'],
-            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:' . User::class,
+                'unique:'.User::class,
                 function ($attribute, $value, $fail) use ($request) {
                     $role = Role::tryFrom((string) $request->input('role'));
 
-                    if (!$role || !EmailDomainValidator::isValid($value, $role)) {
+                    if (! $role || ! EmailDomainValidator::isValid($value, $role)) {
                         $fail('O domínio do email não corresponde ao tipo de usuário selecionado.');
                     }
                 },
@@ -62,20 +66,29 @@ class RegisteredUserController extends Controller
 
         $role = Role::from($validated['role']);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $role,
-            'password' => $validated['password'],
-        ]);
+        $name = $identifierService->generateName($validated['email']);
+        $firstName = $identifierService->extractFirstName($name);
+        $identifier = $identifierService->generateIdentifier($firstName);
 
-        $user
-            ->etecs()
-            ->sync(
-                collect($validated['etecs'] ?? [])->mapWithKeys(
-                    fn($etecId) => [$etecId => ['role' => $role->value]],
-                ),
-            );
+        $user = DB::transaction(function () use ($validated, $role, $name, $identifier) {
+            $user = User::create([
+                'name' => $name,
+                'identifier' => $identifier,
+                'email' => $validated['email'],
+                'role' => $role,
+                'password' => $validated['password'],
+            ]);
+
+            $user
+                ->etecs()
+                ->sync(
+                    collect($validated['etecs'] ?? [])->mapWithKeys(
+                        fn ($etecId) => [$etecId => ['role' => $role->value]],
+                    ),
+                );
+
+            return $user;
+        });
 
         event(new Registered($user));
 

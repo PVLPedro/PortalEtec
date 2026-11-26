@@ -127,7 +127,7 @@ class SchoolClassDisciplineController extends Controller
         $this->confirmPassword($request);
 
         $paths = ActivityFile::pathsWhereActivity(
-            fn($query) => $query->where('school_class_discipline_id', $classDiscipline->id),
+            fn ($query) => $query->where('school_class_discipline_id', $classDiscipline->id),
         );
 
         DB::transaction(function () use ($schoolClass, $classDiscipline) {
@@ -179,7 +179,7 @@ class SchoolClassDisciplineController extends Controller
                 ? $classDiscipline
                     ->teachers()
                     ->get()
-                    ->map(fn($teacher) => ['id' => $teacher->id, 'side_id' => $teacher->side_id])
+                    ->map(fn ($teacher) => ['id' => $teacher->id, 'side_id' => $teacher->side_id])
                     ->values()
                     ->all()
                 : [],
@@ -190,7 +190,7 @@ class SchoolClassDisciplineController extends Controller
     private function availableTeachers(SchoolClass $schoolClass): Collection
     {
         return User::where('role', Role::Professor->value)
-            ->whereHas('etecs', fn($query) => $query->where('etecs.id', $schoolClass->etec_id))
+            ->whereHas('etecs', fn ($query) => $query->where('etecs.id', $schoolClass->etec_id))
             ->orderBy('name')
             ->get(['id', 'name']);
     }
@@ -198,7 +198,7 @@ class SchoolClassDisciplineController extends Controller
     private function teacherRules(SchoolClass $schoolClass): array
     {
         return [
-            'teachers' => ['nullable', 'array', 'max:' . self::MAX_TEACHERS],
+            'teachers' => ['nullable', 'array', 'max:'.self::MAX_TEACHERS],
             'teachers.*.id' => [
                 'nullable',
                 'distinct',
@@ -214,11 +214,11 @@ class SchoolClassDisciplineController extends Controller
     private function cleanTeachers(array $rows): Collection
     {
         $teachers = collect($rows)
-            ->filter(fn($row) => !empty($row['id']))
+            ->filter(fn ($row) => ! empty($row['id']))
             ->map(
-                fn($row) => [
+                fn ($row) => [
                     'id' => (int) $row['id'],
-                    'side_id' => !empty($row['side_id']) ? (int) $row['side_id'] : null,
+                    'side_id' => ! empty($row['side_id']) ? (int) $row['side_id'] : null,
                 ],
             )
             ->values();
@@ -234,7 +234,7 @@ class SchoolClassDisciplineController extends Controller
             return (int) Color::where('code', 'gray')->value('id');
         }
 
-        if (!$requested) {
+        if (! $requested) {
             throw ValidationException::withMessages([
                 'color_id' => 'Escolha uma cor para a disciplina.',
             ]);
@@ -254,7 +254,7 @@ class SchoolClassDisciplineController extends Controller
 
         $rows = $teachers
             ->map(
-                fn($teacher) => [
+                fn ($teacher) => [
                     'school_class_id' => $schoolClassId,
                     'teacher_id' => $teacher['id'],
                     'discipline_id' => $disciplineId,

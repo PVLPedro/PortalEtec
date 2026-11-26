@@ -32,9 +32,12 @@
     $membersItems = $membersList
         ->values()
         ->map(function ($item, $index) {
+            $user = $item['user'];
+            $tag = $user->identifier ? '#' . $user->identifier : '';
+
             return [
                 'id' => $item['id'],
-                'name' => $item['name'],
+                'name' => $item['name'] . $tag,
                 'role' => $item['role'],
                 'detail' => $item['secondary'],
                 'index' => $index,
@@ -349,7 +352,12 @@
                     >
                         <x-card-text>
                             <x-slot name="primary">
-                                {{ $user->name }}
+                                <span class="flex items-center gap-1.5">
+                                    <span>{{ $user->name }}</span>
+                                    @if ($user->identifier)
+                                        <span class="rounded bg-bg-primary px-1.5 py-0.5 text-xs font-mono text-secondary">#{{ $user->identifier }}</span>
+                                    @endif
+                                </span>
                                 <x-dot />
                                 <span class="capitalize">{{ $user->role->value }}</span>
                             </x-slot>

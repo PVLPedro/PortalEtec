@@ -17,6 +17,6 @@ return [
     'sent' => 'Email de alteração de senha enviado.',
     'throttled' => 'Aguarde antes de tentar novamente.',
     'token' => 'O Token de alteração de senha é inválido.',
-    'user' => "Não foi possível achar um usuário com esse email.",
+    'user' => 'Não foi possível achar um usuário com esse email.',
 
 ];

@@ -67,7 +67,7 @@ class Activity extends Model
     {
         $paths = $this->files()->pluck('path')->all();
 
-        DB::transaction(fn() => $this->delete());
+        DB::transaction(fn () => $this->delete());
 
         Storage::disk(ActivityFile::DISK)->delete($paths);
     }

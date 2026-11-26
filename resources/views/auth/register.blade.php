@@ -32,27 +32,11 @@
         >
             @csrf
 
-            <div class="">
-                <x-input-label for="name" :value="__('auth.register.label.name')" />
-                <x-text-input
-                    id="name"
-                    class="block w-full"
-                    type="text"
-                    name="name"
-                    :value="old('name')"
-                    :placeholder="__('auth.placeholder.name')"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-                <x-input-error :messages="$errors->get('name')" class="" />
-            </div>
-
             <div x-data="{ role: '{{ old('role', '') }}' }" class="flex flex-col gap-regular">
                 <div class="">
                     <x-input-label for="role" :value="__('auth.register.label.role')" />
 
-                    <select id="role" name="role" x-model="role" required>
+                    <select id="role" name="role" x-model="role" required autofocus>
                         <option value="">Selecione um cargo</option>
                         @foreach (\App\Enums\Role::cases() as $roleCase)
                             @continue ($roleCase === \App\Enums\Role::Aluno)
@@ -91,7 +75,11 @@
                     <x-input-error :messages="$errors->get('etecs')" class="mt-2" />
                 </div>
 
-                <div class="">
+                <div
+                    x-data='{
+                        emailPrefix: @js(old('email_prefix', old('email') ? str_replace('@cps.sp.gov.br', '', old('email')) : '')),
+                    }'
+                >
                     <x-input-label for="email" :value="__('auth.register.label.email')" />
                     <div class="flex items-center gap-small">
                         <x-text-input
@@ -99,7 +87,7 @@
                             class="block w-full"
                             type="text"
                             name="email_prefix"
-                            :value="old('email_prefix', old('email') ? str_replace('@cps.sp.gov.br', '', old('email')) : '')"
+                            x-model="emailPrefix"
                             placeholder="seunome"
                             required
                             autocomplete="username"
@@ -110,6 +98,19 @@
                             :value="__('auth.domain.worker')"
                         />
                     </div>
+                    <p class="mt-1 text-xs text-secondary">
+                        Nome gerado:
+                        <span
+                            class="font-mono"
+                            x-text="emailPrefix
+                                ? emailPrefix.trim().split('@')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()
+                                : '—'"
+                        ></span>
+                    </p>
+                    <p class="mt-1 text-xs text-secondary">
+                        O nome é gerado automaticamente a partir do e-mail e não pode ser alterado
+                        neste formulário.
+                    </p>
                     <x-input-error :messages="$errors->get('email_prefix')" class="" />
                     <x-input-error :messages="$errors->get('email')" class="" />
                 </div>
@@ -197,17 +198,6 @@
                     itemSelectText: '',
                 });
 
-                $('#name')
-                    .on('blur', function () {
-                        $(this).data('touched', true);
-                        setFeedback(this, isValidName($(this).val()));
-                    })
-                    .on('input', function () {
-                        if ($(this).data('touched')) {
-                            setFeedback(this, isValidName($(this).val()));
-                        }
-                    });
-
                 $('#email')
                     .on('blur', function () {
                         $(this).data('touched', true);
@@ -234,18 +224,6 @@
                     .toggleClass('border-green-500 focus:ring-green-500', isValid)
                     .toggleClass('border-red-500 focus:ring-red-500', !isValid)
                     .attr('aria-invalid', !isValid);
-            }
-
-            function resetFeedback(el) {
-                $(el)
-                    .removeClass(
-                        'border-green-500 border-red-500 focus:ring-green-500 focus:ring-red-500'
-                    )
-                    .removeAttr('aria-invalid');
-            }
-
-            function isValidName(name) {
-                return name.trim().length >= 3 && /^[\p{L}\s]+$/u.test(name.trim());
             }
 
             function isValidEmail(email) {

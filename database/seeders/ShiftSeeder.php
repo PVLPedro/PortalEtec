@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Shift;
 use Illuminate\Database\Seeder;
 
 class ShiftSeeder extends Seeder
@@ -15,7 +15,7 @@ class ShiftSeeder extends Seeder
         $shifts = [['name' => 'Manhã'], ['name' => 'Tarde'], ['name' => 'Noite']];
 
         foreach ($shifts as $shift) {
-            \App\Models\Shift::create($shift);
+            Shift::create($shift);
             // DB::table('shifts')->insert($shift);
         }
     }

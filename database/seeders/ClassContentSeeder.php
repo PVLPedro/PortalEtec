@@ -18,7 +18,7 @@ class ClassContentSeeder extends Seeder
     {
         $schoolClass = SchoolClass::first();
 
-        if (!$schoolClass) {
+        if (! $schoolClass) {
             return;
         }
 

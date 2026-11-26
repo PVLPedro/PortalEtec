@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Grade;
 use Illuminate\Database\Seeder;
 
 class GradeSeeder extends Seeder
@@ -23,7 +23,7 @@ class GradeSeeder extends Seeder
         ];
 
         foreach ($grades as $grade) {
-            \App\Models\Grade::create($grade);
+            Grade::create($grade);
             // DB::table('grades')->insert($grade);
         }
     }

@@ -14,7 +14,9 @@ use Throwable;
 class EmailVerificationService
 {
     public const TTL_MINUTES = 10;
+
     public const RESEND_SECONDS = 60;
+
     public const MAX_ATTEMPTS = 5;
 
     public function current(User $user, string $purpose): ?EmailVerification
@@ -26,7 +28,7 @@ class EmailVerificationService
 
     public function secondsUntilResend(?EmailVerification $verification): int
     {
-        if (!$verification) {
+        if (! $verification) {
             return 0;
         }
 
@@ -90,7 +92,7 @@ class EmailVerificationService
     {
         $verification = $this->current($user, $purpose);
 
-        if (!$verification || $verification->cancelled_at) {
+        if (! $verification || $verification->cancelled_at) {
             $this->fail('Esta verificação não está mais ativa. Peça um novo código.');
         }
 
@@ -102,7 +104,7 @@ class EmailVerificationService
             $this->fail('Muitas tentativas incorretas. Envie um novo código.');
         }
 
-        if (!Hash::check($code, $verification->code)) {
+        if (! Hash::check($code, $verification->code)) {
             $verification->increment('attempts');
             $this->fail('Código incorreto.');
         }

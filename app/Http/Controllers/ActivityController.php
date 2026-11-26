@@ -23,7 +23,9 @@ class ActivityController extends Controller
     use ConfirmsPassword;
 
     private const MAX_FILES = 10;
+
     private const MAX_FILE_KB = 20480;
+
     private const MIMES = 'pdf,doc,docx,xls,xlsx,ppt,pptx,odt,ods,odp,txt,csv,md,zip,rar,7z,png,jpg,jpeg,gif,webp,mp3,mp4';
 
     public function index(Request $request, SchoolClass $schoolClass): RedirectResponse
@@ -38,7 +40,7 @@ class ActivityController extends Controller
     {
         $manageable = ClassAccess::manageableClassDisciplines($request->user(), $schoolClass);
 
-        abort_if($manageable->isEmpty() && !$this->canEnter($request->user(), $schoolClass), 403);
+        abort_if($manageable->isEmpty() && ! $this->canEnter($request->user(), $schoolClass), 403);
 
         if ($manageable->isEmpty()) {
             return redirect()
@@ -206,7 +208,7 @@ class ActivityController extends Controller
 
     private function canEnter(User $user, SchoolClass $schoolClass): bool
     {
-        return !$user->isStudent() && ClassAccess::inEtec($user, $schoolClass);
+        return ! $user->isStudent() && ClassAccess::inEtec($user, $schoolClass);
     }
 
     private function authorizeManage(
@@ -259,8 +261,8 @@ class ActivityController extends Controller
             'deadline' => $creating ? ['nullable', 'date', 'after:now'] : ['nullable', 'date'],
             'side_id' => ['nullable', Rule::in(ClassAccess::assignableSides()->pluck('id')->all())],
             'comments_enabled' => ['nullable', 'boolean'],
-            'files' => ['nullable', 'array', 'max:' . self::MAX_FILES],
-            'files.*' => ['file', 'max:' . self::MAX_FILE_KB, 'mimes:' . self::MIMES],
+            'files' => ['nullable', 'array', 'max:'.self::MAX_FILES],
+            'files.*' => ['file', 'max:'.self::MAX_FILE_KB, 'mimes:'.self::MIMES],
             'remove_files' => ['nullable', 'array'],
             'remove_files.*' => ['integer'],
         ];

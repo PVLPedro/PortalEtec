@@ -11,7 +11,12 @@
             <x-slot name="trigger">
                 <x-lucide-user class="size-8" />
                 <button class="">
-                    <div>{{ Auth::user()->name }}</div>
+                    <div class="flex items-center gap-1.5">
+                        <span>{{ Auth::user()->name }}</span>
+                        @if (Auth::user()->identifier)
+                            <span class="rounded bg-bg-primary px-1.5 py-0.5 text-xs font-mono text-secondary">#{{ Auth::user()->identifier }}</span>
+                        @endif
+                    </div>
                 </button>
             </x-slot>
 

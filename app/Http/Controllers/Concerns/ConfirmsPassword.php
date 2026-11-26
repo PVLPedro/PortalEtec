@@ -15,7 +15,7 @@ trait ConfirmsPassword
             ['password.required' => 'Confirme sua senha para continuar.'],
         );
 
-        if (!Hash::check($request->input('password'), $request->user()->password)) {
+        if (! Hash::check($request->input('password'), $request->user()->password)) {
             throw ValidationException::withMessages(['password' => 'Senha incorreta.']);
         }
     }

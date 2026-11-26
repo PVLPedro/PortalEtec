@@ -11,6 +11,25 @@
         <p class="text-center font-medium {{ $generalTextClass ?? '' }}">Primeiro acesso</p>
         <p class="text-center text-sm">Etapa 2 de 2: defina a sua nova senha</p>
 
+        @auth
+            <div
+                class="flex w-full flex-col gap-small rounded-small border border-border bg-bg-primary p-small"
+            >
+                <p class="text-sm font-medium">Seu identificador no Portal Etec</p>
+                <p class="flex flex-wrap items-center gap-1.5 font-mono">
+                    <span>{{ Auth::user()->name }}</span>
+                    @if (Auth::user()->formattedIdentifier)
+                        <span
+                            class="rounded bg-bg-secondary px-1.5 py-0.5 text-xs text-secondary"
+                        >{{ Auth::user()->formattedIdentifier }}</span>
+                    @endif
+                </p>
+                <p class="text-xs text-secondary">
+                    Nome e identificador gerados automaticamente a partir do e-mail confirmado.
+                </p>
+            </div>
+        @endauth
+
         <form
             method="POST"
             action="{{ route('first-access.password.store') }}"

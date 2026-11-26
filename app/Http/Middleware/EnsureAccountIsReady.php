@@ -15,7 +15,7 @@ class EnsureAccountIsReady
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return $next($request);
         }
 

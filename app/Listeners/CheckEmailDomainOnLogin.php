@@ -13,7 +13,7 @@ class CheckEmailDomainOnLogin
         /** @var User $user */
         $user = $event->user;
 
-        if (!$user->hasValidEmailDomain()) {
+        if (! $user->hasValidEmailDomain()) {
             Auth::logout();
 
             request()->session()->invalidate();

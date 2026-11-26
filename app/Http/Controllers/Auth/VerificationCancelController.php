@@ -12,7 +12,7 @@ class VerificationCancelController extends Controller
     {
         $record = EmailVerification::with('user')->find($verification);
 
-        if (!$record) {
+        if (! $record) {
             return view('auth.verification-cancelled', [
                 'message' => 'Esta verificação já foi concluída ou cancelada. Nenhuma ação é necessária.',
             ]);

@@ -28,18 +28,31 @@
         >
             @csrf
 
-            <div>
+            <div x-data='{ email: @js(old('email', '')) }'>
                 <x-input-label for="email" value="E-mail institucional" />
                 <x-text-input
                     id="email"
                     type="email"
                     name="email"
-                    :value="old('email')"
+                    x-model="email"
                     placeholder="seunome@aluno.cps.sp.gov.br"
                     required
                     autofocus
                     autocomplete="email"
                 />
+                <p class="mt-1 text-xs text-secondary">
+                    Nome gerado:
+                    <span
+                        class="font-mono"
+                        x-text="email
+                            ? email.trim().split('@')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()
+                            : '—'"
+                    ></span>
+                </p>
+                <p class="mt-1 text-xs text-secondary">
+                    Após confirmar o e-mail, seu nome e identificador são gerados
+                    automaticamente. Não é preciso informá-los aqui.
+                </p>
                 <x-input-error :messages="$errors->get('email')" class="" />
             </div>
 

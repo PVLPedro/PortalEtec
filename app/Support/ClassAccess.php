@@ -36,7 +36,7 @@ class ClassAccess
         return DB::table('school_class_teacher')
             ->where('school_class_id', $schoolClass->id)
             ->where('teacher_id', $user->id)
-            ->when($disciplineId, fn($query) => $query->where('discipline_id', $disciplineId))
+            ->when($disciplineId, fn ($query) => $query->where('discipline_id', $disciplineId))
             ->exists();
     }
 
@@ -47,7 +47,7 @@ class ClassAccess
 
     public static function canManageAnnouncements(User $user, SchoolClass $schoolClass): bool
     {
-        if (!self::inEtec($user, $schoolClass)) {
+        if (! self::inEtec($user, $schoolClass)) {
             return false;
         }
 
@@ -60,7 +60,7 @@ class ClassAccess
 
     public static function manageableClassDisciplines(User $user, SchoolClass $schoolClass): Collection
     {
-        if ($user->isStudent() || !self::inEtec($user, $schoolClass)) {
+        if ($user->isStudent() || ! self::inEtec($user, $schoolClass)) {
             return collect();
         }
 
@@ -69,7 +69,7 @@ class ClassAccess
             'color',
         ]);
 
-        if (!$user->isCoordinator()) {
+        if (! $user->isCoordinator()) {
             $query->whereIn(
                 'discipline_id',
                 DB::table('school_class_teacher')
@@ -81,7 +81,7 @@ class ClassAccess
 
         return $query
             ->get()
-            ->sortBy(fn($item) => $item->discipline->name)
+            ->sortBy(fn ($item) => $item->discipline->name)
             ->values();
     }
 
@@ -89,11 +89,11 @@ class ClassAccess
     {
         $schoolClass = $activity->schoolClassDiscipline->schoolClass;
 
-        if (!self::isMember($user, $schoolClass)) {
+        if (! self::isMember($user, $schoolClass)) {
             return false;
         }
 
-        if (!$user->isStudent() || $activity->side_id === null) {
+        if (! $user->isStudent() || $activity->side_id === null) {
             return true;
         }
 

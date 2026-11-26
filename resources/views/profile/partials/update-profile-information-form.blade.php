@@ -21,16 +21,21 @@
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input
-                id="name"
-                name="name"
-                type="text"
-                class="mt-1 block w-full"
-                :value="old('name', $user->name)"
-                required
-                autofocus
-                autocomplete="name"
-            />
+            <div class="mt-1 flex items-center gap-2">
+                <x-text-input
+                    id="name"
+                    name="name"
+                    type="text"
+                    class="block w-full"
+                    :value="old('name', $user->name)"
+                    required
+                    autofocus
+                    autocomplete="name"
+                />
+                @if ($user->identifier)
+                    <span class="rounded bg-bg-primary px-2.5 py-1.5 font-mono text-sm text-secondary border border-border">#{{ $user->identifier }}</span>
+                @endif
+            </div>
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 

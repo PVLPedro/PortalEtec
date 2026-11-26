@@ -163,7 +163,12 @@
                     >
                         <x-card-text>
                             <x-slot name="primary">
-                                {{ $usuario->name }}
+                                <span class="flex items-center gap-1.5">
+                                    <span>{{ $usuario->name }}</span>
+                                    @if ($usuario->identifier)
+                                        <span class="rounded bg-bg-primary px-1.5 py-0.5 text-xs font-mono text-secondary">#{{ $usuario->identifier }}</span>
+                                    @endif
+                                </span>
                                 <x-dot />
                                 <span class="capitalize">{{ $usuario->role->value }}</span>
                             </x-slot>

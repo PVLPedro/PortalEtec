@@ -7,11 +7,10 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\StudentAuthenticatedSessionController;
 use App\Http\Controllers\Auth\VerificationCancelController;
 use App\Http\Controllers\Auth\VerificationCodeController;
-use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\StudentAuthenticatedSessionController;
 
 Route::middleware('guest')->group(function () {
     Route::get('cadastrar', [RegisteredUserController::class, 'create'])->name('register');

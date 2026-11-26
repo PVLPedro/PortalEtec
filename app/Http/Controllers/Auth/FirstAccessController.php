@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\EmailVerificationService;
 use App\Services\TrustedDeviceService;
+use App\Services\UserIdentifierService;
 use App\Support\EmailDomainValidator;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +37,7 @@ class FirstAccessController extends Controller
 
         $verification = $this->verifications->current($user, 'first_access');
 
-        if ($verification && !$verification->cancelled_at) {
+        if ($verification && ! $verification->cancelled_at) {
             return view('auth.verify-code', [
                 'title' => 'Confirme seu e-mail',
                 'step' => 'Primeiro acesso: etapa 1 de 2',
@@ -74,7 +75,7 @@ class FirstAccessController extends Controller
                     'max:255',
                     Rule::unique('users', 'email')->ignore($user->id),
                     function ($attribute, $value, $fail) {
-                        if (!EmailDomainValidator::isValid($value, Role::Aluno)) {
+                        if (! EmailDomainValidator::isValid($value, Role::Aluno)) {
                             $fail('Use o seu e-mail institucional (@aluno.cps.sp.gov.br).');
                         }
                     },
@@ -93,7 +94,7 @@ class FirstAccessController extends Controller
             ->with('status', 'Código enviado. Confira sua caixa de entrada.');
     }
 
-    public function verifyEmail(Request $request): RedirectResponse
+    public function verifyEmail(Request $request, UserIdentifierService $identifierService): RedirectResponse
     {
         $user = $request->user();
 
@@ -111,9 +112,15 @@ class FirstAccessController extends Controller
 
         $verification = $this->verifications->check($user, $request->input('code'), 'first_access');
 
+        $name = $identifierService->generateName($verification->email);
+        $firstName = $identifierService->extractFirstName($name);
+        $identifier = $identifierService->generateIdentifier($firstName, $user->id);
+
         try {
-            DB::transaction(function () use ($user, $verification) {
+            DB::transaction(function () use ($user, $verification, $name, $identifier) {
                 $user->forceFill([
+                    'name' => $name,
+                    'identifier' => $identifier,
                     'email' => $verification->email,
                     'email_verified_at' => now(),
                     'first_access_status' => 'senha_pendente',
@@ -209,7 +216,7 @@ class FirstAccessController extends Controller
 
     private function wrongStep(User $user, string $expected): ?RedirectResponse
     {
-        if (!$user->isStudent()) {
+        if (! $user->isStudent()) {
             return redirect()->route('dashboard');
         }
 

@@ -49,7 +49,7 @@ class VerificationCodeController extends Controller
             'title' => $page['title'],
             'intro' => str_replace(':email', $email, $page['intro']),
             'introNone' => str_replace(':email', $email, $page['none']),
-            'state' => !$verification ? 'none' : ($verification->cancelled_at ? 'cancelled' : 'active'),
+            'state' => ! $verification ? 'none' : ($verification->cancelled_at ? 'cancelled' : 'active'),
             'secondsLeft' => $this->verifications->secondsUntilResend($verification),
             'confirmRoute' => $page['confirm'],
             'sendRoute' => $page['send'],
@@ -102,7 +102,7 @@ class VerificationCodeController extends Controller
             return $user->email_verified_at !== null;
         }
 
-        return !$this->devices->required($user) ||
+        return ! $this->devices->required($user) ||
             $request->session()->get('device_verified') === true;
     }
 }

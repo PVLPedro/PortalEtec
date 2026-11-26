@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -36,8 +35,7 @@ class CourseSeeder extends Seeder
             ['initialism' => 'AUPR', 'name' => 'Automação Predial', 'icon_id' => 13],
             [
                 'initialism' => 'AAFMC',
-                'name' =>
-                    'Auxiliar Administrativo, Auxiliar de Finanças e Auxiliar de Marketing e Comercial',
+                'name' => 'Auxiliar Administrativo, Auxiliar de Finanças e Auxiliar de Marketing e Comercial',
                 'icon_id' => 6,
             ],
             ['initialism' => 'BIBL', 'name' => 'Biblioteconomia', 'icon_id' => 6],
@@ -206,8 +204,7 @@ class CourseSeeder extends Seeder
             ['initialism' => 'SEC', 'name' => 'Secretariado', 'icon_id' => 6],
             [
                 'initialism' => 'SACQ',
-                'name' =>
-                    'Segurança do Alimento - Ênfase em Controle de Qualidade em Unidade de Alimentação e Nutrição',
+                'name' => 'Segurança do Alimento - Ênfase em Controle de Qualidade em Unidade de Alimentação e Nutrição',
                 'icon_id' => 23,
             ],
             ['initialism' => 'ST', 'name' => 'Segurança do Trabalho', 'icon_id' => 23],

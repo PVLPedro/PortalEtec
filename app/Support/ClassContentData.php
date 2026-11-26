@@ -18,13 +18,13 @@ class ClassContentData
         $classDisciplines = SchoolClassDiscipline::where('school_class_id', $schoolClass->id)
             ->with(['discipline', 'color'])
             ->get()
-            ->sortBy(fn($item) => $item->discipline->name)
+            ->sortBy(fn ($item) => $item->discipline->name)
             ->values();
 
         return [
             'classDisciplines' => $classDisciplines,
             'disciplineTeachers' => $classDisciplines->mapWithKeys(
-                fn($item) => [$item->id => $item->teachers()->get()],
+                fn ($item) => [$item->id => $item->teachers()->get()],
             ),
             'sideNames' => Side::pluck('name', 'id'),
             'canManageDisciplines' => ClassAccess::canManageDisciplines($user, $schoolClass),
@@ -53,7 +53,7 @@ class ClassContentData
         return Activity::query()
             ->whereHas(
                 'schoolClassDiscipline',
-                fn($query) => $query->where('school_class_id', $schoolClass->id),
+                fn ($query) => $query->where('school_class_id', $schoolClass->id),
             )
             ->with([
                 'schoolClassDiscipline.discipline',
@@ -64,7 +64,7 @@ class ClassContentData
             ])
             ->when(
                 $request->filled('disciplina'),
-                fn($query) => $query->where(
+                fn ($query) => $query->where(
                     'school_class_discipline_id',
                     (int) $request->query('disciplina'),
                 ),
@@ -73,9 +73,9 @@ class ClassContentData
                 $sideId = $user->student?->side_id;
 
                 $query->where(
-                    fn($sub) => $sub
+                    fn ($sub) => $sub
                         ->whereNull('side_id')
-                        ->when($sideId, fn($inner) => $inner->orWhere('side_id', $sideId)),
+                        ->when($sideId, fn ($inner) => $inner->orWhere('side_id', $sideId)),
                 );
             });
     }

@@ -3,10 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Auth\Access\HandlesAuthorization;
-use App\Enums\Role;
-use App\Models\Etec;
 
 class UserPolicy
 {
@@ -15,6 +11,12 @@ class UserPolicy
      */
     public function manage(User $coordenador, User $alvo): bool
     {
+        $etecAtiva = $coordenador->activeEtec();
+
+        if ($etecAtiva) {
+            return $alvo->etecs()->where('etecs.id', $etecAtiva->id)->exists();
+        }
+
         $etecsCoordenador = $coordenador->etecs()->pluck('etecs.id');
         $etecsAlvo = $alvo->etecs()->pluck('etecs.id');
 

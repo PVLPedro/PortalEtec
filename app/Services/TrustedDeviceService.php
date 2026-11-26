@@ -25,13 +25,13 @@ class TrustedDeviceService
     {
         $token = $request->cookie(self::COOKIE);
 
-        if (!is_string($token) || $token === '') {
+        if (! is_string($token) || $token === '') {
             return false;
         }
 
         $device = $user->trustedDevices()->where('token_hash', hash('sha256', $token))->first();
 
-        if (!$device) {
+        if (! $device) {
             return false;
         }
 
@@ -48,7 +48,7 @@ class TrustedDeviceService
     {
         $token = $request->cookie(self::COOKIE);
 
-        if (!is_string($token) || $token === '') {
+        if (! is_string($token) || $token === '') {
             $token = Str::random(64);
         }
 
@@ -68,7 +68,7 @@ class TrustedDeviceService
 
     public function startSession(Request $request, User $user): void
     {
-        if (!$this->required($user) || $this->isTrusted($request, $user)) {
+        if (! $this->required($user) || $this->isTrusted($request, $user)) {
             $request->session()->put('device_verified', true);
 
             return;
