@@ -16,7 +16,7 @@ class SchoolClass extends Model
     protected function name(): Attribute
     {
         return Attribute::get(
-            fn() => "{$this->grade->name} {$this->course->name} - {$this->shift->name}",
+            fn () => "{$this->grade->name} {$this->course->name} - {$this->shift->name}",
         );
     }
 

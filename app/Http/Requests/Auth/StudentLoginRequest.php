@@ -35,7 +35,7 @@ class StudentLoginRequest extends FormRequest
 
         $user = $this->findStudent();
 
-        if (!$user || !Hash::check($this->input('password'), $user->password)) {
+        if (! $user || ! Hash::check($this->input('password'), $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -51,7 +51,7 @@ class StudentLoginRequest extends FormRequest
     {
         $etec = Etec::where('code', $this->input('etec_code'))->first();
 
-        if (!$etec) {
+        if (! $etec) {
             return null;
         }
 
@@ -66,7 +66,7 @@ class StudentLoginRequest extends FormRequest
 
     private function ensureIsNotRateLimited(): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -85,7 +85,7 @@ class StudentLoginRequest extends FormRequest
     private function throttleKey(): string
     {
         return Str::transliterate(
-            Str::lower($this->input('etec_code') . '|' . $this->input('rm')) . '|' . $this->ip(),
+            Str::lower($this->input('etec_code').'|'.$this->input('rm')).'|'.$this->ip(),
         );
     }
 }

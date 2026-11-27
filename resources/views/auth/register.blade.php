@@ -14,9 +14,6 @@
             <x-application-logo class="h-32 w-full fill-current" />
         </a>
 
-        <<<<<<< HEAD
-        <p class="text-center font-medium {{ $generalTextClass }}">{{ __('auth.welcome') }}</p>
-        =======
         <div class="flex w-full flex-col gap-regular *:flex-1">
             <x-form-link href="{{ url('/') }}">
                 <x-lucide-chevron-left />
@@ -31,12 +28,11 @@
                 <x-lucide-user-plus />
             </x-form-text>
         </div>
-        >>>>>>> design-login
 
         <form method="POST" action="{{ route('register') }}" class="flex w-full flex-col gap-large">
             @csrf
 
-            <div>
+            {{-- <div>
                 <x-input-label for="name" :value="__('auth.register.label.name')" />
                 <x-text-input
                     id="name"
@@ -53,20 +49,14 @@
                     </x-slot>
                 </x-text-input>
                 <x-input-error :messages="$errors->get('name')" />
-            </div>
+            </div> --}}
 
             <div x-data="{ role: @js(old('role', '')) }" class="flex flex-col gap-large">
                 <div>
                     <x-input-label for="role" :value="__('auth.register.label.role')" />
 
-                    <select id="role" name="role" x-model="role" required>
-                        <option value="">
-                            {{
-                                __(
-                                    'auth.register.label.role_select',
-                                )
-                            }}
-                        </option>
+                    <select id="role" name="role" x-model="role" required autofocus>
+                        <option value="">Selecione um cargo</option>
                         @foreach (\App\Enums\Role::cases() as $roleCase)
                             @continue ($roleCase === \App\Enums\Role::Aluno)
                             <option
@@ -99,6 +89,50 @@
                     </select>
 
                     <x-input-error :messages="$errors->get('etecs')" />
+                </div>
+
+                <div
+                    x-data='{
+                        emailPrefix: @js(old('email_prefix', old('email') ? str_replace('@cps.sp.gov.br', '', old('email')) : '')),
+                    }'
+                >
+                    <x-input-label for="email" :value="__('auth.register.label.email')" />
+                    <div class="flex items-center gap-small">
+                        <x-text-input
+                            id="email"
+                            class="block w-full"
+                            type="text"
+                            name="email_prefix"
+                            x-model="emailPrefix"
+                            placeholder="seunome"
+                            required
+                            autocomplete="username"
+                        />
+                        <x-input-label
+                            for="email"
+                            class="text-sm whitespace-nowrap text-secondary"
+                            :value="__('auth.domain.worker')"
+                        />
+                    </div>
+                    <p class="mt-1 text-xs text-secondary">
+                        Nome gerado:
+                        <span
+                            class="font-mono"
+                            x-text="
+                                emailPrefix
+                                    ? emailPrefix
+                                          .trim()
+                                          .split('@')[0]
+                                          .normalize('NFD')
+                                          .replace(/[\u0300-\u036f]/g, '')
+                                          .toUpperCase()
+                                    : '—'
+                            "
+                        ></span>
+                    </p>
+                    <p class="mt-1 text-xs text-secondary">O nome é gerado automaticamente a partir do e-mail e não pode ser alterado neste formulário.</p>
+                    <x-input-error :messages="$errors->get('email_prefix')" class="" />
+                    <x-input-error :messages="$errors->get('email')" class="" />
                 </div>
             </div>
 
@@ -218,6 +252,24 @@
 
                 bindLiveValidation('#name', isValidName);
                 bindLiveValidation('#email', isValidEmail);
+                $('#email')
+                    .on('blur', function () {
+                        $(this).data('touched', true);
+                        setFeedback(this, isValidEmail($(this).val()));
+                    })
+                    .on('input', function () {
+                        if ($(this).data('touched')) {
+                            setFeedback(this, isValidEmail($(this).val()));
+                        }
+                    });
+
+                $('#toggle-password').on('change', function () {
+                    $('#password').attr('type', this.checked ? 'text' : 'password');
+                });
+
+                document.querySelector('form').addEventListener('submit', function () {
+                    document.getElementById('password-real').value = document.getElementById('password').value;
+                });
             });
 
             function bindLiveValidation(selector, validator) {
@@ -250,6 +302,10 @@
                 const value = email.trim().toLowerCase();
 
                 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.endsWith(WORKER_DOMAIN);
+            }
+
+            function isValidEmail(email) {
+                return /^[^\s@]+$/.test(email.trim()) && email.trim().length > 0;
             }
         </script>
     @endpush

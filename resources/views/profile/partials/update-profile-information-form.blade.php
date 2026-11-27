@@ -3,7 +3,11 @@
         <h2 class="text-lg font-medium text-gray-900">{{ __('Profile Information') }}</h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('profile.information.description') }} 
+            {{
+                __(
+                    'profile.information.description',
+                )
+            }}
         </p>
     </header>
 
@@ -16,17 +20,25 @@
         @method ('patch')
 
         <div>
-            <x-input-label for="name" :value="__('profile.information.label.name')" />
-            <x-text-input
-                id="name"
-                name="name"
-                type="text"
-                class="mt-1 block w-full"
-                :value="old('name', $user->name)"
-                required
-                autofocus
-                autocomplete="name"
-            />
+            <x-input-label for="name" :value="__('Name')" />
+            <div class="mt-1 flex items-center gap-2">
+                <x-text-input
+                    id="name"
+                    name="name"
+                    type="text"
+                    class="block w-full"
+                    :value="old('name', $user->name)"
+                    required
+                    autofocus
+                    autocomplete="name"
+                />
+                @if ($user->identifier)
+                    <span
+                        class="rounded border border-border bg-bg-primary px-2.5 py-1.5 font-mono text-sm text-secondary"
+                        >#{{ $user->identifier }}</span
+                    >
+                @endif
+            </div>
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
@@ -46,18 +58,30 @@
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->hasVerifiedEmail())
                 <div>
                     <p class="mt-2 text-sm text-gray-800">
-                        {{ __('profile.information.unverified_email') }}
+                        {{
+                            __(
+                                'profile.information.unverified_email',
+                            )
+                        }}
                         <button
                             form="send-verification"
                             class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                         >
-                          {{ __('profile.information.resend_verification') }}
+                            {{
+                                __(
+                                    'profile.information.resend_verification',
+                                )
+                            }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
                         <p class="mt-2 text-sm font-medium text-green-600">
-                            {{ __('profile.information.verification_sent') }}
+                            {{
+                                __(
+                                    'profile.information.verification_sent',
+                                )
+                            }}
                         </p>
                     @endif
                 </div>

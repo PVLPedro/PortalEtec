@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
-use App\Models\SchoolClass;
-use App\Models\User;
-use App\Models\Etec;
+use App\Models\ActivityFile;
+use App\Models\Color;
 use App\Models\Course;
 use App\Models\Grade;
-use App\Models\Shift;
-use App\Models\Color;
 use App\Models\Icon;
+use App\Models\SchoolClass;
+use App\Models\Shift;
 use App\Models\Side;
+use App\Models\User;
 use App\Models\UserStudent;
-use App\Http\Controllers\Controller;
+use App\Support\ClassContentData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class SchoolClassController extends Controller
@@ -25,7 +26,7 @@ class SchoolClassController extends Controller
     {
         $schoolClass = auth()->user()->currentSchoolClass();
 
-        if (!$schoolClass) {
+        if (! $schoolClass) {
             return redirect()
                 ->route('dashboard')
                 ->with('status', 'Você ainda não foi adicionado a nenhuma turma.');
@@ -69,7 +70,7 @@ class SchoolClassController extends Controller
         // Só alunos entram direto na turma; professores são vinculados por disciplina.
         $preselectedUsers = User::whereIn('id', $request->query('usuarios', []))
             ->where('role', Role::Aluno->value)
-            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->whereHas('etecs', fn ($q) => $q->whereIn('etecs.id', $etecIds))
             ->get(['id', 'name', 'role']);
 
         return view('school-classes.create', [
@@ -105,7 +106,7 @@ class SchoolClassController extends Controller
 
         $message = 'Turma criada!';
 
-        if (!empty($validated['usuarios'])) {
+        if (! empty($validated['usuarios'])) {
             $ignored = $this->addStudents($schoolClass, $validated['usuarios'], $etecIds);
 
             if ($ignored > 0) {
@@ -116,7 +117,7 @@ class SchoolClassController extends Controller
         return redirect()->route('school-classes.index')->with('status', $message);
     }
 
-    public function show(SchoolClass $schoolClass)
+    public function show(Request $request, SchoolClass $schoolClass)
     {
         $this->authorizeClass($schoolClass);
 
@@ -134,6 +135,17 @@ class SchoolClassController extends Controller
 
         $sides = Side::all();
 
+        $availableStudents = User::query()
+            ->where('role', Role::Aluno)
+            ->whereHas('etecs', fn ($q) => $q->where('etecs.id', $schoolClass->etec_id))
+            ->with([
+                'student.schoolClass.grade',
+                'student.schoolClass.course',
+                'etecs' => fn ($q) => $q->where('etecs.id', $schoolClass->etec_id),
+            ])
+            ->orderBy('name')
+            ->get();
+
         return view('school-classes.show', [
             'schoolClass' => $schoolClass,
             'courses' => Course::all(),
@@ -142,6 +154,8 @@ class SchoolClassController extends Controller
             'colors' => Color::all(),
             'icons' => Icon::all(),
             'sides' => $sides,
+            'availableStudents' => $availableStudents,
+            'classContent' => ClassContentData::for($request->user(), $schoolClass, $request),
         ]);
     }
 
@@ -180,7 +194,16 @@ class SchoolClassController extends Controller
         $this->authorizeClass($schoolClass);
         $this->requirePassword($request);
 
+        $paths = ActivityFile::pathsWhereActivity(
+            fn ($query) => $query->whereHas(
+                'schoolClassDiscipline',
+                fn ($discipline) => $discipline->where('school_class_id', $schoolClass->id),
+            ),
+        );
+
         $schoolClass->delete();
+
+        Storage::disk(ActivityFile::DISK)->delete($paths);
 
         return redirect()->route('school-classes.index')->with('status', 'Turma removida!');
     }
@@ -224,18 +247,17 @@ class SchoolClassController extends Controller
     private function addStudents(SchoolClass $schoolClass, array $userIds, $etecIds): int
     {
         $students = User::whereIn('id', $userIds)
-            ->whereHas('etecs', fn($q) => $q->whereIn('etecs.id', $etecIds))
+            ->whereHas('etecs', fn ($q) => $q->whereIn('etecs.id', $etecIds))
             ->get()
-            ->filter(fn($u) => $u->isStudent());
+            ->filter(fn ($u) => $u->isStudent());
 
         foreach ($students as $student) {
             $record =
                 $student->student ??
                 new UserStudent([
                     'user_id' => $student->id,
-                    'rm' =>
-                        (int) ($student->etecs()->where('etecs.id', $schoolClass->etec_id)->first()
-                            ?->pivot->rm ?? 0),
+                    'rm' => (int) ($student->etecs()->where('etecs.id', $schoolClass->etec_id)->first()
+                        ?->pivot->rm ?? 0),
                 ]);
 
             $record->fill(['school_class_id' => $schoolClass->id])->save();
@@ -270,7 +292,7 @@ class SchoolClassController extends Controller
             ],
         );
 
-        if (!Hash::check($request->input('password'), Auth::user()->password)) {
+        if (! Hash::check($request->input('password'), Auth::user()->password)) {
             throw ValidationException::withMessages([
                 'password' => 'Incorrect password.',
             ]);

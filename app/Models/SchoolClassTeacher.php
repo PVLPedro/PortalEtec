@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['school_class_id', 'teacher_id', 'discipline_id'])]
+#[Fillable(['school_class_id', 'teacher_id', 'discipline_id', 'side_id'])]
 class SchoolClassTeacher extends Model
 {
     protected $table = 'school_class_teacher';
@@ -27,8 +26,8 @@ class SchoolClassTeacher extends Model
         return $this->belongsTo(Discipline::class);
     }
 
-    public function activities(): HasMany
+    public function side(): BelongsTo
     {
-        return $this->hasMany(Activity::class);
+        return $this->belongsTo(Side::class);
     }
 }

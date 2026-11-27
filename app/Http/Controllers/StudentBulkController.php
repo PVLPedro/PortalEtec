@@ -46,7 +46,7 @@ class StudentBulkController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'students' => ['required', 'array', 'max:' . self::MAX_ROWS],
+            'students' => ['required', 'array', 'max:'.self::MAX_ROWS],
             'students.*.rm' => ['nullable', 'string', 'max:20'],
             'students.*.name' => ['nullable', 'string', 'max:255'],
             'school_class_id' => ['nullable', 'integer'],
@@ -54,7 +54,7 @@ class StudentBulkController extends Controller
 
         $etec = $request->user()->activeEtec();
 
-        if (!$etec) {
+        if (! $etec) {
             return back()->withErrors(['students' => 'Você não está vinculado a nenhuma Etec.']);
         }
 
@@ -65,7 +65,7 @@ class StudentBulkController extends Controller
                 ->with(['course', 'grade', 'shift'])
                 ->find($request->input('school_class_id'));
 
-            if (!$schoolClass) {
+            if (! $schoolClass) {
                 return back()
                     ->withInput()
                     ->withErrors(['school_class_id' => 'Turma inválida.']);
@@ -84,13 +84,14 @@ class StudentBulkController extends Controller
                 continue;
             }
 
-            if ($rm === '' || $name === '' || !preg_match('/^\d{7}$/', $rm)) {
+            if ($rm === '' || $name === '' || ! preg_match('/^\d{7}$/', $rm)) {
                 $results[] = $this->row(
                     $rm,
                     $name,
                     null,
                     'Erro: informe o RM com 7 dígitos e o nome.',
                 );
+
                 continue;
             }
 
@@ -134,7 +135,7 @@ class StudentBulkController extends Controller
         } else {
             $results = session('bulk_csv');
 
-            if (!$results) {
+            if (! $results) {
                 return redirect()->route('students.bulk.create');
             }
 
@@ -214,6 +215,7 @@ class StudentBulkController extends Controller
                     'role' => Role::Aluno,
                     'password' => $password,
                     'initial_password' => $password,
+                    'first_access_status' => 'email_pendente',
                 ]);
 
                 $user->etecs()->attach($etecId, [
@@ -229,7 +231,7 @@ class StudentBulkController extends Controller
 
             return $this->row((string) $rm, $name, $password, 'Cadastrado');
         } catch (\DomainException $e) {
-            return $this->row((string) $rm, $name, null, 'Erro: ' . $e->getMessage());
+            return $this->row((string) $rm, $name, null, 'Erro: '.$e->getMessage());
         } catch (UniqueConstraintViolationException) {
             return $this->row((string) $rm, $name, null, 'Erro: RM já cadastrado nesta Etec.');
         }

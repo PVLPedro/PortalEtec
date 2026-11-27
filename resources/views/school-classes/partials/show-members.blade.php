@@ -1,9 +1,70 @@
+@php
+    $membersList = collect();
+
+    foreach ($schoolClass->teachers as $teacher) {
+        $membersList->push([
+            'id' => $teacher->id,
+            'user' => $teacher,
+            'matricula' => null,
+            'name' => $teacher->name,
+            'role' => $teacher->role->value,
+            'secondary' => $teacher->email,
+            'is_student' => false,
+            'side_id' => null,
+            'rm' => null,
+        ]);
+    }
+
+    foreach ($schoolClass->students as $matricula) {
+        $membersList->push([
+            'id' => $matricula->user->id,
+            'user' => $matricula->user,
+            'matricula' => $matricula,
+            'name' => $matricula->user->name,
+            'role' => $matricula->user->role->value,
+            'secondary' => 'RM ' . $matricula->rm,
+            'is_student' => true,
+            'side_id' => $matricula->side_id,
+            'rm' => $matricula->rm,
+        ]);
+    }
+
+    $membersItems = $membersList
+        ->values()
+        ->map(function ($item, $index) {
+            $user = $item['user'];
+            $tag = $user->identifier ? '#' . $user->identifier : '';
+
+            return [
+                'id' => $item['id'],
+                'name' => $item['name'] . $tag,
+                'role' => $item['role'],
+                'detail' => $item['secondary'],
+                'index' => $index,
+            ];
+        })
+        ->all();
+@endphp
+
 <div
     x-show="section == 'membersSection'"
     x-data="{
         perPage: 10,
         currentPage: 1,
-        totalUsers: {{ $schoolClass->students->count() + $schoolClass->teachers->count() }},
+        search: '',
+        items: @js($membersItems),
+        get filteredItems() {
+            if (!this.search.trim()) return this.items;
+            const q = this.search.toLowerCase().trim();
+            return this.items.filter(item =>
+                (item.name && item.name.toLowerCase().includes(q)) ||
+                (item.role && item.role.toLowerCase().includes(q)) ||
+                (item.detail && item.detail.toLowerCase().includes(q))
+            );
+        },
+        get totalUsers() {
+            return this.filteredItems.length;
+        },
         get totalPages() {
             return Math.max(1, Math.ceil(this.totalUsers / this.perPage));
         },
@@ -26,6 +87,11 @@
         nextPage() {
             this.goToPage(this.currentPage + 1);
         },
+        isItemVisible(idx) {
+            const pos = this.filteredItems.findIndex(i => i.index === idx);
+            if (pos === -1) return false;
+            return Math.floor(pos / this.perPage) + 1 === this.currentPage;
+        }
     }"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 scale-95"
@@ -42,18 +108,38 @@
             <label for="member-search">
                 <x-lucide-user-search />
             </label>
-            <input
+            <input /><<<<<<<head
                 placeholder="Pesquisar Membro (Por Nome ou RM)"
-                type="text"
-                class="flex-1 border-b-2 border-b-transparent text-text outline-0 placeholder:text-secondary focus:border-b-(--color-school-class)"
-                id="member-search"
-            />
+                ="======"
+                placeholder="Pesquisar Membro (Nome, Cargo ou Email/RM)"
+            >
+                >>>>>> fix/branches type="text" x-model="search"
+                @input
+                ="currentPage = 1"
+                @keydown
+                .enter.prevent class="flex-1 border-b-2 border-b-transparent text-text outline-0
+                placeholder:text-secondary focus:border-b-(--color-school-class)" id="member-search"
+                />
         </div>
         @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-            <x-primary-link href="" class="bg-accent text-text-white hover:bg-accent-hover">
-                <x-lucide-user-plus />
-                <span>Adicionar Membros</span>
-            </x-primary-link>
+            <div class="flex items-center gap-smaller">
+                <x-primary-button
+                    type="button"
+                    @click="addMembersModal = true"
+                    class="cursor-pointer bg-accent text-text-white hover:bg-accent-hover"
+                >
+                    <x-lucide-user-plus />
+                    <span>Adicionar Membros</span>
+                </x-primary-button>
+
+                <a
+                    href="{{ route('users.index') }}"
+                    class="group/tooltip flex size-10 items-center justify-center rounded-small border border-border bg-bg-secondary text-secondary hover:bg-bg-secondary-hover hover:text-text"
+                >
+                    <x-lucide-users class="size-5" />
+                    <x-tooltip>Gerenciar em Usuários</x-tooltip>
+                </a>
+            </div>
         @endif
     </div>
 
@@ -170,7 +256,7 @@
                         <x-primary-button
                             type="button"
                             class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
-                            {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values())" --}}
+                            @click="selected = @js($schoolClass->students->pluck('user_id')->values())"
                         >
                             <x-icons.select-all />
                             <x-tooltip> Selecionar todos </x-tooltip>
@@ -186,7 +272,7 @@
                         <x-primary-button
                             type="button"
                             class="group/tooltip relative rounded-small bg-bg-primary p-small hover:bg-bg-primary-hover"
-                            {{-- @click="selected = @json($schoolClass->users->where('role', '!=', \App\Enums\Role::Coordenador)->pluck('id')->values()).filter(id => !selected.includes(id))" --}}
+                            @click="selected = @js($schoolClass->students->pluck('user_id')->values()).filter(id => !selected.includes(id))"
                         >
                             <x-icons.select-invert />
                             <x-tooltip> Inverter seleção </x-tooltip>
@@ -226,24 +312,30 @@
             </span>
         </div>
 
-        @forelse ($schoolClass->students as $matricula)
+        @forelse ($membersList as $index => $membro)
+            @php
+                $isStudent = $membro['is_student'];
+                $user = $membro['user'];
+                $matricula = $membro['matricula'];
+            @endphp
+
             <div
                 class="col-span-full grid grid-cols-subgrid gap-smaller border-t border-t-border p-smaller"
-                x-show="Math.ceil({{ $loop->iteration }} / perPage) === currentPage"
+                x-show="isItemVisible({{ $index }})"
             >
                 <label
-                    for="{{ "user-checkbox" . $matricula->user->id }}"
+                    for="{{ "user-checkbox" . $user->id }}"
                     class="relative flex h-16 items-center justify-center overflow-hidden transition-all"
                     :class="selectionMode
                         ? 'w-16 opacity-100 border-r border-r-border'
                         : 'w-0 opacity-0 border-0'"
                 >
-                    @if ($matricula->user->role !== \App\Enums\Role::Coordenador)
+                    @if ($isStudent && $user->role !== \App\Enums\Role::Coordenador)
                         <input
                             type="checkbox"
-                            id="{{ "user-checkbox" . $matricula->user->id }}"
+                            id="{{ "user-checkbox" . $user->id }}"
                             class="peer size-6 appearance-none rounded-small border border-border shadow-md checked:bg-accent hover:bg-accent-bg checked:hover:bg-accent-hover"
-                            value="{{ $matricula->user->id }}"
+                            value="{{ $user->id }}"
                             :disabled="!selectionMode"
                             x-model="selected"
                         />
@@ -254,28 +346,42 @@
                 </label>
                 <div class="group contents">
                     <label
-                        for="{{ "user-checkbox" . $matricula->user->id }}"
+                        for="{{ "user-checkbox" . $user->id }}"
                         class="flex flex-col justify-center rounded-regular p-regular"
-                        @if ($matricula->user->role->value != 'coordenador')
+                        @if ($isStudent && $user->role->value != 'coordenador')
                             :class="selectionMode &&
                             'hover:bg-bg-secondary-hover hover:cursor-pointer'"
                         @endif
                     >
                         <x-card-text>
                             <x-slot name="primary">
-                                {{ $matricula->user->name }}
+                                <span class="flex items-center gap-1.5">
+                                    <span>{{ $user->name }}</span>
+                                    @if ($user->identifier)
+                                        <span
+                                            class="rounded bg-bg-primary px-1.5 py-0.5 font-mono text-xs text-secondary"
+                                            >#{{ $user->identifier }}</span
+                                        >
+                                    @endif
+                                </span>
                                 <x-dot />
-                                {{ $matricula->user->role->value }}
+                                <span class="capitalize">{{ $user->role->value }}</span>
                             </x-slot>
                             <x-slot name="secondary">
-                                {{ $matricula->rm }}
+                                {{ $membro['secondary'] }}
                             </x-slot>
                         </x-card-text>
                     </label>
                     @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                        @include ('components.side-dropdown')
+                        @if ($isStudent)
+                            @include ('components.side-dropdown', ['matricula' => $matricula])
+                        @else
+                            <div class="flex items-center justify-center text-sm text-secondary">
+                                —
+                            </div>
+                        @endif
                         <a
-                            href="{{ route('users.edit', $matricula->user) }}"
+                            href="{{ route('users.edit', $user) }}"
                             class="group/tooltip relative flex items-center justify-center rounded-regular font-semibold text-border uppercase group-hover:text-accent hover:bg-bg-secondary-hover"
                         >
                             <span class="flex size-16 items-center justify-center">
@@ -285,7 +391,7 @@
                         </a>
                         <span
                             class="group/tooltip relative flex items-center justify-center rounded-regular font-semibold text-border uppercase group-hover:text-danger hover:bg-bg-secondary-hover"
-                            @click="userToRemove = {{ $matricula->user->id }}; userNameToRemove = '{{ $matricula->user->name }}'; confirmUserRemove = true"
+                            @click="userToRemove = {{ $user->id }}; userNameToRemove = @js($user->name); confirmUserRemove = true"
                         >
                             <span class="flex size-16 items-center justify-center">
                                 <x-lucide-user-minus class="size-5" />
@@ -299,14 +405,24 @@
             <div class="col-span-full flex items-center gap-regular p-regular">
                 <p class="text-secondary">Nenhum Membro na Turma ainda.</p>
                 @if (auth()->user()->role === \App\Enums\Role::Coordenador)
-                    <x-form-link href="">
-                        Adicionar Membros
-                        <x-slot name="icon">
-                            <x-lucide-square-arrow-out-up-right class="size-4 stroke-3" />
-                        </x-slot>
-                    </x-form-link>
+                    <button
+                        type="button"
+                        @click="addMembersModal = true"
+                        class="flex items-center gap-smaller font-semibold text-accent hover:underline"
+                    >
+                        <span>Adicionar Membros</span>
+                        <x-lucide-square-arrow-out-up-right class="size-4 stroke-3" />
+                    </button>
                 @endif
             </div>
         @endforelse
+
+        <div
+            x-show="totalUsers === 0 && items.length > 0"
+            x-cloak
+            class="col-span-full flex items-center gap-regular p-regular"
+        >
+            <p class="text-secondary">Nenhum membro encontrado com os termos pesquisados.</p>
+        </div>
     </div>
 </div>

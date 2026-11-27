@@ -14,7 +14,7 @@
         >
             {{
                 $matricula->side?->name ??
-                    'Sem side'
+                    'Sem Lado'
             }}
         </div>
 
@@ -38,7 +38,11 @@
                 >
                     @csrf
                     @method ('PATCH')
+                    <<<<<<< HEAD
                     <input type="hidden" name="side_id" value="{{ $side->id }}" />
+                    =======
+                    <input class="hidden" name="side_id" value="{{ $side->id }}" />
+                    >>>>>>> fix/branches
 
                     <button
                         type="submit"

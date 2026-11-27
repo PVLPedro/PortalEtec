@@ -11,15 +11,23 @@
                         value="{{ old('role', $user->role->value) }}"
                     />
 
-                    <x-input-label for="name" value="__('users.edit.label.name')" />
-                    <x-text-input
-                        id="name"
-                        name="name"
-                        type="text"
-                        class="mt-1 block w-full"
-                        :value="old('name', $user->name)"
-                        required
-                    />
+                    <x-input-label for="name" value="Nome" />
+                    <div class="mt-1 flex items-center gap-2">
+                        <x-text-input
+                            id="name"
+                            name="name"
+                            type="text"
+                            class="block w-full"
+                            :value="old('name', $user->name)"
+                            required
+                        />
+                        @if ($user->identifier)
+                            <span
+                                class="rounded border border-border bg-bg-primary px-2.5 py-1.5 font-mono text-sm text-secondary"
+                                >#{{ $user->identifier }}</span
+                            >
+                        @endif
+                    </div>
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
 
                     @if ($user->isStudent())

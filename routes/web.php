@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\StudentBulkController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EtecContextController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\StudentBulkController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -18,14 +18,14 @@ Route::get('/', function () {
     return view('auth.select-role');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'account.ready'])->group(function () {
     Route::post('/trocar-etec', [EtecContextController::class, 'switch'])->name(
         'etec-context.switch',
     );
 
     Route::get('/visao-geral', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/manter-sessao', fn() => response()->json(['token' => csrf_token()]))->name(
+    Route::get('/manter-sessao', fn () => response()->json(['token' => csrf_token()]))->name(
         'session.keep-alive',
     );
 
@@ -110,9 +110,7 @@ Route::middleware('auth')->group(function () {
         ])->name('users.add-to-classMultiple');
     });
 
-    Route::get('turma/atividades', function () {
-        return view('activities.index');
-    })->name('activities.index');
+    require __DIR__.'/class-content.php';
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

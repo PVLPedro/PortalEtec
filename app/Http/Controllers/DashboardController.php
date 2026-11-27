@@ -15,11 +15,11 @@ class DashboardController extends Controller
             Role::Aluno => view('aluno.dashboard', compact('activeEtec')),
             Role::Professor => view('professor.dashboard', [
                 'activeEtec' => $activeEtec,
-                'schoolClasses' => $activeEtec->schoolClasses,
+                'schoolClasses' => $activeEtec?->schoolClasses ?? collect(),
             ]),
             Role::Coordenador => view('coordenador.dashboard', [
                 'activeEtec' => $activeEtec,
-                'schoolClasses' => $activeEtec->schoolClasses,
+                'schoolClasses' => $activeEtec?->schoolClasses ?? collect(),
             ]),
         };
     }

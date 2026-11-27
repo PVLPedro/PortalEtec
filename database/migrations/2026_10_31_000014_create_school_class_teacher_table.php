@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('school_class_teacher', function (Blueprint $table) {
@@ -12,6 +13,7 @@ return new class extends Migration {
             $table->foreignId('school_class_id')->constrained('school_classes')->cascadeOnDelete();
             $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('discipline_id')->constrained('disciplines')->cascadeOnDelete();
+            $table->foreignId('side_id')->nullable()->constrained('sides')->nullOnDelete();
             $table->timestamps();
 
             $table->unique(['school_class_id', 'teacher_id', 'discipline_id']);

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -15,6 +16,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('initial_password')->nullable();
             $table->enum('role', ['aluno', 'professor', 'coordenador'])->default('aluno');
+            $table->string('first_access_status', 20)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
