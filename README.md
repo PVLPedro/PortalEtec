@@ -96,111 +96,6 @@ Ferramentas genéricas de sala de aula não conhecem a estrutura de uma ETEC. O 
 
 ---
 
-## 🚀 Como executar
-
-### Pré-requisitos
-
-| Ferramenta | Versão recomendada |
-| --- | --- |
-| PHP | 8.3 ou superior (a equipe usa 8.5) |
-| Composer | 2.9 |
-| Node.js | 24 LTS (veja o arquivo `.nvmrc`) |
-| PostgreSQL | 18 *(opcional, o SQLite funciona por padrão)* |
-
-> 💡 No Windows, a forma mais simples de instalar PHP, Composer e Laravel é pelo [php.new](https://php.new).
-> Se usar PostgreSQL, habilite `extension=pdo_pgsql` e `extension=pgsql` no seu `php.ini`.
-
-### Passo a passo
-
-```bash
-# 1. Clone o repositório
-git clone https://github.com/PVLPedro/PortalEtec.git
-cd PortalEtec
-
-# 2. Instalação automática (dependências, .env, chave, migrations e build)
-composer run setup
-
-# 3. Popule o banco com ETECs, cursos, turnos e dados de exemplo
-php artisan db:seed
-
-# 4. Inicie o ambiente de desenvolvimento (servidor + fila + Vite)
-composer run dev
-```
-
-Depois, acesse **http://localhost:8000**.
-
-<details>
-<summary><b>Prefere usar PostgreSQL?</b></summary>
-
-Crie um banco no pgAdmin e ajuste o `.env`:
-
-```env
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=portal_etec
-DB_USERNAME=postgres
-DB_PASSWORD=sua_senha
-```
-
-Em seguida, rode `php artisan migrate --seed`.
-
-</details>
-
-<details>
-<summary><b>Envio de e-mails (verificação de conta)</b></summary>
-
-Em desenvolvimento, o padrão é `MAIL_MAILER=log`, então os códigos de verificação aparecem em `storage/logs/laravel.log`.
-Para envio real, configure o Mailgun no `.env`.
-
-</details>
-
-### Comandos úteis
-
-| Comando | Descrição |
-| --- | --- |
-| `composer run dev` | Sobe servidor, fila e Vite juntos |
-| `composer test` | Executa a suíte de testes |
-| `composer format` | Formata o PHP com Laravel Pint |
-| `npm run format` | Formata Blade, JS e CSS com Prettier |
-| `npm run build` | Gera os assets de produção |
-| `php artisan migrate:fresh --seed` | Recria o banco do zero com dados de exemplo |
-
----
-
-## 🗂️ Estrutura do projeto
-
-```text
-PortalEtec/
-├── app/
-│   ├── Enums/            # Perfis de usuário (Role)
-│   ├── Http/Controllers/ # Controllers de turmas, atividades, comunicados, usuários e auth
-│   ├── Models/           # Eloquent models (User, SchoolClass, Activity, Announcement...)
-│   ├── Policies/         # Regras de autorização
-│   ├── Services/         # Verificação de e-mail, dispositivos confiáveis, identificadores
-│   └── Support/          # Validador de domínio de e-mail, acesso à turma
-├── database/
-│   ├── migrations/       # Estrutura do banco de dados
-│   └── seeders/          # ETECs, cursos, turnos, séries, status e dados de exemplo
-├── resources/
-│   ├── views/            # Blade: auth, dashboards, turmas, class-content, components
-│   ├── css/ e js/        # Tailwind, Alpine e scripts
-├── routes/               # web.php, auth.php e class-content.php
-└── tests/                # Testes Feature e Unit (Pest)
-```
-
----
-
-## 🧪 Testes
-
-O projeto utiliza **Pest** para testes automatizados, cobrindo autenticação, verificação de e-mail, primeiro acesso, redefinição de senha, perfil, dashboard e escopo de acesso do coordenador por ETEC.
-
-```bash
-composer test
-```
-
----
-
 ## 📚 Documentação do TCC
 
 A documentação acadêmica fica em um repositório separado:
@@ -208,16 +103,6 @@ A documentação acadêmica fica em um repositório separado:
 👉 **[TCC-3DA](https://github.com/Oda-Yuji/TCC-3DA)**
 
 Nele estão a monografia (versões da documentação), relatórios, modelos ABNT, padronizações de Tailwind CSS e protótipos iniciais do banco de dados.
-
----
-
-## 📸 Screenshots
-
-<!-- Adicione aqui prints ou GIFs do projeto. Sugestão: login, dashboard do aluno, mural da turma, criação de atividade. -->
-
-| Login | Dashboard do aluno |
-| :---: | :---: |
-| *(em breve)* | *(em breve)* |
 
 ---
 
@@ -237,19 +122,17 @@ Nele estão a monografia (versões da documentação), relatórios, modelos ABNT
 
 | Integrante | GitHub |
 | --- | --- |
-| Davi de Vasconcelos Furigo | [@usuario](https://github.com/usuario) |
+| Davi de Vasconcelos Furigo | [@FurigoDavi](https://github.com/FurigoDavi) |
 | Felipe Yuji Oda Majer | [@Oda-Yuji](https://github.com/Oda-Yuji) |
-| Gustavo Lopes Gianelli | [@usuario](https://github.com/usuario) |
+| Gustavo Lopes Gianelli | [@tronezitos](https://github.com/tronezitos) |
 | Pedro Henrique Custódio Brito | [@PVLPedro](https://github.com/PVLPedro) |
-| Samuel Lírio Dayne | [@usuario](https://github.com/usuario) |
-
-**Orientador(a):** *(preencher)*
+| Samuel Lírio Dayne | [@OwiOmni](https://github.com/OwiOmni) |
 
 ---
 
 ## 📄 Licença
 
-Projeto acadêmico desenvolvido para fins educacionais. *(Defina aqui a licença, por exemplo MIT, se desejarem.)*
+Projeto acadêmico desenvolvido para fins educacionais.
 
 <div align="center">
 
